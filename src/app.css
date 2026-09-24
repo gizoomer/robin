@@ -1,0 +1,73 @@
+@import 'tailwindcss';
+
+/* Design tokens. Series colors come from a CVD-validated categorical palette. */
+:root {
+	color-scheme: light;
+	--bg: #f6f6f4;
+	--surface: #fcfcfb;
+	--border: #e4e3de;
+	--ink: #0b0b0b;
+	--ink-2: #52514e;
+	--ink-3: #8a8983;
+	--accent: #2a78d6;
+	--accent-ink: #ffffff;
+	--good: #137a3a;
+	--bad: #c2312f;
+	--series-1: #2a78d6;
+	--series-muted: #c9c8c2;
+}
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) {
+		color-scheme: dark;
+		--bg: #111110;
+		--surface: #1a1a19;
+		--border: #2d2d2b;
+		--ink: #ffffff;
+		--ink-2: #c3c2b7;
+		--ink-3: #8a8983;
+		--accent: #3987e5;
+		--good: #4cc27a;
+		--bad: #f07472;
+		--series-1: #3987e5;
+		--series-muted: #3f3f3c;
+	}
+}
+
+@theme inline {
+	--color-bg: var(--bg);
+	--color-surface: var(--surface);
+	--color-line: var(--border);
+	--color-ink: var(--ink);
+	--color-ink-2: var(--ink-2);
+	--color-ink-3: var(--ink-3);
+	--color-accent: var(--accent);
+	--color-good: var(--good);
+	--color-bad: var(--bad);
+	--font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+body {
+	background: var(--bg);
+	color: var(--ink);
+	font-family: var(--font-sans);
+	-webkit-font-smoothing: antialiased;
+}
+
+@utility card {
+	@apply rounded-xl border border-line bg-surface;
+}
+@utility btn {
+	@apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold transition active:scale-[0.98] disabled:opacity-50;
+}
+@utility btn-primary {
+	@apply btn bg-accent text-white hover:brightness-110;
+}
+@utility btn-ghost {
+	@apply btn border border-line bg-surface text-ink hover:bg-bg;
+}
+@utility input {
+	@apply min-h-11 w-full rounded-lg border border-line bg-surface px-3 text-base text-ink placeholder:text-ink-3 focus:border-accent focus:outline-none;
+}
+@utility label {
+	@apply mb-1 block text-sm font-medium text-ink-2;
+}
