@@ -1,249 +1,378 @@
 <title>MYCMO Demo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap">
 <style>
-/* Same tokens as the app (src/app.css). */
 :root {
-	--bg: #f6f6f4; --surface: #fcfcfb; --border: #e4e3de; --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #8a8983;
-	--accent: #2a78d6; --accent-soft: rgba(42, 120, 214, 0.1); --good: #137a3a; --good-soft: rgba(19, 122, 58, 0.1);
-	--bad: #c2312f; --bad-soft: rgba(194, 49, 47, 0.1); --series-1: #2a78d6; --banner: #0b0b0b; --banner-ink: #f6f6f4;
+	--paper: #f4f5f7; --surface: #ffffff; --sunken: #eef0f3; --line: #e2e5ea; --line-2: #cbd1d9;
+	--ink: #0d1b2a; --ink-2: #4a5566; --ink-3: #7d8898;
+	--nav: #0d1b2a; --nav-2: #16263a; --nav-ink: #aab5c3; --nav-hi: #ffffff;
+	--accent: #0b6b6b; --accent-2: #0e8585; --accent-soft: rgba(11, 107, 107, 0.09); --on-accent: #ffffff;
+	--good: #1e7f4f; --good-soft: rgba(30, 127, 79, 0.1); --warn: #a86a12; --warn-soft: rgba(168, 106, 18, 0.1); --bad: #b33a35; --bad-soft: rgba(179, 58, 53, 0.09);
+	--shadow: 0 1px 2px rgba(13, 27, 42, 0.04), 0 8px 24px rgba(13, 27, 42, 0.06);
+	--serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+	--sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme="light"]) {
 		color-scheme: dark;
-		--bg: #111110; --surface: #1a1a19; --border: #2d2d2b; --ink: #ffffff; --ink-2: #c3c2b7; --ink-3: #8a8983;
-		--accent: #3987e5; --accent-soft: rgba(57, 135, 229, 0.16); --good: #4cc27a; --good-soft: rgba(76, 194, 122, 0.14);
-		--bad: #f07472; --bad-soft: rgba(240, 116, 114, 0.14); --series-1: #3987e5; --banner: #2d2d2b; --banner-ink: #ffffff;
+		--paper: #0a1119; --surface: #101a25; --sunken: #0d1620; --line: #1f2c3b; --line-2: #2d3d50;
+		--ink: #eef2f6; --ink-2: #a8b3c1; --ink-3: #6f7c8c;
+		--nav: #060b11; --nav-2: #111b27; --nav-ink: #8d99a8; --nav-hi: #ffffff;
+		--accent: #39aca6; --accent-2: #52c2bb; --accent-soft: rgba(57, 172, 166, 0.14); --on-accent: #06201f;
+		--good: #4cc38a; --good-soft: rgba(76, 195, 138, 0.13); --warn: #e0a84a; --warn-soft: rgba(224, 168, 74, 0.13); --bad: #ee7a74; --bad-soft: rgba(238, 122, 116, 0.13);
+		--shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
 	}
 }
 :root[data-theme="dark"] {
 	color-scheme: dark;
-	--bg: #111110; --surface: #1a1a19; --border: #2d2d2b; --ink: #ffffff; --ink-2: #c3c2b7; --ink-3: #8a8983;
-	--accent: #3987e5; --accent-soft: rgba(57, 135, 229, 0.16); --good: #4cc27a; --good-soft: rgba(76, 194, 122, 0.14);
-	--bad: #f07472; --bad-soft: rgba(240, 116, 114, 0.14); --series-1: #3987e5; --banner: #2d2d2b; --banner-ink: #ffffff;
+	--paper: #0a1119; --surface: #101a25; --sunken: #0d1620; --line: #1f2c3b; --line-2: #2d3d50;
+	--ink: #eef2f6; --ink-2: #a8b3c1; --ink-3: #6f7c8c;
+	--nav: #060b11; --nav-2: #111b27; --nav-ink: #8d99a8; --nav-hi: #ffffff;
+	--accent: #39aca6; --accent-2: #52c2bb; --accent-soft: rgba(57, 172, 166, 0.14); --on-accent: #06201f;
+	--good: #4cc38a; --good-soft: rgba(76, 195, 138, 0.13); --warn: #e0a84a; --warn-soft: rgba(224, 168, 74, 0.13); --bad: #ee7a74; --bad-soft: rgba(238, 122, 116, 0.13);
+	--shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 * { box-sizing: border-box; }
-body { background: var(--bg); color: var(--ink); font: 14px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
-h1, h2, h3 { margin: 0; text-wrap: balance; }
-p { margin: 0; }
-a { color: inherit; text-decoration: none; }
+html, body { height: 100%; }
+body { background: var(--paper); color: var(--ink); font: 14px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { text-wrap: balance; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .tnum { font-variant-numeric: tabular-nums; }
-.wrap { max-width: 1152px; margin: 0 auto; padding-inline: 16px; }
-.muted { color: var(--ink-2); } .faint { color: var(--ink-3); } .small { font-size: 12px; } .good { color: var(--good); } .bad { color: var(--bad); }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid var(--border); background: var(--surface); transition: transform .08s; white-space: nowrap; }
-.btn:active { transform: scale(.98); }
-.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-.btn-sm { min-height: 36px; padding: 0 10px; font-size: 12px; }
-.input { width: 100%; min-height: 44px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); padding: 0 12px; font-size: 16px; }
-textarea.input { padding: 8px 12px; min-height: 64px; }
-.input:focus { outline: none; border-color: var(--accent); }
-.label { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 500; color: var(--ink-2); }
-.stack { display: flex; flex-direction: column; gap: 12px; }
+.muted { color: var(--ink-2); } .faint { color: var(--ink-3); } .xs { font-size: 12px; } .good { color: var(--good); } .bad { color: var(--bad); } .warn { color: var(--warn); }
+.eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); }
+.serif { font-family: var(--serif); font-weight: 500; letter-spacing: -0.01em; }
+.plain { list-style: none; margin: 0; padding: 0; }
 .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.grid { display: grid; gap: 12px; }
-.g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-@media (max-width: 900px) { .g4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .g3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px) { .g3, .g2 { grid-template-columns: 1fr; } }
-.banner { background: var(--banner); color: var(--banner-ink); font-size: 12px; text-align: center; padding: 6px 16px; }
-.banner button { background: none; border: 0; color: inherit; font-weight: 700; text-decoration: underline; padding: 0 0 0 10px; }
-header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--border); }
-header.top .wrap { display: flex; align-items: center; gap: 12px; height: 56px; }
-.brand { font-size: 13px; font-weight: 700; letter-spacing: .06em; color: var(--accent); }
-.pill { border: 1px solid var(--border); border-radius: 999px; padding: 2px 8px; font-size: 12px; color: var(--ink-2); white-space: nowrap; }
-.nav { display: flex; gap: 4px; margin-left: auto; }
-.nav button, .linkbtn { background: none; border: 0; padding: 8px 12px; border-radius: 6px; color: var(--ink-2); font-size: 14px; }
-.nav button[aria-current="page"] { background: var(--bg); color: var(--ink); font-weight: 600; }
-.bottomnav { display: none; }
-@media (max-width: 700px) {
-	.nav { display: none; }
-	.bottomnav { display: grid; position: fixed; inset: auto 0 0 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom, 0px); }
-	.bottomnav button { background: none; border: 0; min-height: 56px; font-size: 12px; color: var(--ink-2); }
-	.bottomnav button[aria-current="page"] { color: var(--accent); font-weight: 600; }
-	main { padding-bottom: 80px !important; }
-	.hide-sm { display: none !important; }
-}
-main { padding-block: 24px 48px; }
-.tile { padding: 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.tile .v { font-size: 24px; font-weight: 600; letter-spacing: -.01em; }
-.hero { font-size: 48px; font-weight: 600; letter-spacing: -.02em; line-height: 1.1; }
-.sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 32px 0 12px; }
-.sec-h h2 { font-size: 18px; }
-.meter { height: 8px; border-radius: 999px; background: var(--border); overflow: hidden; }
-.meter > div { height: 100%; border-radius: 999px; }
-.fill-good { background: var(--good); } .fill-ok { background: var(--accent); } .fill-bad { background: var(--bad); }
-.spark { position: relative; margin-top: 8px; }
-.spark svg { display: block; width: 100%; height: 40px; overflow: visible; touch-action: none; }
-.tip { position: absolute; top: -34px; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 2px 8px; font-size: 12px; white-space: nowrap; pointer-events: none; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th { text-align: left; font-weight: 500; color: var(--ink-2); padding: 10px 8px; }
-td { padding: 10px 8px; border-top: 1px solid var(--border); }
-.scroll-x { overflow-x: auto; }
-tr.click { cursor: pointer; } tr.click:hover td { background: var(--bg); }
-.seg { display: inline-flex; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 3px; }
-.seg button { background: none; border: 0; padding: 6px 12px; border-radius: 6px; color: var(--ink-2); }
-.seg button[aria-selected="true"] { background: var(--bg); color: var(--ink); font-weight: 600; }
-.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 24px; overflow-x: auto; }
-.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 8px 12px; color: var(--ink-2); white-space: nowrap; }
-.tabs button[aria-current="page"] { border-color: var(--accent); color: var(--ink); font-weight: 600; }
-.board { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 16px; margin-inline: -16px; padding-inline: 16px; }
-.col { flex: 0 0 min(85vw, 288px); scroll-snap-align: start; display: flex; flex-direction: column; }
-.col.drop { border-color: var(--accent); }
-.col header { padding: 12px; border-bottom: 1px solid var(--border); }
-.col ul { list-style: none; margin: 0; padding: 8px; display: flex; flex-direction: column; gap: 8px; min-height: 96px; }
-.lead { border: 1px solid var(--border); background: var(--bg); border-radius: 8px; padding: 12px; }
-.lead > button { all: unset; display: block; width: 100%; cursor: pointer; }
-.lead .acts { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
-.toast { position: fixed; left: 50%; bottom: 88px; transform: translateX(-50%); z-index: 40; background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: 14px; box-shadow: 0 4px 16px rgba(0,0,0,.2); max-width: calc(100vw - 32px); text-align: center; }
-.alert { padding: 8px 12px; border-radius: 8px; font-size: 14px; }
-.alert-bad { background: var(--bad-soft); color: var(--bad); } .alert-good { background: var(--good-soft); color: var(--good); } .alert-info { background: var(--accent-soft); }
-.chip { border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 500; }
-.chip-ads { background: var(--accent-soft); color: var(--accent); }
-.persona { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 44px; background: none; border: 0; border-radius: 8px; padding: 0 8px; text-align: left; }
-.persona:hover { background: var(--bg); }
-.check { display: flex; align-items: center; gap: 12px; min-height: 44px; flex: 1; cursor: pointer; }
-.check input { width: 20px; height: 20px; accent-color: var(--accent); }
-.radio-card { display: flex; gap: 8px; border: 1px solid var(--border); border-radius: 8px; padding: 8px; cursor: pointer; }
-.radio-card:has(input:checked) { border-color: var(--accent); }
-.src-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.src-grid label { display: flex; align-items: center; justify-content: center; min-height: 44px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); font-size: 12px; font-weight: 600; cursor: pointer; }
-.src-grid label:has(input:checked) { border-color: var(--accent); color: var(--accent); }
+.stack { display: flex; flex-direction: column; gap: 12px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-ul.plain { list-style: none; margin: 0; padding: 0; }
+
+/* Shell */
+.shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100%; }
+.side { background: var(--nav); color: var(--nav-ink); padding: 20px 14px; display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.wordmark { display: flex; align-items: baseline; gap: 8px; padding: 4px 10px 22px; color: var(--nav-hi); }
+.wordmark b { font-family: var(--serif); font-size: 22px; font-weight: 600; letter-spacing: 0.01em; }
+.wordmark span { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--nav-ink); }
+.side .grp { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--nav-ink); opacity: 0.7; padding: 16px 10px 6px; }
+.side button.nv { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 40px; padding: 0 10px; border: 0; background: none; color: var(--nav-ink); border-radius: 6px; text-align: left; font-size: 14px; }
+.side button.nv:hover { background: var(--nav-2); color: var(--nav-hi); }
+.side button.nv[aria-current="page"] { background: var(--nav-2); color: var(--nav-hi); box-shadow: inset 2px 0 0 var(--accent-2); }
+.side button.nv .ct { margin-left: auto; font-size: 11px; opacity: 0.7; }
+.side svg { width: 16px; height: 16px; flex: none; }
+.side .pinned-link { font-size: 13px; min-height: 34px; }
+.side .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+.side .foot { margin-top: auto; padding: 14px 10px 0; border-top: 1px solid var(--nav-2); font-size: 12px; }
+.side .foot b { color: var(--nav-hi); font-weight: 600; display: block; }
+.main { min-width: 0; display: flex; flex-direction: column; }
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.topbar .in { display: flex; align-items: center; gap: 12px; min-height: 60px; padding-inline: 32px; }
+.demo-note { font-size: 12px; color: var(--ink-2); margin-left: auto; white-space: nowrap; }
+.demo-note button { border: 1px solid var(--line-2); background: var(--surface); border-radius: 999px; padding: 4px 12px; margin-left: 8px; font-size: 12px; font-weight: 600; }
+.content { padding: 32px 32px 64px; max-width: 1320px; width: 100%; }
+.menu-btn { display: none; border: 1px solid var(--line-2); background: var(--surface); border-radius: 8px; width: 40px; height: 40px; }
+
+/* Search */
+.search { position: relative; flex: 1; max-width: 460px; }
+.search input { width: 100%; height: 40px; border: 1px solid var(--line-2); background: var(--surface); border-radius: 8px; padding: 0 12px 0 36px; font-size: 14px; }
+.search input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.search > svg { position: absolute; left: 12px; top: 12px; width: 16px; height: 16px; color: var(--ink-3); }
+.search kbd { position: absolute; right: 10px; top: 10px; font: 11px var(--sans); color: var(--ink-3); border: 1px solid var(--line-2); border-radius: 4px; padding: 1px 5px; }
+.results { position: absolute; top: 46px; left: 0; right: 0; background: var(--surface); border: 1px solid var(--line-2); border-radius: 10px; box-shadow: var(--shadow); padding: 6px; max-height: 420px; overflow-y: auto; z-index: 40; }
+.results li { display: flex; align-items: center; gap: 10px; border-radius: 6px; padding: 4px 4px 4px 10px; }
+.results li[aria-selected="true"], .results li:hover { background: var(--sunken); }
+.results .open { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; border: 0; background: none; text-align: left; min-height: 40px; padding: 0; }
+.results .nm { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pinbtn { border: 1px solid var(--line-2); background: var(--surface); border-radius: 6px; padding: 5px 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.pinbtn[aria-pressed="true"] { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+
+/* Page header */
+.ph { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+.ph h1 { font-family: var(--serif); font-weight: 500; font-size: 34px; line-height: 1.1; letter-spacing: -0.015em; }
+.ph .sub { margin-top: 6px; color: var(--ink-2); }
+.crumbs { font-size: 12px; color: var(--ink-3); margin-bottom: 8px; }
+.crumbs button { border: 0; background: none; padding: 0; color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-2); }
+
+/* Surfaces */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.panel-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 18px 20px 0; flex-wrap: wrap; }
+.panel-h h2 { font-size: 15px; font-weight: 600; }
+.panel-b { padding: 16px 20px 20px; }
+.sec { margin-top: 36px; }
+.sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.sec-h h2 { font-family: var(--serif); font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
+
+/* KPI strip: numbers separated by hairlines, the consulting-report way */
+.strip { display: grid; grid-template-columns: repeat(var(--n, 5), minmax(0, 1fr)); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.strip > div { padding: 20px 22px; border-left: 1px solid var(--line); min-width: 0; }
+.strip > div:first-child { border-left: 0; }
+.strip .lbl { font-size: 12px; color: var(--ink-2); }
+.strip .val { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin-top: 6px; line-height: 1.1; }
+.strip .dl { font-size: 12px; margin-top: 6px; color: var(--ink-3); }
+.hero-val { font-size: clamp(28px, 2.6vw, 38px) !important; white-space: nowrap; }
+.split { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.split-team { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 960px) { .split, .split-team { grid-template-columns: 1fr; } }
+
+.delta { font-weight: 600; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.chip.ok { color: var(--good); background: var(--good-soft); } .chip.risk { color: var(--warn); background: var(--warn-soft); } .chip.act { color: var(--bad); background: var(--bad-soft); }
+.chip.plain::before { display: none; }
+.chip.role { color: var(--ink-2); background: var(--sunken); }
+.chip.ads { color: var(--accent); background: var(--accent-soft); }
+
+.meter { height: 6px; border-radius: 999px; background: var(--sunken); overflow: hidden; }
+.meter > div { height: 100%; border-radius: 999px; }
+.f-ok { background: var(--good); } .f-mid { background: var(--accent); } .f-bad { background: var(--bad); }
+
+/* Status distribution */
+.dist { display: flex; height: 10px; border-radius: 999px; overflow: hidden; gap: 2px; background: var(--surface); }
+.dist > div { height: 100%; }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+/* Pinned client cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+.ccard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; transition: border-color 0.15s, box-shadow 0.15s; }
+.ccard:hover { border-color: var(--line-2); box-shadow: var(--shadow); }
+.ccard .top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.ccard .nm { font-family: var(--serif); font-size: 19px; font-weight: 500; letter-spacing: -0.01em; border: 0; background: none; padding: 0; text-align: left; }
+.ccard .nm:hover { color: var(--accent); }
+.mini { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.mini p:first-child { font-size: 11px; color: var(--ink-3); }
+.mini p:last-child { font-size: 16px; font-weight: 600; margin-top: 2px; }
+.ccard .foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; border-top: 1px solid var(--line); padding-top: 12px; }
+.linkish { border: 0; background: none; padding: 0; color: var(--accent); font-weight: 600; font-size: 13px; }
+.iconbtn { border: 0; background: none; color: var(--ink-3); padding: 4px; border-radius: 6px; }
+.iconbtn:hover { color: var(--ink); background: var(--sunken); }
+.addcard { border: 1px dashed var(--line-2); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 24px; color: var(--ink-2); background: transparent; min-height: 220px; }
+.addcard:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Charts */
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; overflow: visible; touch-action: pan-y; }
+.chart .axis { font-size: 11px; fill: var(--ink-3); font-family: var(--sans); }
+.tip { position: absolute; top: 0; transform: translate(-50%, -110%); background: var(--ink); color: var(--paper); border-radius: 6px; padding: 5px 10px; font-size: 12px; white-space: nowrap; pointer-events: none; }
+.spark svg { height: 36px; }
+
+/* Tables */
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); padding: 12px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th button { border: 0; background: none; padding: 0; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; }
+th button[aria-sort] { color: var(--ink); }
+td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: 0; }
+tr.click { cursor: pointer; } tr.click:hover td { background: var(--sunken); }
+td.num, th.num { text-align: right; }
+
+/* Controls */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 8px; font-size: 14px; font-weight: 600; border: 1px solid var(--line-2); background: var(--surface); white-space: nowrap; }
+.btn:hover { border-color: var(--ink-3); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.primary:hover { background: var(--accent-2); }
+.btn.sm { min-height: 32px; padding: 0 10px; font-size: 12px; }
+.btn.danger { color: var(--bad); }
+.input { width: 100%; min-height: 42px; border: 1px solid var(--line-2); background: var(--surface); border-radius: 8px; padding: 0 12px; font-size: 15px; }
+textarea.input { padding: 10px 12px; min-height: 70px; resize: vertical; }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+select.input { padding-right: 28px; }
+.label { display: block; font-size: 12px; font-weight: 600; color: var(--ink-2); margin-bottom: 6px; }
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 8px; padding: 3px; background: var(--surface); }
+.seg button { border: 0; background: none; padding: 6px 12px; border-radius: 5px; font-size: 13px; color: var(--ink-2); white-space: nowrap; }
+.seg button[aria-selected="true"] { background: var(--ink); color: var(--paper); font-weight: 600; }
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin-bottom: 28px; overflow-x: auto; }
+.tabs button { border: 0; background: none; padding: 10px 14px; font-size: 14px; color: var(--ink-2); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.tabs button[aria-current="page"] { color: var(--ink); font-weight: 600; border-color: var(--accent); }
+.pager { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-2); flex-wrap: wrap; }
+
+/* Summary callout */
+.brief { border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 12px 12px 0; padding: 18px 22px; border-top: 1px solid var(--line); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.brief p.t { font-family: var(--serif); font-size: 19px; line-height: 1.45; letter-spacing: -0.005em; max-width: 68ch; }
+
+/* Pipeline */
+.board { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 12px; scroll-snap-type: x mandatory; }
+.col { flex: 0 0 min(84vw, 280px); scroll-snap-align: start; background: var(--sunken); border: 1px solid var(--line); border-radius: 12px; display: flex; flex-direction: column; }
+.col.drop { border-color: var(--accent); background: var(--accent-soft); }
+.col header { padding: 14px 14px 10px; }
+.col ul { list-style: none; margin: 0; padding: 0 10px 10px; display: flex; flex-direction: column; gap: 8px; min-height: 80px; }
+.lead { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+.lead > button { all: unset; display: block; width: 100%; cursor: pointer; }
+.lead .acts { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+.qgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+/* Team hierarchy */
+.tier { border-left: 2px solid var(--line-2); margin-left: 8px; padding-left: 18px; }
+.tier + .tier { margin-top: 18px; }
+.person { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--sunken); color: var(--ink-2); display: grid; place-items: center; font-size: 12px; font-weight: 600; flex: none; }
+.radio-card { display: flex; gap: 10px; border: 1px solid var(--line-2); border-radius: 8px; padding: 10px; cursor: pointer; }
+.radio-card:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.src-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.src-grid label { display: flex; align-items: center; justify-content: center; min-height: 42px; border: 1px solid var(--line-2); border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; background: var(--surface); }
+.src-grid label:has(input:checked) { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.check { display: flex; align-items: center; gap: 12px; min-height: 42px; flex: 1; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 60; background: var(--ink); color: var(--paper); padding: 10px 18px; border-radius: 8px; font-size: 14px; box-shadow: var(--shadow); max-width: calc(100vw - 32px); }
+.notice { border-radius: 10px; padding: 12px 16px; font-size: 14px; background: var(--accent-soft); }
+
+/* Sign-in */
+.signin { max-width: 880px; margin: 0 auto; padding: 56px 16px 64px; }
+.signin h1 { font-family: var(--serif); font-weight: 500; font-size: 40px; letter-spacing: -0.02em; line-height: 1.1; }
+.super-card { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; text-align: left; background: var(--nav); color: var(--nav-hi); border: 0; border-radius: 14px; padding: 22px 24px; margin-top: 28px; }
+.super-card small { display: block; color: var(--nav-ink); font-size: 13px; margin-top: 4px; }
+.persona { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; min-height: 40px; border: 0; background: none; border-radius: 6px; padding: 0 8px; text-align: left; }
+.persona:hover { background: var(--sunken); }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-top: 14px; }
+
+.mobile-only { display: none; }
+@media (max-width: 960px) {
+	.shell { grid-template-columns: 1fr; }
+	.side { position: fixed; inset: 0 auto 0 0; width: 272px; z-index: 50; transform: translateX(-100%); transition: transform 0.2s; }
+	.shell.nav-open .side { transform: none; box-shadow: var(--shadow); }
+	.menu-btn { display: inline-grid; place-items: center; }
+	.topbar .in, .content { padding-inline: 16px; }
+	.strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.strip > div { border-left: 0; border-top: 1px solid var(--line); }
+	.strip > div:nth-child(-n+2) { border-top: 0; }
+	.strip > div:nth-child(even) { border-left: 1px solid var(--line); }
+	.demo-note .who { display: none; }
+	.hide-md { display: none !important; }
+	.mobile-only { display: block; }
+}
+@media (max-width: 560px) {
+	.ph h1 { font-size: 28px; }
+	.hero-val { font-size: 34px !important; }
+	.strip .val { font-size: 22px; }
+	.mini { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	.search kbd { display: none; }
+}
+.scrim { display: none; }
+@media (max-width: 960px) { .shell.nav-open .scrim { display: block; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.35); z-index: 45; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
 <div id="app"></div>
 
 <script>
-// ---------------------------------------------------------------------------
-// Sample data: same generator as src/lib/server/demo.ts (20 clients, 3-4 staff each)
-// ---------------------------------------------------------------------------
+// ===========================================================================
+// Sample data: 100 clients, 3-6 people each. Deterministic, so every demo matches.
+// ===========================================================================
 function rng(seed) { return () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-const DAY = 86400000;
-const daysAgo = (n) => new Date(Date.now() - n * DAY);
-const iso = (d) => d.toISOString();
-const dayStr = (d) => d.toISOString().slice(0, 10);
+const DAY = 86400000, daysAgo = (n) => new Date(Date.now() - n * DAY), iso = (d) => d.toISOString(), dayStr = (d) => d.toISOString().slice(0, 10);
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 let uid = 0; const newId = () => 'id' + (++uid);
-
 const SUPER = 'super-admin';
-const CLIENTS = [
-	['Acme Roofing', 'Roofing', 14, 1.0, 1, ['google', 'meta', 'google_ads', 'meta_ads']],
-	['Bright Smile Dental', 'Dental', 6, 0.7, 1, ['google', 'meta', 'google_ads']],
-	['Summit HVAC', 'HVAC', 9, 0.9, 1, ['google', 'google_ads']],
-	['Harbor Law Group', 'Legal', 22, 0.5, 0.5, ['google', 'meta']],
-	['Evergreen Landscaping', 'Landscaping', 5, 0.6, 1, ['google', 'meta', 'meta_ads']],
-	['Peak Fitness Studio', 'Fitness', 1.2, 0.8, -1, ['google', 'meta', 'meta_ads']],
-	['Coastal Realty', 'Real estate', 18, 1.3, 1, ['google', 'meta', 'google_ads', 'meta_ads']],
-	['Blue Ridge Plumbing', 'Plumbing', 4, 0.8, 1, ['google', 'google_ads']],
-	['Urban Bites Catering', 'Catering', 3, 0.4, 0.5, ['google', 'meta']],
-	['Northside Auto Repair', 'Auto repair', 2, 0.6, -0.5, ['google']],
-	['Lumen Med Spa', 'Med spa', 2.5, 0.7, 1, ['google', 'meta', 'meta_ads']],
-	['Keystone Builders', 'Construction', 45, 0.4, 1, ['google', 'google_ads']],
-	['Silver Oak Senior Living', 'Senior care', 30, 0.5, 0.5, ['google', 'meta']],
-	['Prairie Solar', 'Solar', 26, 0.9, 1, ['google', 'meta', 'google_ads', 'meta_ads']],
-	['Metro Pest Control', 'Pest control', 1.5, 0.7, 0.5, ['google', 'google_ads']],
-	['Willow Veterinary', 'Veterinary', 1, 0.6, 1, ['google', 'meta']],
-	['Titan Garage Doors', 'Garage doors', 3, 0.5, -1, ['google']],
-	['Clearview Windows', 'Windows', 12, 0.8, 1, ['google', 'meta', 'meta_ads']],
-	['Redline Moving Co.', 'Moving', 2.2, 0.6, 0.5, ['google', 'google_ads']],
-	['Horizon Financial', 'Financial advice', 8, 0.5, 0, []]
+
+// [industry, noun for names, deal size $K, typical channels]
+const INDUSTRIES = [
+	['Roofing', 'Roofing', 14, ['google', 'meta', 'google_ads', 'meta_ads']], ['Dental', 'Dental', 6, ['google', 'meta', 'google_ads']],
+	['HVAC', 'HVAC', 9, ['google', 'google_ads']], ['Legal', 'Law Group', 22, ['google', 'meta']], ['Landscaping', 'Landscaping', 5, ['google', 'meta', 'meta_ads']],
+	['Fitness', 'Fitness', 1.2, ['google', 'meta', 'meta_ads']], ['Real estate', 'Realty', 18, ['google', 'meta', 'google_ads', 'meta_ads']],
+	['Plumbing', 'Plumbing', 4, ['google', 'google_ads']], ['Catering', 'Catering', 3, ['google', 'meta']], ['Auto repair', 'Auto Care', 2, ['google']],
+	['Med spa', 'Med Spa', 2.5, ['google', 'meta', 'meta_ads']], ['Construction', 'Builders', 45, ['google', 'google_ads']],
+	['Senior care', 'Senior Living', 30, ['google', 'meta']], ['Solar', 'Solar', 26, ['google', 'meta', 'google_ads', 'meta_ads']],
+	['Pest control', 'Pest Control', 1.5, ['google', 'google_ads']], ['Veterinary', 'Veterinary', 1, ['google', 'meta']],
+	['Garage doors', 'Garage Doors', 3, ['google']], ['Windows', 'Windows & Doors', 12, ['google', 'meta', 'meta_ads']],
+	['Moving', 'Moving Co.', 2.2, ['google', 'google_ads']], ['Financial advice', 'Wealth Partners', 8, ['google', 'meta']],
+	['Chiropractic', 'Chiropractic', 1.8, ['google', 'meta', 'google_ads']], ['Pools', 'Pools & Spas', 35, ['google', 'meta', 'meta_ads']],
+	['Electrical', 'Electric', 3.5, ['google', 'google_ads']], ['Orthodontics', 'Orthodontics', 5.5, ['google', 'meta', 'meta_ads']]
 ];
-const FIRST = ['Maria', 'James', 'Priya', 'Carlos', 'Aisha', 'Tom', 'Grace', 'Omar', 'Leah', 'Victor', 'Nina', 'Derek', 'Sofia', 'Ben', 'Hana', 'Luis', 'Zoe', 'Ravi', 'Emma', 'Jake'];
-const LAST = ['Lopez', 'Carter', 'Shah', 'Nguyen', 'Brooks', 'Reed', 'Kim', 'Patel', 'Diaz', 'Hughes', 'Ward', 'Singh', 'Ellis', 'Moreno', 'Fox'];
+const PREFIX = ['Acme', 'Bright', 'Summit', 'Harbor', 'Evergreen', 'Peak', 'Coastal', 'Blue Ridge', 'Urban', 'Northside', 'Lumen', 'Keystone', 'Silver Oak', 'Prairie', 'Metro', 'Willow', 'Titan', 'Clearview', 'Redline', 'Horizon', 'Granite', 'Cedar', 'Lakeshore', 'Pioneer', 'Sterling', 'Oakmont', 'Riverbend', 'Ironwood', 'Beacon', 'Sagebrush', 'Crestline', 'Magnolia', 'Frontier', 'Bayside', 'Highland', 'Juniper', 'Copper', 'Maple', 'Westgate', 'Liberty'];
+const FIRST = ['Maria', 'James', 'Priya', 'Carlos', 'Aisha', 'Tom', 'Grace', 'Omar', 'Leah', 'Victor', 'Nina', 'Derek', 'Sofia', 'Ben', 'Hana', 'Luis', 'Zoe', 'Ravi', 'Emma', 'Jake', 'Ana', 'Marcus', 'Ivy', 'Noah', 'Chloe', 'Samir', 'Elena', 'Kofi', 'Mei', 'Owen'];
+const LAST = ['Lopez', 'Carter', 'Shah', 'Nguyen', 'Brooks', 'Reed', 'Kim', 'Patel', 'Diaz', 'Hughes', 'Ward', 'Singh', 'Ellis', 'Moreno', 'Fox', 'Bennett', 'Okafor', 'Chen', 'Russo', 'Grant'];
 const LEAD_NAMES = ['Robert Mills', 'Angela Brooks', 'Dave Kim', 'Linda Torres', 'Mark Ellison', 'Sofia Nguyen', 'Tom Becker', 'Rachel Green', 'Owen Patel', 'Carla Diaz', 'Ben Foster', 'Nina Hart', 'Greg Walsh', 'Emily Stone', 'Victor Reyes', 'Holly Price', 'Sam Ortiz', 'Julia Chen', 'Aaron Webb', 'Kate Lin', 'Paula Grant', 'Ian Brooks', 'Maya Cole', 'Eric Tran'];
 
 const SOURCES = {
-	ga4: { label: 'Website (Google Analytics)', provider: 'google' }, gsc: { label: 'Google Search', provider: 'google' },
-	youtube: { label: 'YouTube', provider: 'google' }, facebook: { label: 'Facebook', provider: 'meta' },
-	instagram: { label: 'Instagram', provider: 'meta' }, google_ads: { label: 'Google Ads', provider: 'google_ads' },
-	meta_ads: { label: 'Meta Ads', provider: 'meta_ads' }
+	ga4: { label: 'Website', sub: 'Google Analytics', provider: 'google' }, gsc: { label: 'Search', sub: 'Google Search Console', provider: 'google' },
+	youtube: { label: 'YouTube', sub: 'YouTube Analytics', provider: 'google' }, facebook: { label: 'Facebook', sub: 'Page insights', provider: 'meta' },
+	instagram: { label: 'Instagram', sub: 'Business account', provider: 'meta' }, google_ads: { label: 'Google Ads', sub: 'Paid search', provider: 'google_ads' },
+	meta_ads: { label: 'Meta Ads', sub: 'Paid social', provider: 'meta_ads' }
 };
 const METRICS = [
-	{ source: 'ga4', metric: 'sessions', label: 'Website visits', agg: 'sum' },
-	{ source: 'ga4', metric: 'totalUsers', label: 'Visitors', agg: 'sum' },
-	{ source: 'ga4', metric: 'keyEvents', label: 'Conversions', agg: 'sum' },
-	{ source: 'gsc', metric: 'clicks', label: 'Search clicks', agg: 'sum' },
-	{ source: 'gsc', metric: 'impressions', label: 'Search impressions', agg: 'sum' },
-	{ source: 'gsc', metric: 'position', label: 'Avg. search position', agg: 'avg', format: 'decimal', upIsGood: false },
-	{ source: 'youtube', metric: 'views', label: 'Video views', agg: 'sum' },
-	{ source: 'youtube', metric: 'estimatedMinutesWatched', label: 'Minutes watched', agg: 'sum' },
-	{ source: 'youtube', metric: 'subscribersNet', label: 'Net subscribers', agg: 'sum' },
-	{ source: 'facebook', metric: 'followers', label: 'Page followers', agg: 'last' },
-	{ source: 'facebook', metric: 'page_post_engagements', label: 'Post engagements', agg: 'sum' },
-	{ source: 'instagram', metric: 'followers', label: 'Followers', agg: 'last' },
+	{ source: 'ga4', metric: 'sessions', label: 'Website visits', agg: 'sum' }, { source: 'ga4', metric: 'totalUsers', label: 'Visitors', agg: 'sum' },
+	{ source: 'ga4', metric: 'keyEvents', label: 'Conversions', agg: 'sum' }, { source: 'gsc', metric: 'clicks', label: 'Search clicks', agg: 'sum' },
+	{ source: 'gsc', metric: 'impressions', label: 'Search impressions', agg: 'sum' }, { source: 'gsc', metric: 'position', label: 'Avg. search position', agg: 'avg', format: 'decimal', upIsGood: false },
+	{ source: 'youtube', metric: 'views', label: 'Video views', agg: 'sum' }, { source: 'youtube', metric: 'estimatedMinutesWatched', label: 'Minutes watched', agg: 'sum' },
+	{ source: 'youtube', metric: 'subscribersNet', label: 'Net subscribers', agg: 'sum' }, { source: 'facebook', metric: 'followers', label: 'Page followers', agg: 'last' },
+	{ source: 'facebook', metric: 'page_post_engagements', label: 'Post engagements', agg: 'sum' }, { source: 'instagram', metric: 'followers', label: 'Followers', agg: 'last' },
 	{ source: 'instagram', metric: 'reach', label: 'Accounts reached', agg: 'sum' },
-	{ source: 'google_ads', metric: 'spend', label: 'Google Ads spend', agg: 'sum', format: 'money', neutral: true },
-	{ source: 'google_ads', metric: 'clicks', label: 'Ad clicks', agg: 'sum' },
-	{ source: 'google_ads', metric: 'conversions', label: 'Ad conversions', agg: 'sum' },
-	{ source: 'meta_ads', metric: 'spend', label: 'Meta Ads spend', agg: 'sum', format: 'money', neutral: true },
-	{ source: 'meta_ads', metric: 'clicks', label: 'Ad clicks', agg: 'sum' },
-	{ source: 'meta_ads', metric: 'leads', label: 'Ad leads', agg: 'sum' }
+	{ source: 'google_ads', metric: 'spend', label: 'Spend', agg: 'sum', format: 'money', neutral: true }, { source: 'google_ads', metric: 'clicks', label: 'Clicks', agg: 'sum' },
+	{ source: 'google_ads', metric: 'conversions', label: 'Conversions', agg: 'sum' },
+	{ source: 'meta_ads', metric: 'spend', label: 'Spend', agg: 'sum', format: 'money', neutral: true }, { source: 'meta_ads', metric: 'clicks', label: 'Clicks', agg: 'sum' },
+	{ source: 'meta_ads', metric: 'leads', label: 'Leads', agg: 'sum' }
 ];
+const kpiLabel = (m) => (m.source === 'google_ads' || m.source === 'meta_ads') ? `${SOURCES[m.source].label} ${m.label.toLowerCase()}` : m.label;
 const PROVIDERS = [
-	{ id: 'google', name: 'Google', covers: 'Google Analytics 4, Search Console, YouTube', ads: false, available: true, pickers: ['Google Analytics property', 'Search Console site', 'YouTube channel'] },
-	{ id: 'meta', name: 'Meta', covers: 'Facebook Page, Instagram Business', ads: false, available: true, pickers: ['Facebook Page (and linked Instagram)'] },
-	{ id: 'google_ads', name: 'Google Ads', covers: 'Spend, clicks, conversions, cost per conversion', ads: true, available: true, pickers: ['Google Ads account'] },
-	{ id: 'meta_ads', name: 'Meta Ads', covers: 'Facebook + Instagram ad spend, clicks, leads', ads: true, available: true, pickers: ['Ad account'] },
-	{ id: 'tiktok_ads', name: 'TikTok Ads', covers: 'Spend, views, conversions', available: false },
-	{ id: 'linkedin_ads', name: 'LinkedIn Ads', covers: 'Spend, leads, CPL', available: false },
-	{ id: 'gbp', name: 'Google Business Profile', covers: 'Calls, direction requests, reviews', available: false },
-	{ id: 'callrail', name: 'CallRail', covers: 'Tracked calls by source', available: false }
+	{ id: 'google', name: 'Google', covers: 'Analytics 4, Search Console, YouTube', available: true, pickers: ['Analytics property', 'Search Console site', 'YouTube channel'] },
+	{ id: 'meta', name: 'Meta', covers: 'Facebook Page and Instagram Business', available: true, pickers: ['Facebook Page and linked Instagram'] },
+	{ id: 'google_ads', name: 'Google Ads', covers: 'Spend, clicks, conversions', ads: true, available: true, pickers: ['Google Ads account'] },
+	{ id: 'meta_ads', name: 'Meta Ads', covers: 'Facebook and Instagram ad spend, clicks, leads', ads: true, available: true, pickers: ['Ad account'] },
+	{ id: 'tiktok_ads', name: 'TikTok Ads', covers: 'Spend, views, conversions' }, { id: 'linkedin_ads', name: 'LinkedIn Ads', covers: 'Spend, leads, cost per lead' },
+	{ id: 'gbp', name: 'Google Business Profile', covers: 'Calls, direction requests, reviews' }, { id: 'callrail', name: 'CallRail', covers: 'Tracked calls by source' }
 ];
 const STAGES = [['new', 'New lead'], ['attempted_contact', 'Attempted contact'], ['meeting_scheduled', 'Meeting scheduled'], ['proposal_sent', 'Proposal sent'], ['closed_won', 'Closed won'], ['closed_lost', 'Closed lost']];
 const LEAD_SOURCES = [['door_knock', 'Door knock'], ['referral', 'Referral'], ['web', 'Web'], ['phone', 'Phone'], ['social', 'Social'], ['other', 'Other']];
-const QUICK = [['call', 'Logged call'], ['voicemail', 'Left voicemail'], ['door_knock', 'Knocked door'], ['follow_up_scheduled', 'Scheduled follow-up']];
-const ROLES = [['owner', 'Owner', 'Everything: dashboard, team, KPIs, connections, all leads'], ['rep', 'Sales rep', 'Pipeline, add leads, log activity on their own leads'], ['viewer', 'View only', 'Sees the dashboard, cannot change anything']];
-const ROLE_LABEL = { agency: 'Super admin', owner: 'Owner', rep: 'Sales rep', viewer: 'View only' };
+const QUICK = [['call', 'Logged call'], ['voicemail', 'Left voicemail'], ['door_knock', 'Knocked door'], ['follow_up_scheduled', 'Follow-up set']];
+const ROLES = { admin: { label: 'Admin', help: 'Business owner. Sees all company data, connects accounts, adds and removes sub-users.' }, rep: { label: 'Sales rep', help: 'Sub-user. Works the pipeline and logs activity on their own leads.' }, viewer: { label: 'View only', help: 'Sub-user. Sees the dashboard, cannot change anything.' } };
+const ROLE_LABEL = { super: 'Super admin', admin: 'Admin', rep: 'Sales rep', viewer: 'View only' };
 
 function seed() {
-	const r = rng(42);
-	const db = { profiles: [{ id: SUPER, name: 'You (CMO)', email: 'cmo@youragency.com', agency: true }], orgs: [], members: [], leads: [], activities: [], huddles: [], spend: [], integrations: [], snaps: [], kpis: [] };
+	const r = rng(7);
+	const db = { profiles: [{ id: SUPER, name: 'You', email: 'you@youragency.com', super: true }], orgs: [], members: [], leads: [], activities: [], huddles: [], spend: [], integrations: [], snaps: new Map(), kpis: [] };
+	const used = new Set();
 	const monthStart = (back) => { const d = new Date(); return dayStr(new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - back, 1))); };
-	CLIENTS.forEach(([name, industry, dealK, scale, momentum, providers], ci) => {
-		const orgId = newId(); const slug = slugify(name);
-		db.orgs.push({ id: orgId, name, slug, industry });
-		const roles = ['owner', 'rep', 'rep', ...(ci % 3 === 0 ? [] : ['viewer'])];
+	for (let ci = 0; ci < 100; ci++) {
+		const [industry, noun, dealK, baseChannels] = INDUSTRIES[ci % INDUSTRIES.length];
+		let nm = `${PREFIX[(ci * 7) % PREFIX.length]} ${noun}`;
+		if (used.has(nm)) nm = `${PREFIX[(ci * 11 + 3) % PREFIX.length]} ${noun}`;
+		if (used.has(nm)) nm = `${PREFIX[(ci * 13 + 5) % PREFIX.length]} ${noun}`;
+		used.add(nm);
+		const orgId = newId(), slug = slugify(nm), scale = 0.4 + r() * 1.0;
+		const momentum = r() < 0.14 ? -1 : r() < 0.3 ? 0.3 : 1;
+		const providers = ci % 23 === 22 ? [] : baseChannels.filter((p, i) => i < 2 || r() > 0.25);
+		const broken = ci % 17 === 3;
+		db.orgs.push({ id: orgId, name: nm, slug, industry, since: iso(daysAgo(900 - ci * 8)) });
+
+		const subCount = 2 + Math.floor(r() * 4);
+		const roles = ['admin', ...Array.from({ length: subCount }, (_, i) => i < Math.ceil(subCount * 0.6) ? 'rep' : 'viewer')];
 		const staff = roles.map((role, i) => {
-			const first = FIRST[(ci * 3 + i) % FIRST.length], last = LAST[(ci * 7 + i * 3) % LAST.length], id = newId();
-			db.profiles.push({ id, name: `${first} ${last}`, email: `${first.toLowerCase()}@${slug}.com`, agency: false });
-			db.members.push({ org: orgId, user: id, role });
+			const first = FIRST[(ci * 3 + i * 7) % FIRST.length], last = LAST[(ci * 7 + i * 3) % LAST.length], id = newId();
+			db.profiles.push({ id, name: `${first} ${last}`, email: `${first.toLowerCase()}.${last.toLowerCase()}@${slug.replace(/-/g, '')}.com` });
+			db.members.push({ org: orgId, user: id, role, added: iso(daysAgo(300 - i * 20)) });
 			return { id, role };
 		});
 		const sellers = staff.filter((s) => s.role !== 'viewer');
 		const bag = ['new', 'new', 'new', 'attempted_contact', 'attempted_contact', 'meeting_scheduled', 'meeting_scheduled', 'proposal_sent', 'proposal_sent', 'closed_won', 'closed_won', 'closed_lost', 'closed_lost'];
 		const srcs = ['door_knock', 'referral', 'web', 'phone', 'social'];
-		const n = 10 + Math.floor(r() * 14), leadIds = [];
+		const n = 8 + Math.floor(r() * 16), leadIds = [];
 		for (let i = 0; i < n; i++) {
-			const stage = bag[Math.floor(r() * bag.length)], created = daysAgo(2 + Math.floor(r() * 80)), id = newId();
-			leadIds.push(id);
+			const stage = bag[Math.floor(r() * bag.length)], id = newId(); leadIds.push(id);
 			db.leads.push({ id, org: orgId, owner: sellers[i % sellers.length].id, name: LEAD_NAMES[(ci * 5 + i) % LEAD_NAMES.length],
 				company: r() > 0.5 ? `${LAST[(ci + i) % LAST.length]} ${['Holdings', 'Residence', 'LLC', 'Group'][i % 4]}` : '',
-				phone: `(555) ${String(100 + ci).slice(-3)}-${String(1000 + i * 37).slice(-4)}`, source: srcs[Math.floor(r() * srcs.length)], stage,
-				value: Math.round(dealK * (0.5 + r()) * 1000), created: iso(created),
+				phone: `(555) ${String(100 + (ci % 900)).slice(-3)}-${String(1000 + i * 37).slice(-4)}`, source: srcs[Math.floor(r() * 5)], stage,
+				value: Math.round(dealK * (0.5 + r()) * 1000), created: iso(daysAgo(2 + Math.floor(r() * 80))),
 				changed: iso(daysAgo(stage.startsWith('closed') ? 2 + Math.floor(r() * 25) : Math.floor(r() * 6))) });
 		}
 		const types = ['call', 'call', 'voicemail', 'door_knock', 'follow_up_scheduled', 'email'];
-		const na = 8 + Math.floor(r() * 30);
-		for (let i = 0; i < na; i++) db.activities.push({ org: orgId, lead: leadIds[i % leadIds.length], user: sellers[Math.floor(r() * sellers.length)].id, type: types[i % types.length], at: iso(daysAgo(r() * 6.5)) });
+		for (let i = 0, k = 6 + Math.floor(r() * 30); i < k; i++) db.activities.push({ org: orgId, lead: leadIds[i % leadIds.length], user: sellers[Math.floor(r() * sellers.length)].id, type: types[i % 6], at: iso(daysAgo(r() * 6.5)) });
 		db.huddles.push({ id: newId(), org: orgId, date: dayStr(daysAgo(ci % 3)), wins: `Closed ${LEAD_NAMES[ci % LEAD_NAMES.length]} ($${Math.round(dealK * 1.1)}K). Two new referrals this week.`, blockers: ci % 2 ? 'Waiting on a financing approval for one proposal.' : '', focus: 'Follow up on every open proposal before Friday.' });
-		for (const back of [0, 1, 2, 3]) db.spend.push({ id: newId(), org: orgId, channel: 'SEO retainer', month: monthStart(back), amount: Math.round(800 + dealK * 40) });
-		const broken = name === 'Harbor Law Group';
-		for (const p of providers) db.integrations.push({ org: orgId, provider: p, status: broken && p === 'meta' ? 'error' : 'connected', error: broken && p === 'meta' ? 'Access expired. Reconnect this account.' : '', synced: iso(daysAgo(broken && p === 'meta' ? 9 : 0.3)) });
-		const has = (p) => providers.includes(p);
-		const push = (source, metric, d, value) => db.snaps.push({ org: orgId, source, metric, day: dayStr(d), value });
+		for (const back of [0, 1, 2, 3]) db.spend.push({ id: newId(), org: orgId, channel: 'SEO retainer', month: monthStart(back), amount: Math.round(700 + dealK * 35) });
+		for (const p of providers) db.integrations.push({ org: orgId, provider: p, status: broken && p === 'meta' ? 'error' : 'connected', error: broken && p === 'meta' ? 'Access expired. The client needs to reconnect.' : '', synced: iso(daysAgo(broken && p === 'meta' ? 9 : 0.3)) });
+
+		const rows = [], has = (p) => providers.includes(p), push = (source, metric, d, value) => rows.push({ source, metric, day: dayStr(d), value });
+		const yt = ci % 4 === 0;
 		for (let i = 62; i >= 1; i--) {
 			const d = daysAgo(i), growth = 1 + (62 - i) * 0.005 * momentum, wk = [0.7, 1.05, 1.1, 1.08, 1.02, 0.95, 0.75][d.getUTCDay()], nz = () => 0.88 + r() * 0.24;
 			if (has('google')) {
-				const s = Math.round(420 * scale * growth * wk * nz());
-				push('ga4', 'sessions', d, s); push('ga4', 'totalUsers', d, Math.round(s * 0.72)); push('ga4', 'keyEvents', d, Math.round(s * 0.026 * nz()));
-				const imp = Math.round(5200 * scale * growth * wk * nz());
-				push('gsc', 'impressions', d, imp); push('gsc', 'clicks', d, Math.round(imp * 0.029 * nz())); push('gsc', 'position', d, +(14.2 - (62 - i) * 0.04 * momentum + r() * 0.6).toFixed(1));
-				if (ci % 4 === 0) { const v = Math.round(310 * scale * growth * nz()); push('youtube', 'views', d, v); push('youtube', 'estimatedMinutesWatched', d, Math.round(v * 2.9 * nz())); push('youtube', 'subscribersNet', d, Math.round(1 + r() * 5)); }
+				const s = Math.round(420 * scale * growth * wk * nz()); push('ga4', 'sessions', d, s); push('ga4', 'totalUsers', d, Math.round(s * 0.72)); push('ga4', 'keyEvents', d, Math.round(s * 0.026 * nz()));
+				const imp = Math.round(5200 * scale * growth * wk * nz()); push('gsc', 'impressions', d, imp); push('gsc', 'clicks', d, Math.round(imp * 0.029 * nz())); push('gsc', 'position', d, +(14.2 - (62 - i) * 0.04 * momentum + r() * 0.6).toFixed(1));
+				if (yt) { const v = Math.round(310 * scale * growth * nz()); push('youtube', 'views', d, v); push('youtube', 'estimatedMinutesWatched', d, Math.round(v * 2.9 * nz())); push('youtube', 'subscribersNet', d, Math.round(1 + r() * 5)); }
 			}
 			if (has('meta') && !(broken && i < 9)) {
 				push('facebook', 'followers', d, Math.round(3120 * scale) + Math.round((62 - i) * 2.1 * momentum)); push('facebook', 'page_post_engagements', d, Math.round(80 * scale * growth * nz()));
@@ -252,31 +381,33 @@ function seed() {
 			if (has('google_ads')) { const sp = +(85 * scale * nz()).toFixed(2), c = Math.round(sp / 3.1 * nz()); push('google_ads', 'spend', d, sp); push('google_ads', 'clicks', d, c); push('google_ads', 'conversions', d, Math.round(c * 0.07 * growth * nz())); }
 			if (has('meta_ads')) { const sp = +(55 * scale * nz()).toFixed(2), c = Math.round(sp / 1.4 * nz()); push('meta_ads', 'spend', d, sp); push('meta_ads', 'clicks', d, c); push('meta_ads', 'leads', d, Math.round(c * 0.05 * growth * nz())); }
 		}
-		const k = [];
-		if (has('google')) k.push(['ga4', 'sessions', Math.round(13000 * scale * 1.1)], ['ga4', 'keyEvents', Math.round(340 * scale * 1.1)]);
-		if (has('google_ads')) k.push(['google_ads', 'conversions', Math.round(620 * scale / 10)]);
-		if (has('meta_ads')) k.push(['meta_ads', 'leads', Math.round(1200 * scale / 20)]);
-		if (has('meta') && k.length < 4) k.push(['instagram', 'reach', Math.round(40000 * scale)]);
-		if (has('google') && k.length < 4) k.push(['gsc', 'clicks', Math.round(4500 * scale)]);
+		db.snaps.set(orgId, rows);
+		const k = [], stretch = momentum < 0 ? 1.25 : 1.05 + r() * 0.1;
+		if (has('google')) k.push(['ga4', 'sessions', Math.round(13000 * scale * stretch)], ['ga4', 'keyEvents', Math.round(340 * scale * stretch)]);
+		if (has('google_ads')) k.push(['google_ads', 'conversions', Math.round(62 * scale * stretch)]);
+		if (has('meta_ads')) k.push(['meta_ads', 'leads', Math.round(60 * scale * stretch)]);
+		if (has('meta') && k.length < 4) k.push(['instagram', 'reach', Math.round(40000 * scale * stretch)]);
+		if (has('google') && k.length < 4) k.push(['gsc', 'clicks', Math.round(4500 * scale * stretch)]);
 		k.slice(0, 4).forEach(([source, metric, target], position) => db.kpis.push({ org: orgId, source, metric, position, target }));
-	});
+	}
 	return db;
 }
 const db = seed();
 
-// ---------------------------------------------------------------------------
-// Dashboard math: same as src/lib/dashboard.ts and src/lib/portfolio.ts
-// ---------------------------------------------------------------------------
-const agg = (vals, how) => { if (!vals.length) return null; if (how === 'last') return vals[vals.length - 1]; const s = vals.reduce((a, b) => a + b, 0); return how === 'avg' ? s / vals.length : s; };
-function buildTiles(rows, days = 30) {
-	const t = new Date(); const end = Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate());
-	const cut = dayStr(new Date(end - days * DAY)), prior = dayStr(new Date(end - 2 * days * DAY));
+// ===========================================================================
+// Metrics math (same rules as src/lib/dashboard.ts and src/lib/portfolio.ts)
+// ===========================================================================
+const aggr = (vals, how) => { if (!vals.length) return null; if (how === 'last') return vals[vals.length - 1]; const s = vals.reduce((a, b) => a + b, 0); return how === 'avg' ? s / vals.length : s; };
+const todayUTC = (() => { const t = new Date(); return Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate()); })();
+const CUT = dayStr(new Date(todayUTC - 30 * DAY)), PRIOR = dayStr(new Date(todayUTC - 60 * DAY)), SINCE30 = iso(daysAgo(30)), SINCE7 = iso(daysAgo(7));
+function buildTiles(rows) {
 	const out = Object.fromEntries(Object.keys(SOURCES).map((s) => [s, []]));
+	const bucket = new Map(); for (const r of rows) { const k = r.source + '|' + r.metric; (bucket.get(k) ?? bucket.set(k, []).get(k)).push(r); }
 	for (const def of METRICS) {
-		const series = rows.filter((r) => r.source === def.source && r.metric === def.metric).sort((a, b) => a.day.localeCompare(b.day));
-		const cur = series.filter((r) => r.day >= cut); if (!cur.length) continue;
-		const prev = series.filter((r) => r.day >= prior && r.day < cut);
-		const value = agg(cur.map((r) => r.value), def.agg), p = agg(prev.map((r) => r.value), def.agg);
+		const series = (bucket.get(def.source + '|' + def.metric) ?? []).sort((a, b) => a.day.localeCompare(b.day));
+		const cur = series.filter((r) => r.day >= CUT); if (!cur.length) continue;
+		const prev = series.filter((r) => r.day >= PRIOR && r.day < CUT);
+		const value = aggr(cur.map((r) => r.value), def.agg), p = aggr(prev.map((r) => r.value), def.agg);
 		out[def.source].push({ def, value, prior: p, delta: p == null || p === 0 ? null : (value - p) / Math.abs(p), spark: cur.map((r) => ({ day: r.day, value: r.value })) });
 	}
 	return out;
@@ -290,323 +421,491 @@ function kpiProgress(tiles, kpis) {
 		const def = METRICS.find((m) => m.source === k.source && m.metric === k.metric); if (!def) return [];
 		const t = tiles[k.source]?.find((x) => x.def.metric === k.metric), value = t?.value ?? 0, target = k.target ?? null;
 		let pct = null; if (target && t) pct = def.upIsGood === false ? (value ? target / value : null) : value / target;
-		return [{ def, value, target, pct }];
+		return [{ def, value, target, pct, delta: t?.delta ?? null, spark: t?.spark ?? [] }];
 	});
 }
-function summarize(org) {
-	const leads = db.leads.filter((l) => l.org === org.id), tiles = buildTiles(db.snaps.filter((s) => s.org === org.id));
-	const integ = db.integrations.filter((i) => i.org === org.id), since = iso(daysAgo(30));
+const cache = new Map();
+const invalidate = (orgId) => cache.delete(orgId);
+function summary(org) {
+	if (cache.has(org.id)) return cache.get(org.id);
+	const leads = db.leads.filter((l) => l.org === org.id), tiles = buildTiles(db.snaps.get(org.id) ?? []), integ = db.integrations.filter((i) => i.org === org.id);
 	const sessions = tiles.ga4.find((t) => t.def.metric === 'sessions');
 	const adSpend = [...tiles.google_ads, ...tiles.meta_ads].filter((t) => t.def.metric === 'spend').reduce((a, t) => a + t.value, 0);
 	const prog = kpiProgress(tiles, db.kpis.filter((k) => k.org === org.id)).filter((k) => k.pct != null);
 	const att = prog.length ? prog.reduce((a, k) => a + Math.min(k.pct, 1.5), 0) / prog.length : null;
-	const alerts = [];
+	const actions = [], risks = [];
 	const broken = integ.filter((i) => i.status === 'error');
-	if (broken.length) alerts.push(`${broken.map((b) => b.provider.replace('_', ' ')).join(', ')} needs reconnecting`);
-	if (!integ.length) alerts.push('No accounts connected');
-	if (att != null && att < 0.8) alerts.push(`KPIs at ${Math.round(att * 100)}% of goal`);
-	if (sessions?.delta != null && sessions.delta < -0.1) alerts.push(`Website visits down ${Math.round(-sessions.delta * 100)}%`);
-	return { org, members: db.members.filter((m) => m.org === org.id).length, open: pipelineStats(leads).openValue, newLeads: leads.filter((l) => l.created >= since).length, sessions: sessions?.value ?? null, sDelta: sessions?.delta ?? null, adSpend, att, alerts };
+	if (broken.length) actions.push(`${broken.map((b) => PROVIDERS.find((p) => p.id === b.provider).name).join(', ')} needs reconnecting`);
+	if (!integ.length) actions.push('No accounts connected');
+	if (att != null && att < 0.8) risks.push(`KPIs at ${Math.round(att * 100)}% of goal`);
+	if (sessions?.delta != null && sessions.delta < -0.1) risks.push(`Website visits down ${Math.round(-sessions.delta * 100)}%`);
+	const ps = pipelineStats(leads);
+	const s = { org, tiles, users: db.members.filter((m) => m.org === org.id).length, open: ps.openValue, won30: leads.filter((l) => l.stage === 'closed_won' && l.changed >= SINCE30).reduce((a, l) => a + l.value, 0),
+		newLeads: leads.filter((l) => l.created >= SINCE30).length, sessions: sessions?.value ?? null, sDelta: sessions?.delta ?? null, sSpark: sessions?.spark ?? [], adSpend, att,
+		status: actions.length ? 'act' : risks.length ? 'risk' : 'ok', issues: [...actions, ...risks] };
+	cache.set(org.id, s); return s;
 }
+const STATUS = { ok: ['ok', 'On track'], risk: ['risk', 'At risk'], act: ['act', 'Action needed'] };
 
-// ---------------------------------------------------------------------------
+// ===========================================================================
 // Formatting
-// ---------------------------------------------------------------------------
-const compact = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 });
-const whole = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+// ===========================================================================
+const compact = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }), whole = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
 const moneyC = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 });
 const money = (v) => moneyC.format(Math.abs(v) < 1000 ? Math.round(v) : v);
 const fmt = (v, f) => f === 'decimal' ? v.toFixed(1) : f === 'money' ? money(v) : Math.abs(v) >= 10000 ? compact.format(v) : whole.format(v);
 const pct = (v) => v == null ? '—' : `${Math.round(v * 100)}%`;
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-const name = (id) => db.profiles.find((p) => p.id === id)?.name ?? '';
+const nameOf = (id) => db.profiles.find((p) => p.id === id)?.name ?? '';
+const initials = (n) => n.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+const shortDate = (d) => new Date(d + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+const deltaHtml = (d, upIsGood = true, neutral = false, suffix = ' vs prior 30 days') => {
+	if (d == null) return '';
+	const good = neutral || d === 0 ? null : (d > 0) === upIsGood;
+	return `<span class="delta ${good === null ? 'muted' : good ? 'good' : 'bad'}">${d > 0 ? '▲' : d < 0 ? '▼' : '•'} ${Math.abs(d * 100).toFixed(0)}%</span><span class="faint">${suffix}</span>`;
+};
+const meterCls = (p) => p >= 1 ? 'f-ok' : p >= 0.8 ? 'f-mid' : 'f-bad';
+const chip = (st) => `<span class="chip ${STATUS[st][0]}">${STATUS[st][1]}</span>`;
+const ICON = {
+	home: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 7 8 2.5 13.5 7v6.5h-11z"/><path d="M6.5 13.5v-4h3v4"/></svg>',
+	list: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5.5 4h8M5.5 8h8M5.5 12h8M2.5 4h.01M2.5 8h.01M2.5 12h.01" stroke-linecap="round"/></svg>',
+	plus: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3v10M3 8h10" stroke-linecap="round"/></svg>',
+	search: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3" stroke-linecap="round"/></svg>',
+	menu: '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 4h11M2.5 8h11M2.5 12h11" stroke-linecap="round"/></svg>',
+	x: '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m4 4 8 8M12 4l-8 8" stroke-linecap="round"/></svg>',
+	chart: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 13.5h11M4.5 11V8M8 11V4.5M11.5 11V6.5" stroke-linecap="round"/></svg>',
+	board: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="2.5" width="3" height="11" rx=".5"/><rect x="6.5" y="2.5" width="3" height="7" rx=".5"/><rect x="10.5" y="2.5" width="3" height="9" rx=".5"/></svg>'
+};
 
-// ---------------------------------------------------------------------------
-// Session + permissions (mirror of the SQL row-level security)
-// ---------------------------------------------------------------------------
-const S = { user: null, org: null, view: 'overview', openLead: null, filter: 'all', query: '', personaQuery: '', adding: false, flash: null, confirmRemove: null, dragging: null };
+// ===========================================================================
+// Session, permissions (mirror of the SQL row-level security) and pins
+// ===========================================================================
+const S = { user: null, page: 'home', org: null, tab: 'overview', pins: [], dir: { q: '', status: 'all', industry: '', sort: 'name', asc: true, page: 0 }, personaQ: '', searchQ: '', searchOpen: false, searchIdx: 0, openLead: null, confirmRemove: null, newClient: false, navOpen: false, dragging: null };
 const me = () => db.profiles.find((p) => p.id === S.user);
-const isAgency = () => !!me()?.agency;
-function roleIn(orgId) { if (isAgency()) return 'agency'; return db.members.find((m) => m.org === orgId && m.user === S.user)?.role ?? null; }
-const canWork = (o) => ['agency', 'owner', 'rep'].includes(roleIn(o));
-const canManage = (o) => ['agency', 'owner'].includes(roleIn(o));
-const myOrgs = () => isAgency() ? db.orgs : db.orgs.filter((o) => roleIn(o.id));
+const isSuper = () => !!me()?.super;
+const roleIn = (orgId) => isSuper() ? 'super' : db.members.find((m) => m.org === orgId && m.user === S.user)?.role ?? null;
+const canWork = (o) => ['super', 'admin', 'rep'].includes(roleIn(o));
+const canManage = (o) => ['super', 'admin'].includes(roleIn(o));
+const myOrgs = () => isSuper() ? db.orgs : db.orgs.filter((o) => roleIn(o.id));
 const curOrg = () => db.orgs.find((o) => o.id === S.org);
-function canEditLead(l) { const r = roleIn(l.org); return r === 'agency' || r === 'owner' || (r === 'rep' && (l.owner === S.user || !l.owner)); }
+const canEditLead = (l) => { const r = roleIn(l.org); return r === 'super' || r === 'admin' || (r === 'rep' && (l.owner === S.user || !l.owner)); };
+
+const PIN_KEY = 'mycmo-demo-pins';
+function loadPins() { try { const v = JSON.parse(localStorage.getItem(PIN_KEY) || 'null'); if (Array.isArray(v)) return v.filter((id) => db.orgs.some((o) => o.id === id)); } catch {} return null; }
+function savePins() { try { localStorage.setItem(PIN_KEY, JSON.stringify(S.pins)); } catch {} }
+function defaultPins() {
+	// Start with a useful mix: the biggest accounts plus the ones that need action.
+	const all = db.orgs.map(summary);
+	const big = [...all].sort((a, b) => b.open - a.open).slice(0, 4), act = all.filter((s) => s.status === 'act').slice(0, 2);
+	return [...new Set([...big, ...act].map((s) => s.org.id))];
+}
+function togglePin(id) { S.pins = S.pins.includes(id) ? S.pins.filter((x) => x !== id) : [...S.pins, id]; savePins(); toast(S.pins.includes(id) ? `Added ${db.orgs.find((o) => o.id === id).name} to My view` : 'Removed from My view'); }
 
 let toastTimer;
-function toast(msg) { clearTimeout(toastTimer); S.toast = msg; renderToast(); toastTimer = setTimeout(() => { S.toast = null; renderToast(); }, 2600); }
-function renderToast() { let el = document.getElementById('toast'); if (!S.toast) { el?.remove(); return; } if (!el) { el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; el.setAttribute('role', 'status'); document.body.append(el); } el.textContent = S.toast; }
+function toast(msg) { clearTimeout(toastTimer); let el = document.getElementById('toast'); if (!el) { el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; el.setAttribute('role', 'status'); document.body.append(el); } el.textContent = msg; toastTimer = setTimeout(() => el.remove(), 2800); }
 
-// ---------------------------------------------------------------------------
-// Components
-// ---------------------------------------------------------------------------
-const sparks = [];
-function spark(points, label, format) {
+// ===========================================================================
+// Charts (single series, one axis, hover crosshair + tooltip)
+// ===========================================================================
+const charts = [];
+function areaChart(points, { height = 220, format, label }) {
 	if (points.length < 2) return '';
-	const id = sparks.push({ points, format }) - 1, W = 200, H = 40;
+	const id = charts.push({ points, format, kind: 'area', height }) - 1, W = 800, H = height, pl = 44, pr = 8, pt = 12, pb = 26;
+	const vals = points.map((p) => p.value), max = Math.max(...vals) * 1.08, min = 0;
+	const x = (i) => pl + (i / (points.length - 1)) * (W - pl - pr), y = (v) => pt + (1 - (v - min) / (max - min)) * (H - pt - pb);
+	const line = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.value).toFixed(1)}`).join('');
+	const area = `${line}L${x(points.length - 1).toFixed(1)},${y(0)}L${x(0).toFixed(1)},${y(0)}Z`;
+	const ticks = [0, max / 2, max].map((v) => `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1"/><text class="axis" x="${pl - 8}" y="${y(v) + 4}" text-anchor="end">${fmt(v, format)}</text>`).join('');
+	const xl = [0, Math.floor((points.length - 1) / 2), points.length - 1].map((i, k) => `<text class="axis" x="${x(i)}" y="${H - 6}" text-anchor="${k === 0 ? 'start' : k === 2 ? 'end' : 'middle'}">${shortDate(points[i].day)}</text>`).join('');
+	const last = points.length - 1;
+	return `<div class="chart" data-chart="${id}"><svg viewBox="0 0 ${W} ${H}" style="height:${H}px" role="img" aria-label="${esc(label)}, last 30 days">${ticks}${xl}<path d="${area}" fill="var(--accent)" opacity="0.1"/><path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><circle cx="${x(last)}" cy="${y(points[last].value)}" r="4" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/><line class="cross" y1="${pt}" y2="${H - pb}" stroke="var(--ink-3)" stroke-width="1" visibility="hidden"/><circle class="dot" r="4" fill="var(--accent)" stroke="var(--surface)" stroke-width="2" visibility="hidden"/></svg></div>`;
+}
+function spark(points, { format, label, height = 36 } = {}) {
+	if (points.length < 2) return '';
+	const id = charts.push({ points, format, kind: 'spark', height }) - 1, W = 200, H = height;
 	const vals = points.map((p) => p.value), min = Math.min(...vals), max = Math.max(...vals);
 	const x = (i) => (i / (points.length - 1)) * W, y = (v) => max === min ? H / 2 : H - 3 - ((v - min) / (max - min)) * (H - 6);
 	const d = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.value).toFixed(1)}`).join('');
-	return `<div class="spark" data-spark="${id}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(label)} daily trend"><path d="${d}" fill="none" stroke="var(--series-1)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><line class="cross" x1="0" x2="0" y1="0" y2="${H}" stroke="var(--ink-3)" stroke-width="1" vector-effect="non-scaling-stroke" visibility="hidden"/></svg></div>`;
+	return `<div class="chart spark" data-chart="${id}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${H}px" role="img" aria-label="${esc(label)} daily trend"><path d="${d}" fill="none" stroke="var(--accent)" stroke-width="1.75" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><line class="cross" y1="0" y2="${H}" stroke="var(--ink-3)" stroke-width="1" vector-effect="non-scaling-stroke" visibility="hidden"/></svg></div>`;
 }
-function tile(label, value, { delta = null, upIsGood = true, neutral = false, sparkPts = [], format } = {}) {
-	const good = neutral || delta == null || delta === 0 ? null : (delta > 0) === upIsGood;
-	return `<div class="card tile"><p class="muted">${esc(label)}</p><p class="v tnum">${value}</p>${delta != null ? `<p class="small muted"><span style="font-weight:600" class="${good === null ? '' : good ? 'good' : 'bad'}">${delta > 0 ? '▲' : delta < 0 ? '▼' : '•'} ${Math.abs(delta * 100).toFixed(0)}%</span> vs prior 30 days</p>` : ''}${spark(sparkPts, label, format)}</div>`;
-}
-const meterClass = (p) => p >= 1 ? 'fill-good' : p >= 0.8 ? 'fill-ok' : 'fill-bad';
 
-// ---------------------------------------------------------------------------
+// ===========================================================================
 // Views
-// ---------------------------------------------------------------------------
-function viewPicker() {
-	const q = S.personaQuery.toLowerCase();
-	const groups = [...db.orgs].sort((a, b) => a.name.localeCompare(b.name)).map((o) => ({ o, people: db.members.filter((m) => m.org === o.id) }))
-		.filter((g) => !q || g.o.name.toLowerCase().includes(q) || g.people.some((p) => name(p.user).toLowerCase().includes(q)));
-	return `<main class="wrap" style="max-width:780px">
-		<p class="brand">MYCMO DEMO</p>
-		<h1 style="font-size:26px;margin-top:4px">Who do you want to sign in as?</h1>
-		<p class="muted" style="margin-top:4px">Everything here is sample data. Switch people any time from the bar at the top. Changes you make last until you reload.</p>
-		<button class="card" data-act="signin" data-id="${SUPER}" style="display:flex;justify-content:space-between;align-items:center;gap:16px;width:100%;margin-top:24px;padding:16px;text-align:left;border-color:var(--accent)">
-			<span><span style="display:block;font-weight:600">Super admin (you, the CMO)</span><span class="muted" style="display:block">All 20 clients, portfolio view, set up each client's access, KPIs and connections</span></span><span style="color:var(--accent)" aria-hidden="true">→</span>
-		</button>
-		<div class="row" style="justify-content:space-between;margin-top:32px">
-			<h2 style="font-size:18px">Or sign in as a client's employee</h2>
-			<input id="persona-q" class="input" style="max-width:240px" type="search" placeholder="Search clients or people" aria-label="Search clients or people" value="${esc(S.personaQuery)}">
+// ===========================================================================
+function viewSignIn() {
+	const q = S.personaQ.toLowerCase();
+	let groups = [...db.orgs].sort((a, b) => a.name.localeCompare(b.name)).map((o) => ({ o, people: db.members.filter((m) => m.org === o.id) }));
+	if (q) groups = groups.filter((g) => g.o.name.toLowerCase().includes(q) || g.o.industry.toLowerCase().includes(q) || g.people.some((p) => nameOf(p.user).toLowerCase().includes(q)));
+	const shown = groups.slice(0, q ? 24 : 9);
+	return `<main class="signin">
+		<p class="eyebrow">MYCMO · Interactive demo</p>
+		<h1 style="margin-top:10px">Choose who to sign in as</h1>
+		<p class="muted" style="margin-top:10px;max-width:60ch">Sample data for an agency with ${db.orgs.length} clients and ${db.members.length} client users. Each person sees exactly what their access level allows. Switch people any time from the top bar.</p>
+		<button class="super-card" data-act="signin" data-id="${SUPER}"><span><span style="font-family:var(--serif);font-size:22px">Super admin</span><small>You, the CMO. All ${db.orgs.length} clients, portfolio totals, create clients, set anyone's access.</small></span><span aria-hidden="true" style="font-size:20px">→</span></button>
+		<div class="row" style="justify-content:space-between;margin-top:40px">
+			<div><h2 style="font-family:var(--serif);font-weight:500;font-size:22px">Or sign in as a client's user</h2><p class="muted xs" style="margin-top:4px">Admin = the business owner. Sales rep and View only are the sub-users they manage.</p></div>
+			<input id="persona-q" class="input" style="max-width:280px" type="search" placeholder="Search ${db.orgs.length} clients or people" aria-label="Search clients or people" value="${esc(S.personaQ)}">
 		</div>
-		<div class="grid g2" style="margin-top:12px">${groups.map((g) => `<section class="card" style="padding:12px"><h3 style="font-size:15px;padding:0 4px">${esc(g.o.name)}</h3><ul class="plain" style="margin-top:8px">${g.people.map((p) => `<li><button class="persona" data-act="signin" data-id="${p.user}" data-org="${g.o.id}"><span>${esc(name(p.user))}</span><span class="small faint">${ROLE_LABEL[p.role]}</span></button></li>`).join('')}</ul></section>`).join('')}</div>
+		<div class="pgrid">${shown.map((g) => `<section class="panel" style="padding:12px"><p style="font-weight:600;padding:2px 8px">${esc(g.o.name)}</p><p class="xs faint" style="padding:0 8px 6px">${esc(g.o.industry)} · ${g.people.length} users</p><ul class="plain">${g.people.map((p) => `<li><button class="persona" data-act="signin" data-id="${p.user}" data-org="${g.o.id}"><span>${esc(nameOf(p.user))}</span><span class="xs faint">${ROLE_LABEL[p.role]}</span></button></li>`).join('')}</ul></section>`).join('')}</div>
+		${groups.length > shown.length ? `<p class="muted xs" style="margin-top:14px">Showing ${shown.length} of ${groups.length} clients. Search to find any of them.</p>` : ''}
 	</main>`;
 }
 
-function viewPortfolio() {
-	const all = db.orgs.map(summarize), attention = all.filter((c) => c.alerts.length);
-	const q = S.query.toLowerCase();
-	const rows = (S.filter === 'attention' ? attention : [...all].sort((a, b) => b.alerts.length - a.alerts.length || a.org.name.localeCompare(b.org.name))).filter((c) => !q || c.org.name.toLowerCase().includes(q));
-	const status = (c) => c.alerts.length ? `<span class="small bad" style="font-weight:600">⚠ ${esc(c.alerts[0])}</span>` : `<span class="small good">● On track</span>`;
-	const kpiCell = (c) => c.att == null ? '<span class="faint">Not set</span>' : `<div class="row" style="gap:8px;flex-wrap:nowrap"><div class="meter" style="width:64px;height:6px"><div class="${meterClass(c.att)}" style="width:${Math.min(c.att, 1) * 100}%"></div></div><span>${pct(c.att)}</span></div>`;
-	return `<header class="top"><div class="wrap"><span class="brand">MYCMO</span><span style="font-weight:600">All clients</span></div></header>
-	<main class="wrap">
-		<section class="grid g4">
-			${tile('Active clients', all.length)}${tile('Needs attention', attention.length)}
-			${tile('Client pipeline (open)', money(all.reduce((a, c) => a + c.open, 0)))}${tile('Ad spend managed, 30 days', money(all.reduce((a, c) => a + c.adSpend, 0)))}
-		</section>
-		<div class="row" style="margin-top:24px">
-			<div class="seg" role="tablist"><button role="tab" aria-selected="${S.filter === 'all'}" data-act="filter" data-v="all">All ${all.length}</button><button role="tab" aria-selected="${S.filter === 'attention'}" data-act="filter" data-v="attention">Needs attention ${attention.length}</button></div>
-			<input id="client-q" class="input" style="max-width:220px" type="search" placeholder="Search clients" aria-label="Search clients" value="${esc(S.query)}">
-			<button class="btn btn-primary" style="margin-left:auto" data-act="toggle-add">+ New client</button>
-		</div>
-		${S.adding ? `<form id="new-client" class="card grid" style="margin-top:12px;padding:16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));align-items:end">
-			<div><label class="label" for="nc-name">Business name</label><input class="input" id="nc-name" required placeholder="Sunrise Pools"></div>
-			<div><label class="label" for="nc-ind">Industry</label><input class="input" id="nc-ind" placeholder="Pools"></div>
-			<button class="btn btn-primary">Create and invite team</button></form>` : ''}
-		<div class="card scroll-x hide-sm" style="margin-top:16px"><table class="tnum"><thead><tr><th style="padding-left:16px">Client</th><th>KPI goals</th><th>Website visits</th><th>New leads</th><th>Open pipeline</th><th>Ad spend</th><th>Users</th><th>Status</th></tr></thead><tbody>
-			${rows.map((c) => `<tr class="click" data-act="open-org" data-id="${c.org.id}" tabindex="0"><td style="padding-left:16px"><span style="font-weight:600">${esc(c.org.name)}</span><div class="small faint">${esc(c.org.industry ?? '')}</div></td><td>${kpiCell(c)}</td>
-			<td>${c.sessions == null ? '—' : fmt(c.sessions)} ${c.sDelta != null ? `<span class="small ${c.sDelta >= 0 ? 'good' : 'bad'}">${c.sDelta >= 0 ? '▲' : '▼'}${Math.abs(Math.round(c.sDelta * 100))}%</span>` : ''}</td>
-			<td>${c.newLeads}</td><td>${money(c.open)}</td><td>${c.adSpend ? money(c.adSpend) : '—'}</td><td>${c.members}</td><td>${status(c)}</td></tr>`).join('')}
-		</tbody></table></div>
-		<ul class="plain stack only-sm" style="margin-top:16px">${rows.map((c) => `<li class="show-sm"><button class="card" data-act="open-org" data-id="${c.org.id}" style="display:block;width:100%;text-align:left;padding:16px"><span class="row" style="justify-content:space-between"><span style="font-weight:600">${esc(c.org.name)}</span><span class="tnum">${money(c.open)}</span></span><span class="small muted" style="display:block;margin-top:4px">KPI goals ${pct(c.att)} · ${c.newLeads} new leads · ${c.members} users</span>${c.alerts.length ? `<span class="small bad" style="display:block;margin-top:4px;font-weight:600">⚠ ${esc(c.alerts.join(' · '))}</span>` : ''}</button></li>`).join('')}</ul>
-		<p class="small faint" style="margin-top:12px">Last 30 days. KPI goals = average progress toward each client's monthly targets. Click a client to open their dashboard.</p>
-	</main>`;
+function shell(body) {
+	const u = me(), orgs = myOrgs();
+	const pinned = isSuper() ? S.pins.map((id) => db.orgs.find((o) => o.id === id)).filter(Boolean) : orgs;
+	const nav = (page, label, icon, extra = '') => `<button class="nv" data-act="page" data-v="${page}" ${S.page === page ? 'aria-current="page"' : ''}>${ICON[icon]}<span>${label}</span>${extra}</button>`;
+	const orgLink = (o) => { const st = summary(o).status; return `<button class="nv pinned-link" data-act="open-org" data-id="${o.id}" ${S.page === 'client' && S.org === o.id ? 'aria-current="page"' : ''}><span class="dot" style="background:var(--${st === 'ok' ? 'good' : st === 'risk' ? 'warn' : 'bad'})"></span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(o.name)}</span></button>`; };
+	const side = `<aside class="side" aria-label="Main">
+		<div class="wordmark"><b>MYCMO</b><span>${isSuper() ? 'Agency' : 'Client'}</span></div>
+		${isSuper() ? `${nav('home', 'Portfolio', 'home')}${nav('directory', 'Client directory', 'list', `<span class="ct">${db.orgs.length}</span>`)}${nav('new', 'New client', 'plus')}` : ''}
+		<p class="grp">${isSuper() ? 'My view' : orgs.length > 1 ? 'Your businesses' : 'Your business'}</p>
+		${pinned.map(orgLink).join('') || '<p class="xs" style="padding:0 10px">Pin clients from search to keep them here.</p>'}
+		<div class="foot"><b>${esc(u.name)}</b>${isSuper() ? 'Super admin' : ROLE_LABEL[roleIn(S.org ?? orgs[0]?.id)]}</div>
+	</aside>`;
+	const search = isSuper() ? `<div class="search" id="gsearch">${ICON.search}<input id="gsearch-in" type="search" autocomplete="off" placeholder="Find a client, pin it to My view" aria-label="Find a client" aria-expanded="${S.searchOpen}" aria-controls="gresults" value="${esc(S.searchQ)}"><kbd>/</kbd><div id="gresults-wrap"></div></div>` : `<div style="flex:1"></div>`;
+	return `<div class="shell ${S.navOpen ? 'nav-open' : ''}">${side}<div class="scrim" data-act="close-nav"></div>
+		<div class="main"><div class="topbar"><div class="in"><button class="menu-btn" data-act="open-nav" aria-label="Open menu">${ICON.menu}</button>${search}
+		<p class="demo-note"><span class="who">Demo · signed in as <strong>${esc(u.name)}</strong> (${isSuper() ? 'Super admin' : ROLE_LABEL[roleIn(S.org)]})</span><button data-act="switch">Switch user</button></p></div></div>
+		<div class="content">${body}</div></div></div>`;
 }
 
-function clientShell(body) {
-	const o = curOrg(), role = roleIn(o.id);
-	const links = [['overview', 'Overview', true], ['pipeline', 'Pipeline', true], ['add', 'Add lead', canWork(o.id)], ['huddle', 'Huddle', true], ['team', 'Setup', canManage(o.id)]].filter((l) => l[2]);
-	const active = (v) => v === S.view || (v === 'team' && ['team', 'kpis', 'connections'].includes(S.view));
-	const back = isAgency() || myOrgs().length > 1;
-	return `<header class="top"><div class="wrap">
-		${back ? `<button class="linkbtn" style="padding-left:0" data-act="portfolio">← <span class="hide-sm">All clients</span></button>` : '<span class="brand">MYCMO</span>'}
-		<span style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(o.name)}</span><span class="pill hide-sm">${ROLE_LABEL[role]}</span>
-		<nav class="nav">${links.map(([v, l]) => `<button data-act="view" data-v="${v}" ${active(v) ? 'aria-current="page"' : ''}>${l}</button>`).join('')}</nav>
-	</div></header>
-	<main class="wrap">${body}</main>
-	<nav class="bottomnav" style="grid-template-columns:repeat(${links.length},1fr)">${links.map(([v, l]) => `<button data-act="view" data-v="${v}" ${active(v) ? 'aria-current="page"' : ''}>${l}</button>`).join('')}</nav>`;
+function searchResults() {
+	const q = S.searchQ.trim().toLowerCase();
+	if (!S.searchOpen) return '';
+	const list = (q ? db.orgs.filter((o) => o.name.toLowerCase().includes(q) || o.industry.toLowerCase().includes(q)) : db.orgs.filter((o) => !S.pins.includes(o.id)).sort((a, b) => summary(b).open - summary(a).open)).slice(0, 8);
+	S.searchIdx = Math.min(S.searchIdx, Math.max(0, list.length - 1));
+	return `<ul class="plain results" id="gresults" role="listbox">${!q ? '<li class="xs faint" style="padding:6px 10px">Largest clients not in My view</li>' : ''}${list.map((o, i) => { const s = summary(o), pinned = S.pins.includes(o.id); return `<li role="option" aria-selected="${i === S.searchIdx}" data-idx="${i}" data-id="${o.id}"><button class="open" data-act="open-org" data-id="${o.id}"><span class="dot" style="width:8px;height:8px;border-radius:50%;flex:none;background:var(--${s.status === 'ok' ? 'good' : s.status === 'risk' ? 'warn' : 'bad'})"></span><span style="min-width:0"><span class="nm" style="display:block">${esc(o.name)}</span><span class="xs faint">${esc(o.industry)} · ${money(s.open)} pipeline</span></span></button><button class="pinbtn" data-act="pin" data-id="${o.id}" aria-pressed="${pinned}">${pinned ? 'In My view' : '+ My view'}</button></li>`; }).join('') || '<li class="muted" style="padding:10px">No clients match.</li>'}</ul>`;
+}
+
+function portfolioTotals() {
+	const all = db.orgs.map(summary), sum = (f) => all.reduce((a, s) => a + f(s), 0);
+	const counts = { ok: all.filter((s) => s.status === 'ok').length, risk: all.filter((s) => s.status === 'risk').length, act: all.filter((s) => s.status === 'act').length };
+	const withAtt = all.filter((s) => s.att != null);
+	// Portfolio-wide daily website visits
+	const byDay = new Map(), prevTotal = { cur: 0, prev: 0 };
+	for (const s of all) for (const t of s.tiles.ga4.filter((t) => t.def.metric === 'sessions')) { for (const p of t.spark) byDay.set(p.day, (byDay.get(p.day) ?? 0) + p.value); prevTotal.cur += t.value; prevTotal.prev += t.prior ?? 0; }
+	const visits = [...byDay.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([day, value]) => ({ day, value }));
+	return { all, counts, pipeline: sum((s) => s.open), won: sum((s) => s.won30), ad: sum((s) => s.adSpend), users: sum((s) => s.users), leads: sum((s) => s.newLeads), att: withAtt.length ? withAtt.reduce((a, s) => a + Math.min(s.att, 1.5), 0) / withAtt.length : null, visits, visitsTotal: prevTotal.cur, visitsDelta: prevTotal.prev ? (prevTotal.cur - prevTotal.prev) / prevTotal.prev : null };
+}
+
+function clientCard(s) {
+	const goal = s.att;
+	return `<article class="ccard">
+		<div class="top"><div style="min-width:0"><button class="nm" data-act="open-org" data-id="${s.org.id}">${esc(s.org.name)}</button><p class="xs faint">${esc(s.org.industry)} · ${s.users} users</p></div><button class="iconbtn" data-act="pin" data-id="${s.org.id}" aria-label="Remove ${esc(s.org.name)} from My view" title="Remove from My view">${ICON.x}</button></div>
+		<div class="mini tnum"><div><p>Pipeline</p><p>${money(s.open)}</p></div><div><p>Won, 30d</p><p>${money(s.won30)}</p></div><div><p>New leads</p><p>${s.newLeads}</p></div></div>
+		<div><div class="row" style="justify-content:space-between;gap:8px"><p class="xs muted">Website visits <strong class="tnum" style="color:var(--ink)">${s.sessions == null ? '—' : fmt(s.sessions)}</strong></p><p class="xs">${deltaHtml(s.sDelta, true, false, '')}</p></div>${spark(s.sSpark, { label: `${s.org.name} website visits` })}</div>
+		<div><div class="row" style="justify-content:space-between;gap:8px"><p class="xs muted">KPI goals</p><p class="xs tnum" style="font-weight:600">${goal == null ? 'Not set' : pct(goal)}</p></div>${goal != null ? `<div class="meter" style="margin-top:6px"><div class="${meterCls(goal)}" style="width:${Math.min(goal, 1) * 100}%"></div></div>` : ''}</div>
+		<div class="foot">${chip(s.status)}<button class="linkish" data-act="open-org" data-id="${s.org.id}">Open dashboard →</button></div>
+		${s.issues.length ? `<p class="xs ${s.status === 'act' ? 'bad' : 'warn'}" style="margin-top:-6px">${esc(s.issues.join(' · '))}</p>` : ''}
+	</article>`;
+}
+
+function viewHome() {
+	const T = portfolioTotals(), n = T.all.length;
+	const pinned = S.pins.map((id) => db.orgs.find((o) => o.id === id)).filter(Boolean).map(summary);
+	const attention = T.all.filter((s) => s.status !== 'ok').sort((a, b) => (a.status === 'act' ? 0 : 1) - (b.status === 'act' ? 0 : 1) || b.open - a.open).slice(0, 6);
+	const updated = new Date(); updated.setHours(6, 17, 0, 0);
+	return `<div class="ph"><div><p class="eyebrow">Portfolio overview</p><h1 style="margin-top:6px">Good ${new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}</h1><p class="sub">${n} clients · ${T.users} client users · Data refreshed today at ${updated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</p></div><button class="btn primary" data-act="page" data-v="new">${ICON.plus.replace('<svg', '<svg width="14" height="14"')} New client</button></div>
+
+	<section class="strip tnum" style="--n:5">
+		<div><p class="lbl">Open pipeline, all clients</p><p class="val hero-val">${money(T.pipeline)}</p><p class="dl">${T.leads} new leads in 30 days</p></div>
+		<div><p class="lbl">Won revenue, 30 days</p><p class="val">${money(T.won)}</p><p class="dl">Across ${T.all.filter((s) => s.won30).length} clients</p></div>
+		<div><p class="lbl">Website visits, 30 days</p><p class="val">${fmt(T.visitsTotal)}</p><p class="dl">${deltaHtml(T.visitsDelta, true, false, ' vs prior')}</p></div>
+		<div><p class="lbl">Ad spend managed, 30 days</p><p class="val">${money(T.ad)}</p><p class="dl">Google Ads and Meta Ads</p></div>
+		<div><p class="lbl">Average KPI attainment</p><p class="val">${pct(T.att)}</p><p class="dl">Of each client's monthly goals</p></div>
+	</section>
+
+	<div class="sec split">
+		<section class="panel"><div class="panel-h"><h2>Website visits, all clients</h2><p class="xs faint">Daily, last 30 days</p></div><div class="panel-b">${areaChart(T.visits, { height: 230, label: 'Website visits across all clients' })}</div></section>
+		<section class="panel"><div class="panel-h"><h2>Client health</h2><p class="xs faint">${n} clients</p></div><div class="panel-b">
+			<div class="dist" role="img" aria-label="${T.counts.ok} on track, ${T.counts.risk} at risk, ${T.counts.act} need action"><div style="flex:${T.counts.ok};background:var(--good)"></div><div style="flex:${T.counts.risk};background:var(--warn)"></div><div style="flex:${T.counts.act};background:var(--bad)"></div></div>
+			<div class="legend"><span><i style="background:var(--good)"></i>On track <strong class="tnum">${T.counts.ok}</strong></span><span><i style="background:var(--warn)"></i>At risk <strong class="tnum">${T.counts.risk}</strong></span><span><i style="background:var(--bad)"></i>Action needed <strong class="tnum">${T.counts.act}</strong></span></div>
+			<ul class="plain" style="margin-top:18px">${attention.map((s) => `<li class="row" style="justify-content:space-between;padding:10px 0;border-top:1px solid var(--line);flex-wrap:nowrap"><button class="linkish" style="color:var(--ink);font-weight:600;text-align:left;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-act="open-org" data-id="${s.org.id}">${esc(s.org.name)}</button><span class="xs ${s.status === 'act' ? 'bad' : 'warn'}" style="text-align:right">${esc(s.issues[0])}</span></li>`).join('')}</ul>
+			<button class="linkish" style="margin-top:12px" data-act="dir-filter" data-v="attention">See all ${T.counts.risk + T.counts.act} clients that need attention →</button>
+		</div></section>
+	</div>
+
+	<section class="sec"><div class="sec-h"><div><h2>My view</h2><p class="muted xs" style="margin-top:4px">Clients you've pinned. Use the search bar to add any of your ${n} clients.</p></div><span class="xs faint">${pinned.length} pinned</span></div>
+		<div class="cards">${pinned.map(clientCard).join('')}<button class="addcard" data-act="focus-search">${ICON.plus.replace('<svg', '<svg width="22" height="22"')}<span style="font-weight:600">Add a client to My view</span><span class="xs faint">Search by name or industry</span></button></div>
+	</section>`;
+}
+
+function viewDirectory() {
+	const D = S.dir, q = D.q.toLowerCase();
+	let rows = db.orgs.map(summary).filter((s) => (!q || s.org.name.toLowerCase().includes(q)) && (!D.industry || s.org.industry === D.industry) && (D.status === 'all' || (D.status === 'attention' ? s.status !== 'ok' : s.status === D.status)));
+	const key = { name: (s) => s.org.name, open: (s) => s.open, won: (s) => s.won30, leads: (s) => s.newLeads, visits: (s) => s.sessions ?? -1, att: (s) => s.att ?? -1, users: (s) => s.users, status: (s) => ({ act: 0, risk: 1, ok: 2 })[s.status] }[D.sort];
+	rows.sort((a, b) => { const x = key(a), y = key(b); return (x > y ? 1 : x < y ? -1 : 0) * (D.asc ? 1 : -1); });
+	const per = 25, pages = Math.max(1, Math.ceil(rows.length / per)); D.page = Math.min(D.page, pages - 1);
+	const slice = rows.slice(D.page * per, D.page * per + per);
+	const th = (k, l, num) => `<th class="${num ? 'num' : ''}"><button data-act="sort" data-v="${k}" ${D.sort === k ? `aria-sort="${D.asc ? 'ascending' : 'descending'}"` : ''}>${l}${D.sort === k ? (D.asc ? ' ↑' : ' ↓') : ''}</button></th>`;
+	const industries = [...new Set(db.orgs.map((o) => o.industry))].sort();
+	return `<div class="ph"><div><p class="eyebrow">Client directory</p><h1 style="margin-top:6px">All clients</h1><p class="sub">${db.orgs.length} clients. No limit on how many you add.</p></div><button class="btn primary" data-act="page" data-v="new">New client</button></div>
+	<div class="row" style="margin-bottom:14px">
+		<div class="seg" role="tablist">${[['all', 'All'], ['attention', 'Needs attention'], ['ok', 'On track'], ['risk', 'At risk'], ['act', 'Action needed']].map(([v, l]) => `<button role="tab" aria-selected="${D.status === v}" data-act="dir-filter" data-v="${v}">${l}</button>`).join('')}</div>
+		<select id="dir-ind" class="input" style="width:auto;min-height:38px;font-size:14px" aria-label="Industry"><option value="">All industries</option>${industries.map((i) => `<option ${D.industry === i ? 'selected' : ''}>${esc(i)}</option>`).join('')}</select>
+		<input id="dir-q" class="input" style="max-width:260px;min-height:38px;font-size:14px" type="search" placeholder="Filter by name" aria-label="Filter clients by name" value="${esc(D.q)}">
+	</div>
+	<section class="panel"><div class="tablewrap"><table class="tnum" style="min-width:880px"><thead><tr>${th('name', 'Client')}${th('status', 'Status')}${th('att', 'KPI goals')}${th('visits', 'Website visits', 1)}${th('leads', 'New leads', 1)}${th('open', 'Open pipeline', 1)}${th('won', 'Won, 30d', 1)}${th('users', 'Users', 1)}<th><span class="sr">My view</span></th></tr></thead><tbody>
+	${slice.map((s) => `<tr class="click" data-act="open-org" data-id="${s.org.id}" tabindex="0"><td><strong>${esc(s.org.name)}</strong><div class="xs faint">${esc(s.org.industry)}</div></td><td>${chip(s.status)}</td>
+		<td>${s.att == null ? '<span class="faint">Not set</span>' : `<div class="row" style="gap:8px;flex-wrap:nowrap"><div class="meter" style="width:64px"><div class="${meterCls(s.att)}" style="width:${Math.min(s.att, 1) * 100}%"></div></div>${pct(s.att)}</div>`}</td>
+		<td class="num">${s.sessions == null ? '—' : fmt(s.sessions)} ${s.sDelta != null ? `<span class="xs ${s.sDelta >= 0 ? 'good' : 'bad'}">${s.sDelta >= 0 ? '▲' : '▼'}${Math.abs(Math.round(s.sDelta * 100))}%</span>` : ''}</td>
+		<td class="num">${s.newLeads}</td><td class="num">${money(s.open)}</td><td class="num">${money(s.won30)}</td><td class="num">${s.users}</td>
+		<td class="num"><button class="pinbtn" data-act="pin" data-id="${s.org.id}" aria-pressed="${S.pins.includes(s.org.id)}">${S.pins.includes(s.org.id) ? 'In My view' : '+ My view'}</button></td></tr>`).join('') || '<tr><td colspan="9" class="muted" style="padding:24px">No clients match these filters.</td></tr>'}
+	</tbody></table></div>
+	<div class="pager"><span>${rows.length ? `${D.page * per + 1}–${Math.min(rows.length, D.page * per + per)} of ${rows.length}` : '0 clients'}</span><span class="row" style="gap:8px"><button class="btn sm" data-act="dir-page" data-v="-1" ${D.page === 0 ? 'disabled' : ''}>Previous</button><span>Page ${D.page + 1} of ${pages}</span><button class="btn sm" data-act="dir-page" data-v="1" ${D.page >= pages - 1 ? 'disabled' : ''}>Next</button></span></div></section>`;
+}
+
+function viewNewClient() {
+	return `<div class="ph"><div><p class="eyebrow">Onboarding</p><h1 style="margin-top:6px">Add a client</h1><p class="sub">Three steps: create the client, invite their admin and sub-users, then set KPIs and connect their accounts.</p></div></div>
+	<form id="new-client" class="panel" style="max-width:640px;padding:24px"><div class="stack" style="gap:16px">
+		<div><label class="label" for="nc-name">Business name</label><input class="input" id="nc-name" required placeholder="Sunrise Pools"></div>
+		<div><label class="label" for="nc-ind">Industry</label><input class="input" id="nc-ind" placeholder="Pools" list="ind-list"><datalist id="ind-list">${[...new Set(db.orgs.map((o) => o.industry))].sort().map((i) => `<option>${esc(i)}</option>`).join('')}</datalist></div>
+		<div class="row" style="border-top:1px solid var(--line);padding-top:16px"><label class="check" style="flex:0 1 auto"><input type="checkbox" id="nc-pin" checked><span>Add to My view</span></label><button class="btn primary" style="margin-left:auto">Create client and invite team</button></div>
+	</div></form>`;
+}
+
+// ---------- Client workspace ----------
+function clientHeader() {
+	const o = curOrg(), s = summary(o), r = roleIn(o.id);
+	const tabs = [['overview', 'Overview', true], ['pipeline', 'Pipeline', true], ['add', 'Add lead', canWork(o.id)], ['huddle', 'Huddle', true], ['team', 'Team & access', canManage(o.id)], ['kpis', 'KPIs & goals', canManage(o.id)], ['connections', 'Connections', canManage(o.id)]].filter((t) => t[2]);
+	return `${isSuper() ? `<p class="crumbs"><button data-act="page" data-v="home">Portfolio</button> / <button data-act="page" data-v="directory">Clients</button> / ${esc(o.name)}</p>` : ''}
+	<div class="ph" style="margin-bottom:18px"><div><h1>${esc(o.name)}</h1><p class="sub">${esc(o.industry)} · ${s.users} users · ${isSuper() ? chip(s.status) : `<span class="chip role plain">${ROLE_LABEL[r]}</span>`}</p></div>
+	${isSuper() ? `<button class="pinbtn" data-act="pin" data-id="${o.id}" aria-pressed="${S.pins.includes(o.id)}">${S.pins.includes(o.id) ? 'In My view' : '+ Add to My view'}</button>` : ''}</div>
+	<nav class="tabs" aria-label="${esc(o.name)} sections">${tabs.map(([v, l]) => `<button data-act="tab" data-v="${v}" ${S.tab === v ? 'aria-current="page"' : ''}>${l}</button>`).join('')}</nav>`;
+}
+
+function executiveBrief(o, s, goals, ps) {
+	const parts = [];
+	if (s.sDelta != null) parts.push(`Website visits are ${s.sDelta >= 0 ? 'up' : 'down'} ${Math.abs(Math.round(s.sDelta * 100))}% on the prior 30 days`);
+	const withT = goals.filter((g) => g.pct != null), hit = withT.filter((g) => g.pct >= 1).length;
+	if (withT.length) parts.push(`${hit} of ${withT.length} headline KPIs are at or above goal`);
+	if (ps.openCount) parts.push(`${ps.openCount} open deals are worth ${money(ps.openValue)}`);
+	let text = parts.length ? parts.join('; ') + '.' : 'No marketing data yet. Connect accounts to start reporting.';
+	const behind = withT.filter((g) => g.pct < 0.8).sort((a, b) => a.pct - b.pct)[0];
+	if (behind) text += ` ${kpiLabel(behind.def)} is the one to watch, at ${pct(behind.pct)} of goal.`;
+	if (s.issues.some((i) => i.includes('reconnect'))) text += ` ${s.issues.find((i) => i.includes('reconnect'))}.`;
+	return text;
 }
 
 function viewOverview() {
-	const o = curOrg(), leads = db.leads.filter((l) => l.org === o.id), tiles = buildTiles(db.snaps.filter((s) => s.org === o.id));
+	const o = curOrg(), s = summary(o), leads = db.leads.filter((l) => l.org === o.id), tiles = s.tiles;
 	const goals = kpiProgress(tiles, db.kpis.filter((k) => k.org === o.id)), ps = pipelineStats(leads);
 	const spendFrom = (() => { const d = daysAgo(90); return dayStr(new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1))); })();
-	const adSpend = db.snaps.filter((s) => s.org === o.id && s.metric === 'spend' && s.day >= spendFrom).reduce((a, s) => a + s.value, 0);
-	const totalSpend = db.spend.filter((s) => s.org === o.id && s.month >= spendFrom).reduce((a, s) => a + s.amount, 0) + adSpend;
+	const adSpend = (db.snaps.get(o.id) ?? []).filter((r) => r.metric === 'spend' && r.day >= spendFrom).reduce((a, r) => a + r.value, 0);
+	const totalSpend = db.spend.filter((x) => x.org === o.id && x.month >= spendFrom).reduce((a, x) => a + x.amount, 0) + adSpend;
 	const winLeads = leads.filter((l) => l.created >= spendFrom), won = leads.filter((l) => l.stage === 'closed_won' && l.changed >= spendFrom).reduce((a, l) => a + l.value, 0);
-	const acts = new Map(); for (const a of db.activities) if (a.org === o.id && a.at >= iso(daysAgo(7))) acts.set(a.user, (acts.get(a.user) ?? 0) + 1);
-	const repIds = [...new Set([...leads.map((l) => l.owner).filter(Boolean), ...acts.keys()])];
-	const reps = repIds.map((id) => { const mine = leads.filter((l) => l.owner === id); return { id, name: name(id), leads: mine.length, ...pipelineStats(mine), acts: acts.get(id) ?? 0 }; }).sort((a, b) => b.wonValue - a.wonValue || b.acts - a.acts);
+	const acts = new Map(); for (const a of db.activities) if (a.org === o.id && a.at >= SINCE7) acts.set(a.user, (acts.get(a.user) ?? 0) + 1);
+	const reps = [...new Set([...leads.map((l) => l.owner).filter(Boolean), ...acts.keys()])].map((id) => { const mine = leads.filter((l) => l.owner === id); return { id, name: nameOf(id), leads: mine.length, ...pipelineStats(mine), acts: acts.get(id) ?? 0 }; }).sort((a, b) => b.wonValue - a.wonValue || b.acts - a.acts);
 	const huddle = db.huddles.filter((h) => h.org === o.id).sort((a, b) => b.date.localeCompare(a.date))[0];
-	const sources = Object.keys(SOURCES).filter((s) => tiles[s].length);
-	return `${goals.length ? `<section style="margin-bottom:32px"><div class="sec-h" style="margin-top:0"><h2>Goals <span class="small faint" style="font-weight:400">last 30 days vs monthly goal</span></h2>${canManage(o.id) ? '<button class="linkbtn" style="color:var(--accent)" data-act="view" data-v="kpis">Edit KPIs</button>' : ''}</div>
-		<div class="grid g4">${goals.map((g) => `<div class="card tile"><p class="muted">${esc(g.def.label)}</p><p class="v tnum">${fmt(g.value, g.def.format)}</p>${g.target != null ? `<div class="meter" style="margin-top:8px" role="meter" aria-valuenow="${Math.round((g.pct ?? 0) * 100)}" aria-valuemin="0" aria-valuemax="100" aria-label="${esc(g.def.label)} progress to goal"><div class="${meterClass(g.pct ?? 0)}" style="width:${Math.min(g.pct ?? 0, 1) * 100}%"></div></div><p class="small muted">${Math.round((g.pct ?? 0) * 100)}% of ${fmt(g.target, g.def.format)} goal</p>` : ''}</div>`).join('')}</div></section>` : ''}
-	<section><p class="muted">Open pipeline</p><p class="hero tnum">${money(ps.openValue)}</p><p class="muted" style="margin-top:4px">${ps.openCount} open deals · ${ps.wonCount} won all-time · win rate ${pct(ps.winRate)}</p></section>
-	<section class="grid g4" style="margin-top:24px">${tile('Won revenue', money(won))}${tile('Marketing spend', money(totalSpend))}${tile('Cost per lead', totalSpend && winLeads.length ? money(totalSpend / winLeads.length) : '—')}${tile('Marketing ROI', totalSpend ? pct((won - totalSpend) / totalSpend) : '—')}</section>
-	<p class="small faint" style="margin-top:8px">Spend includes synced Google Ads and Meta Ads spend, since ${new Date(spendFrom + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' })}.</p>
-	${!sources.length ? `<div class="card" style="margin-top:32px;padding:24px"><h2 style="font-size:16px">No marketing data yet</h2><p class="muted" style="margin-top:4px">Connect Google, Meta and ad accounts to see traffic, search, social and ads here. ${canManage(o.id) ? '<button class="linkbtn" style="color:var(--accent);padding:0;font-weight:600" data-act="view" data-v="connections">Connect accounts</button>' : ''}</p></div>` : ''}
-	${sources.map((s) => `<section><div class="sec-h"><h2>${SOURCES[s].label} <span class="small faint" style="font-weight:400">last 30 days</span></h2></div><div class="grid g3">${tiles[s].map((t) => tile(t.def.label, fmt(t.value, t.def.format), { delta: t.def.agg === 'last' ? null : t.delta, upIsGood: t.def.upIsGood ?? true, neutral: t.def.neutral, sparkPts: t.def.agg === 'last' ? [] : t.spark, format: t.def.format })).join('')}</div></section>`).join('')}
-	<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:32px;align-items:start">
-		<section class="card scroll-x" style="padding:16px"><h2 style="font-size:16px">Rep scoreboard</h2>${reps.length ? `<table class="tnum" style="margin-top:8px;min-width:440px"><thead><tr><th>Rep</th><th>Leads</th><th>Win rate</th><th>Won</th><th>Activity (7d)</th></tr></thead><tbody>${reps.map((r) => `<tr><td style="font-weight:500">${esc(r.name)}</td><td>${r.leads}</td><td>${pct(r.winRate)}</td><td>${money(r.wonValue)}</td><td>${r.acts}</td></tr>`).join('')}</tbody></table>` : '<p class="muted" style="margin-top:8px">No leads or activity yet.</p>'}</section>
-		<section class="card" style="padding:16px"><div class="row" style="justify-content:space-between"><h2 style="font-size:16px">Latest huddle</h2><button class="linkbtn" style="color:var(--accent);padding:0" data-act="view" data-v="huddle">All</button></div>${huddle ? `<p class="small faint">${huddle.date}</p><div class="stack" style="gap:8px;margin-top:8px">${huddle.wins ? `<div><p class="small muted" style="font-weight:500">Wins</p><p>${esc(huddle.wins)}</p></div>` : ''}${huddle.blockers ? `<div><p class="small muted" style="font-weight:500">Blockers</p><p>${esc(huddle.blockers)}</p></div>` : ''}${huddle.focus ? `<div><p class="small muted" style="font-weight:500">Today's focus</p><p>${esc(huddle.focus)}</p></div>` : ''}</div>` : '<p class="muted" style="margin-top:8px">No huddle logged yet.</p>'}</section>
+	const sessions = tiles.ga4.find((t) => t.def.metric === 'sessions');
+	const sources = Object.keys(SOURCES).filter((k) => tiles[k].length);
+	return `<section class="brief"><p class="eyebrow" style="margin-bottom:8px">Executive summary · last 30 days</p><p class="t">${esc(executiveBrief(o, s, goals, ps))}</p></section>
+	${goals.length ? `<section class="sec" style="margin-top:28px"><div class="sec-h"><h2>Goals</h2>${canManage(o.id) ? '<button class="linkish" data-act="tab" data-v="kpis">Edit KPIs and goals</button>' : ''}</div>
+		<div class="strip tnum" style="--n:${goals.length}">${goals.map((g) => `<div><p class="lbl">${esc(kpiLabel(g.def))}</p><p class="val">${fmt(g.value, g.def.format)}</p>${g.target != null ? `<div class="meter" style="margin-top:12px" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round((g.pct ?? 0) * 100)}" aria-label="${esc(kpiLabel(g.def))} progress"><div class="${meterCls(g.pct ?? 0)}" style="width:${Math.min(g.pct ?? 0, 1) * 100}%"></div></div><p class="dl">${pct(g.pct)} of ${fmt(g.target, g.def.format)} monthly goal</p>` : '<p class="dl">No goal set</p>'}</div>`).join('')}</div></section>` : ''}
+	<section class="sec"><div class="sec-h"><h2>Sales and return</h2><p class="xs faint">Spend includes synced ad spend since ${new Date(spendFrom + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' })}</p></div>
+		<div class="strip tnum" style="--n:5"><div><p class="lbl">Open pipeline</p><p class="val hero-val">${money(ps.openValue)}</p><p class="dl">${ps.openCount} open deals</p></div><div><p class="lbl">Win rate</p><p class="val">${pct(ps.winRate)}</p><p class="dl">${ps.wonCount} won all-time</p></div><div><p class="lbl">Won revenue</p><p class="val">${money(won)}</p><p class="dl">Since ${new Date(spendFrom + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' })}</p></div><div><p class="lbl">Cost per lead</p><p class="val">${totalSpend && winLeads.length ? money(totalSpend / winLeads.length) : '—'}</p><p class="dl">${money(totalSpend)} total spend</p></div><div><p class="lbl">Marketing ROI</p><p class="val">${totalSpend ? pct((won - totalSpend) / totalSpend) : '—'}</p><p class="dl">Won revenue vs spend</p></div></div></section>
+	${sessions ? `<section class="sec panel"><div class="panel-h"><h2>Website visits</h2><p class="xs">${deltaHtml(sessions.delta)}</p></div><div class="panel-b">${areaChart(sessions.spark, { height: 220, label: 'Website visits' })}</div></section>` : ''}
+	${!sources.length ? `<section class="sec panel" style="padding:24px"><h2 style="font-size:16px">No marketing data yet</h2><p class="muted" style="margin-top:6px">Connect Google, Meta and ad accounts to see traffic, search, social and ads here.</p>${canManage(o.id) ? '<button class="btn primary" style="margin-top:14px" data-act="tab" data-v="connections">Connect accounts</button>' : ''}</section>` : ''}
+	${sources.length ? `<section class="sec"><div class="sec-h"><h2>Channel performance</h2><p class="xs faint">Last 30 days vs prior 30</p></div><div class="panel"><div class="tablewrap"><table class="tnum" style="min-width:640px"><thead><tr><th>Channel</th><th>Metric</th><th class="num">Last 30 days</th><th class="num">Change</th><th style="width:30%">Daily trend</th></tr></thead><tbody>
+		${sources.map((k) => tiles[k].map((t, i) => `<tr><td>${i === 0 ? `<strong>${SOURCES[k].label}</strong><div class="xs faint">${SOURCES[k].sub}</div>` : ''}</td><td>${esc(t.def.label)}</td><td class="num" style="font-weight:600">${fmt(t.value, t.def.format)}</td><td class="num xs">${t.def.agg === 'last' ? '<span class="faint">Current total</span>' : deltaHtml(t.delta, t.def.upIsGood ?? true, t.def.neutral, '')}</td><td>${t.def.agg === 'last' ? '' : spark(t.spark, { format: t.def.format, label: `${SOURCES[k].label} ${t.def.label}`, height: 28 })}</td></tr>`).join('')).join('')}
+	</tbody></table></div></div></section>` : ''}
+	<div class="sec" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+		<section class="panel"><div class="panel-h"><h2>Rep scoreboard</h2><p class="xs faint">Activity = last 7 days</p></div><div class="tablewrap" style="margin-top:8px">${reps.length ? `<table class="tnum"><thead><tr><th>Rep</th><th class="num">Leads</th><th class="num">Win rate</th><th class="num">Won</th><th class="num">Activity</th></tr></thead><tbody>${reps.map((r) => `<tr><td style="font-weight:500">${esc(r.name)}</td><td class="num">${r.leads}</td><td class="num">${pct(r.winRate)}</td><td class="num">${money(r.wonValue)}</td><td class="num">${r.acts}</td></tr>`).join('')}</tbody></table>` : '<p class="muted" style="padding:16px 20px">No leads or activity yet.</p>'}</div></section>
+		<section class="panel"><div class="panel-h"><h2>Latest sales huddle</h2><button class="linkish" data-act="tab" data-v="huddle">All huddles</button></div><div class="panel-b">${huddle ? `<p class="xs faint">${shortDate(huddle.date)}</p><dl class="stack" style="gap:10px;margin:10px 0 0">${[['Wins', huddle.wins], ['Blockers', huddle.blockers], ["Today's focus", huddle.focus]].filter((x) => x[1]).map(([k, v]) => `<div><dt class="eyebrow">${k}</dt><dd style="margin:4px 0 0">${esc(v)}</dd></div>`).join('')}</dl>` : '<p class="muted">No huddle logged yet.</p>'}</div></section>
 	</div>`;
 }
 
 function viewPipeline() {
-	const o = curOrg(), since = iso(daysAgo(30));
+	const o = curOrg(), since = SINCE30;
 	const leads = db.leads.filter((l) => l.org === o.id && (!l.stage.startsWith('closed') || l.changed >= since)).sort((a, b) => b.changed.localeCompare(a.changed));
-	return `<div class="row" style="justify-content:space-between;margin-bottom:16px"><h1 style="font-size:20px">Pipeline</h1>${canWork(o.id) ? '<button class="btn btn-primary" data-act="view" data-v="add">+ Lead</button>' : ''}</div>
-	<p class="small muted" style="margin:-8px 0 12px">Tap a lead for quick actions. On a computer you can also drag leads between stages.</p>
-	<div class="board">${STAGES.map(([id, label]) => { const items = leads.filter((l) => l.stage === id); return `<section class="card col" data-drop="${id}" aria-label="${label}"><header><h2 style="font-size:14px">${label} <span class="faint" style="font-weight:400">${items.length}</span></h2><p class="small muted tnum">${money(items.reduce((a, l) => a + l.value, 0))}</p></header><ul>${items.map((l) => `<li class="lead" draggable="${canEditLead(l)}" data-drag="${l.id}"><button data-act="open-lead" data-id="${l.id}"><span style="display:block;font-weight:500">${esc(l.name)}</span>${l.company ? `<span class="muted" style="display:block">${esc(l.company)}</span>` : ''}<span class="small faint" style="display:block;margin-top:4px">${money(l.value)}${l.owner ? ' · ' + esc(name(l.owner)) : ''}</span></button>
-		${S.openLead === l.id ? `<div class="acts">${l.phone ? `<p class="small muted">Phone: <span class="tnum" style="color:var(--ink);user-select:all">${esc(l.phone)}</span></p>` : ''}${canWork(o.id) ? `<div class="grid g2" style="grid-template-columns:1fr 1fr;gap:8px">${QUICK.map(([t, lb]) => `<button class="btn btn-sm" data-act="log" data-id="${l.id}" data-v="${t}" data-l="${lb}">${lb}</button>`).join('')}</div>${canEditLead(l) ? `<label><span class="label">Move to</span><select class="input" data-move="${l.id}">${STAGES.map(([s, sl]) => `<option value="${s}" ${s === l.stage ? 'selected' : ''}>${sl}</option>`).join('')}</select></label>` : '<p class="small faint">This lead belongs to another rep, so only they or the owner can move it.</p>'}` : '<p class="small faint">View-only access.</p>'}</div>` : ''}</li>`).join('')}</ul></section>`; }).join('')}</div>`;
+	return `<div class="row" style="justify-content:space-between;margin-bottom:14px"><p class="muted">Tap a lead for quick actions. On a computer you can also drag leads between stages.</p>${canWork(o.id) ? '<button class="btn primary" data-act="tab" data-v="add">Add lead</button>' : ''}</div>
+	<div class="board">${STAGES.map(([id, label]) => { const items = leads.filter((l) => l.stage === id); return `<section class="col" data-drop="${id}" aria-label="${label}"><header><p style="font-weight:600">${label} <span class="faint" style="font-weight:400">${items.length}</span></p><p class="xs muted tnum">${money(items.reduce((a, l) => a + l.value, 0))}</p></header><ul>${items.map((l) => `<li class="lead" draggable="${canEditLead(l)}" data-drag="${l.id}"><button data-act="open-lead" data-id="${l.id}"><span style="display:block;font-weight:600">${esc(l.name)}</span>${l.company ? `<span class="muted xs" style="display:block">${esc(l.company)}</span>` : ''}<span class="xs faint tnum" style="display:block;margin-top:4px">${money(l.value)}${l.owner ? ' · ' + esc(nameOf(l.owner)) : ''}</span></button>
+		${S.openLead === l.id ? `<div class="acts">${l.phone ? `<p class="xs muted">Phone <span class="tnum" style="color:var(--ink);user-select:all">${esc(l.phone)}</span></p>` : ''}${canWork(o.id) ? `<div class="qgrid">${QUICK.map(([t, lb]) => `<button class="btn sm" data-act="log" data-id="${l.id}" data-v="${t}" data-l="${lb}">${lb}</button>`).join('')}</div>${canEditLead(l) ? `<label><span class="label">Move to</span><select class="input" data-move="${l.id}">${STAGES.map(([st, sl]) => `<option value="${st}" ${st === l.stage ? 'selected' : ''}>${sl}</option>`).join('')}</select></label>` : '<p class="xs faint">Assigned to another rep. Only they or an admin can move it.</p>'}` : '<p class="xs faint">View-only access.</p>'}</div>` : ''}</li>`).join('')}</ul></section>`; }).join('')}</div>`;
 }
 
 function viewAdd() {
-	return `<div style="max-width:440px;margin:0 auto"><h1 style="font-size:20px">Quick-add lead</h1>
-	<form id="add-lead" class="stack" style="margin-top:16px">
-		<div><label class="label" for="l-name">Name *</label><input class="input" id="l-name" required autocomplete="off"></div>
+	return `<form id="add-lead" class="panel" style="max-width:520px;padding:24px"><div class="stack" style="gap:14px">
+		<h2 style="font-family:var(--serif);font-weight:500;font-size:22px">Quick-add lead</h2>
+		<div><label class="label" for="l-name">Name</label><input class="input" id="l-name" required autocomplete="off"></div>
 		<div><label class="label" for="l-phone">Phone</label><input class="input" id="l-phone" type="tel" inputmode="tel" autocomplete="off"></div>
 		<div><label class="label" for="l-co">Company</label><input class="input" id="l-co" autocomplete="off"></div>
 		<div><label class="label" for="l-addr">Address</label><input class="input" id="l-addr" autocomplete="off"></div>
 		<fieldset style="border:0;padding:0;margin:0"><legend class="label">Lead source</legend><div class="src-grid">${LEAD_SOURCES.map(([id, lb], i) => `<label><input class="sr" type="radio" name="l-src" value="${id}" ${i === 0 ? 'checked' : ''}>${lb}</label>`).join('')}</div></fieldset>
 		<div><label class="label" for="l-val">Estimated deal value ($)</label><input class="input" id="l-val" inputmode="decimal" placeholder="0"></div>
-		<div class="grid g2" style="grid-template-columns:1fr 1fr"><button class="btn" type="submit" data-again="1">Save + add another</button><button class="btn btn-primary" type="submit">Save lead</button></div>
-	</form></div>`;
+		<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn" type="submit" data-again="1">Save and add another</button><button class="btn primary" type="submit">Save lead</button></div>
+	</div></form>`;
 }
 
 function viewHuddle() {
 	const o = curOrg(), notes = db.huddles.filter((h) => h.org === o.id).sort((a, b) => b.date.localeCompare(a.date));
-	return `<div style="max-width:680px;margin:0 auto"><h1 style="font-size:20px">Daily sales huddle</h1>
-	${canWork(o.id) ? `<form id="huddle" class="card stack" style="margin-top:16px;padding:16px"><div><label class="label" for="h-w">Wins since yesterday</label><textarea class="input" id="h-w" rows="2"></textarea></div><div><label class="label" for="h-b">Blockers</label><textarea class="input" id="h-b" rows="2"></textarea></div><div><label class="label" for="h-f">Today's focus</label><textarea class="input" id="h-f" rows="2"></textarea></div><button class="btn btn-primary" style="align-self:flex-start">Post huddle</button></form>` : ''}
-	<ol class="plain stack" style="margin-top:24px">${notes.map((n) => `<li class="card" style="padding:16px"><p class="small faint" style="font-weight:600">${n.date}</p>${n.wins ? `<p style="margin-top:8px"><span class="muted" style="font-weight:500">Wins:</span> ${esc(n.wins)}</p>` : ''}${n.blockers ? `<p style="margin-top:4px"><span class="muted" style="font-weight:500">Blockers:</span> ${esc(n.blockers)}</p>` : ''}${n.focus ? `<p style="margin-top:4px"><span class="muted" style="font-weight:500">Focus:</span> ${esc(n.focus)}</p>` : ''}</li>`).join('')}</ol></div>`;
+	return `<div style="max-width:720px">${canWork(o.id) ? `<form id="huddle" class="panel" style="padding:24px"><div class="stack" style="gap:14px"><h2 style="font-family:var(--serif);font-weight:500;font-size:22px">Today's huddle</h2><div><label class="label" for="h-w">Wins since yesterday</label><textarea class="input" id="h-w" rows="2"></textarea></div><div><label class="label" for="h-b">Blockers</label><textarea class="input" id="h-b" rows="2"></textarea></div><div><label class="label" for="h-f">Today's focus</label><textarea class="input" id="h-f" rows="2"></textarea></div><button class="btn primary" style="align-self:flex-start">Post huddle</button></div></form>` : ''}
+	<ol class="plain stack" style="margin-top:20px">${notes.map((n) => `<li class="panel" style="padding:18px 20px"><p class="eyebrow">${shortDate(n.date)}</p><dl class="stack" style="gap:8px;margin:10px 0 0">${[['Wins', n.wins], ['Blockers', n.blockers], ['Focus', n.focus]].filter((x) => x[1]).map(([k, v]) => `<div class="row" style="align-items:baseline;flex-wrap:nowrap"><dt class="muted" style="width:72px;flex:none;font-weight:600;font-size:13px">${k}</dt><dd style="margin:0">${esc(v)}</dd></div>`).join('')}</dl></li>`).join('')}</ol></div>`;
 }
 
-const setupTabs = () => `<nav class="tabs" aria-label="Client setup">${[['team', 'Team & access'], ['kpis', 'KPIs & goals'], ['connections', 'Connections']].map(([v, l]) => `<button data-act="view" data-v="${v}" ${S.view === v ? 'aria-current="page"' : ''}>${l}</button>`).join('')}</nav>`;
-
 function viewTeam() {
-	const o = curOrg(), order = { owner: 0, rep: 1, viewer: 2 };
-	const members = db.members.filter((m) => m.org === o.id).map((m) => ({ ...m, p: db.profiles.find((p) => p.id === m.user) })).sort((a, b) => order[a.role] - order[b.role] || a.p.name.localeCompare(b.p.name));
-	return `${setupTabs()}${S.flash?.newClient ? `<p class="alert alert-info" style="margin-bottom:16px"><strong>${esc(o.name)}</strong> is set up. Next: invite the owner and their staff, then pick their KPIs and connect their accounts.</p>` : ''}
-	<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));align-items:start">
-		<section class="card"><h2 style="font-size:16px;padding:12px 16px;border-bottom:1px solid var(--border)">People with access <span class="faint" style="font-weight:400">${members.length}</span></h2>
-		<ul class="plain">${members.map((m) => `<li class="row" style="padding:12px 16px;border-bottom:1px solid var(--border)"><div style="flex:1;min-width:0"><p style="font-weight:500;overflow:hidden;text-overflow:ellipsis">${esc(m.p.name)}${m.user === S.user ? ' <span class="small faint">(you)</span>' : ''}</p><p class="small muted" style="overflow:hidden;text-overflow:ellipsis">${esc(m.p.email)}</p></div>
-			<select class="input" style="width:auto;min-height:36px;font-size:13px" data-role="${m.user}" aria-label="Role for ${esc(m.p.name)}">${ROLES.map(([r, l]) => `<option value="${r}" ${r === m.role ? 'selected' : ''}>${l}</option>`).join('')}</select>
-			${S.confirmRemove === m.user ? `<button class="btn btn-sm" style="color:var(--bad);border-color:var(--bad)" data-act="remove" data-id="${m.user}">Confirm remove</button><button class="linkbtn small" data-act="cancel-remove">Cancel</button>` : `<button class="linkbtn small bad" data-act="ask-remove" data-id="${m.user}">Remove</button>`}</li>`).join('') || '<li style="padding:24px 16px" class="muted">Nobody yet. Invite the business owner first.</li>'}</ul></section>
-		<section class="card" style="padding:16px"><h2 style="font-size:16px">Invite someone</h2><p class="muted">They get an email and can sign in with Google, Microsoft or an email link.</p>
-		<form id="invite" class="stack" style="margin-top:12px"><div><label class="label" for="i-name">Name</label><input class="input" id="i-name" autocomplete="off"></div><div><label class="label" for="i-email">Email *</label><input class="input" id="i-email" type="email" required autocomplete="off"></div>
-		<fieldset style="border:0;padding:0;margin:0"><legend class="label">Role</legend><div class="stack" style="gap:8px">${ROLES.map(([r, l, h], i) => `<label class="radio-card"><input type="radio" name="i-role" value="${r}" ${i === 1 ? 'checked' : ''}><span><span style="font-weight:500">${l}</span><span class="small muted" style="display:block">${h}</span></span></label>`).join('')}</div></fieldset>
-		<button class="btn btn-primary">Send invite</button></form></section>
+	const o = curOrg();
+	const people = db.members.filter((m) => m.org === o.id).map((m) => ({ ...m, p: db.profiles.find((p) => p.id === m.user) }));
+	const admins = people.filter((m) => m.role === 'admin'), subs = people.filter((m) => m.role !== 'admin').sort((a, b) => a.role.localeCompare(b.role) || a.p.name.localeCompare(b.p.name));
+	const row = (m) => `<li class="person"><span class="avatar">${initials(m.p.name)}</span><div style="flex:1;min-width:160px"><p style="font-weight:600">${esc(m.p.name)}${m.user === S.user ? ' <span class="xs faint">(you)</span>' : ''}</p><p class="xs muted">${esc(m.p.email)}</p></div>
+		<select class="input" style="width:auto;min-height:34px;font-size:13px" data-role="${m.user}" aria-label="Access level for ${esc(m.p.name)}">${Object.entries(ROLES).map(([r, v]) => `<option value="${r}" ${r === m.role ? 'selected' : ''}>${v.label}</option>`).join('')}</select>
+		${S.confirmRemove === m.user ? `<button class="btn sm danger" data-act="remove" data-id="${m.user}">Confirm remove</button><button class="btn sm" data-act="cancel-remove">Keep</button>` : `<button class="btn sm" data-act="ask-remove" data-id="${m.user}">Remove</button>`}</li>`;
+	return `${S.newClient ? `<p class="notice" style="margin-bottom:20px"><strong>${esc(o.name)}</strong> is created. Next, invite the business owner as Admin, then their sub-users. After that, set their KPIs and connect their accounts.</p>` : ''}
+	<div class="split-team">
+		<section class="panel"><div class="panel-h"><h2>Access hierarchy</h2><p class="xs faint">${people.length} users · no limit</p></div><div class="panel-b">
+			<div class="person" style="border-bottom:0;padding-top:0"><span class="avatar" style="background:var(--nav);color:#fff">SA</span><div style="flex:1"><p style="font-weight:600">MYCMO agency</p><p class="xs muted">Super admin. Full access to every client.</p></div><span class="chip role plain">Super admin</span></div>
+			<div class="tier"><p class="eyebrow" style="margin-top:6px">Admin · business owner</p><ul class="plain">${admins.map(row).join('') || '<li class="muted xs" style="padding:10px 0">No admin yet. Invite the business owner first.</li>'}</ul>
+				<div class="tier" style="margin-top:14px"><p class="eyebrow">Sub-users · managed by the admin</p><ul class="plain">${subs.map(row).join('') || '<li class="muted xs" style="padding:10px 0">No sub-users yet.</li>'}</ul></div>
+			</div>
+		</div></section>
+		<section class="panel"><div class="panel-h"><h2>Invite someone</h2></div><form id="invite" class="panel-b stack" style="gap:14px"><p class="xs muted" style="margin-top:-6px">They get an email and can sign in with Google, Microsoft or an email link.</p>
+			<div><label class="label" for="i-name">Name</label><input class="input" id="i-name" autocomplete="off"></div>
+			<div><label class="label" for="i-email">Email</label><input class="input" id="i-email" type="email" required autocomplete="off"></div>
+			<fieldset style="border:0;padding:0;margin:0"><legend class="label">Access level</legend><div class="stack" style="gap:8px">${Object.entries(ROLES).map(([r, v]) => `<label class="radio-card"><input type="radio" name="i-role" value="${r}" ${(admins.length ? r === 'rep' : r === 'admin') ? 'checked' : ''}><span><span style="font-weight:600">${v.label}</span><span class="xs muted" style="display:block">${v.help}</span></span></label>`).join('')}</div></fieldset>
+			<button class="btn primary">Send invite</button></form></section>
 	</div>`;
 }
 
 function viewKpis() {
 	const o = curOrg(), chosen = db.kpis.filter((k) => k.org === o.id), connected = db.integrations.filter((i) => i.org === o.id).map((i) => i.provider);
 	const key = (s, m) => `${s}:${m}`, sel = new Map(chosen.map((k) => [key(k.source, k.metric), k]));
-	return `${setupTabs()}<p class="muted" style="max-width:640px">Pick up to 6 headline KPIs. They appear at the top of ${esc(o.name)}'s dashboard with progress toward the monthly goal, and roll up into your all-clients view.</p>
-	<form id="kpis" class="stack" style="margin-top:16px">${Object.keys(SOURCES).map((s) => { const on = connected.includes(SOURCES[s].provider); return `<section class="card" style="padding:16px;${on ? '' : 'opacity:.6'}"><h2 style="font-size:15px">${SOURCES[s].label} ${on ? '' : '<span class="small faint" style="font-weight:400">not connected yet</span>'}</h2><ul class="plain">${METRICS.filter((m) => m.source === s).map((m) => { const k = key(s, m.metric), cur = sel.get(k); return `<li class="row" style="border-top:1px solid var(--border);padding-block:4px"><label class="check"><input type="checkbox" data-kpi="${k}" ${cur ? 'checked' : ''}><span>${m.label}</span></label><label class="row small muted" style="gap:8px" ${cur ? '' : 'hidden'} data-target-wrap="${k}">${m.upIsGood === false ? 'Goal (at or below)' : 'Monthly goal'}<input class="input" style="width:120px" inputmode="decimal" placeholder="optional" data-target="${k}" value="${cur?.target ?? ''}"></label></li>`; }).join('')}</ul></section>`; }).join('')}
-	<div class="card row" style="position:sticky;bottom:72px;padding:12px"><span class="small muted" id="kpi-count">${chosen.length} of 6 selected</span><button class="btn btn-primary" style="margin-left:auto">Save KPIs</button></div></form>`;
+	return `<p class="muted" style="max-width:68ch">Choose up to 6 headline KPIs for ${esc(o.name)} and set a monthly goal for each. They lead the client's dashboard and roll up into your portfolio view.</p>
+	<form id="kpis" class="stack" style="margin-top:18px;gap:14px;max-width:880px">${Object.keys(SOURCES).map((k) => { const on = connected.includes(SOURCES[k].provider); return `<section class="panel" style="padding:16px 20px;${on ? '' : 'opacity:.62'}"><p style="font-weight:600">${SOURCES[k].label} <span class="xs faint" style="font-weight:400">${SOURCES[k].sub}${on ? '' : ' · not connected yet'}</span></p><ul class="plain" style="margin-top:6px">${METRICS.filter((m) => m.source === k).map((m) => { const kk = key(k, m.metric), cur = sel.get(kk); return `<li class="row" style="border-top:1px solid var(--line);padding-block:4px"><label class="check"><input type="checkbox" data-kpi="${kk}" ${cur ? 'checked' : ''}><span>${esc(m.label)}</span></label><label class="row xs muted" style="gap:8px" ${cur ? '' : 'hidden'} data-target-wrap="${kk}">${m.upIsGood === false ? 'Goal (at or below)' : 'Monthly goal'}<input class="input" style="width:128px;min-height:36px" inputmode="decimal" placeholder="Optional" data-target="${kk}" value="${cur?.target ?? ''}"></label></li>`; }).join('')}</ul></section>`; }).join('')}
+	<div class="panel row" style="position:sticky;bottom:12px;padding:12px 16px;box-shadow:var(--shadow)"><span class="xs muted" id="kpi-count">${chosen.length} of 6 selected</span><button class="btn primary" style="margin-left:auto">Save KPIs and goals</button></div></form>`;
 }
 
 function viewConnections() {
 	const o = curOrg(), integ = Object.fromEntries(db.integrations.filter((i) => i.org === o.id).map((i) => [i.provider, i]));
-	return `${setupTabs()}<p class="muted" style="max-width:640px">Connect once. Data refreshes every night, and you can sync any time. Each platform connects separately, so a client can share ads without sharing analytics.</p>
-	<div class="stack" style="margin-top:16px;max-width:760px">${PROVIDERS.filter((p) => p.available).map((p) => { const i = integ[p.id]; return `<section class="card" style="padding:16px"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2 style="font-size:16px">${p.name} ${p.ads ? '<span class="chip chip-ads">Ads</span>' : ''}</h2><p class="muted">${p.covers}</p>${i ? `<p class="small ${i.status === 'error' ? 'bad' : 'faint'}" style="margin-top:4px;${i.status === 'error' ? 'font-weight:600' : ''}">${i.status === 'error' ? '⚠ Needs attention' : '● Connected'} · last sync ${new Date(i.synced).toLocaleString()}</p>${i.error ? `<p class="small muted">${esc(i.error)}</p>` : ''}` : ''}</div>
-		<div class="row" style="gap:8px"><button class="btn ${i ? '' : 'btn-primary'}" data-act="connect" data-v="${p.id}">${i ? 'Reconnect' : 'Connect'}</button>${i ? `<button class="btn" data-act="sync" data-v="${p.id}">Sync now</button><button class="btn" style="color:var(--bad)" data-act="disconnect" data-v="${p.id}">Disconnect</button>` : ''}</div></div>
-		${i ? `<div class="stack" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">${p.pickers.map((pk) => `<label><span class="label">${pk}</span><select class="input"><option>${esc(o.name)} (${pk.toLowerCase().includes('site') ? slugify(o.name).replace(/-/g, '') + '.com' : 'main'})</option><option>Don't track</option></select></label>`).join('')}</div>` : ''}</section>`; }).join('')}</div>
-	<h2 style="font-size:16px;margin-top:32px">Coming soon</h2><div class="grid g2" style="margin-top:12px;max-width:760px">${PROVIDERS.filter((p) => !p.available).map((p) => `<div class="card row" style="padding:16px;justify-content:space-between;opacity:.7"><div><p style="font-weight:500">${p.name}</p><p class="small muted">${p.covers}</p></div><span class="pill">Soon</span></div>`).join('')}</div>`;
+	return `<p class="muted" style="max-width:68ch">Each platform connects separately, so a client can share ad accounts without sharing analytics. Data refreshes nightly.</p>
+	<div class="stack" style="margin-top:18px;gap:14px;max-width:880px">${PROVIDERS.filter((p) => p.available).map((p) => { const i = integ[p.id]; return `<section class="panel" style="padding:18px 20px"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><p style="font-weight:600;font-size:15px">${p.name} ${p.ads ? '<span class="chip ads plain" style="margin-left:4px">Ads</span>' : ''}</p><p class="muted xs">${p.covers}</p>${i ? `<p class="xs ${i.status === 'error' ? 'bad' : 'good'}" style="margin-top:6px;font-weight:600">${i.status === 'error' ? 'Needs reconnecting' : 'Connected'} <span class="faint" style="font-weight:400">· last sync ${new Date(i.synced).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span></p>${i.error ? `<p class="xs muted">${esc(i.error)}</p>` : ''}` : ''}</div>
+		<div class="row" style="gap:8px"><button class="btn ${i ? '' : 'primary'}" data-act="connect" data-v="${p.id}">${i ? 'Reconnect' : 'Connect'}</button>${i ? `<button class="btn" data-act="sync" data-v="${p.id}">Sync now</button><button class="btn danger" data-act="disconnect" data-v="${p.id}">Disconnect</button>` : ''}</div></div>
+		${i ? `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)">${p.pickers.map((pk) => `<label><span class="label">${pk}</span><select class="input" style="font-size:14px"><option>${esc(o.name)}${pk.includes('site') ? ` (${slugify(o.name).replace(/-/g, '')}.com)` : ''}</option><option>Don't track</option></select></label>`).join('')}</div>` : ''}</section>`; }).join('')}
+	<p class="eyebrow" style="margin-top:18px">Coming soon</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">${PROVIDERS.filter((p) => !p.available).map((p) => `<div class="panel" style="padding:14px 16px;opacity:.72"><p style="font-weight:600">${p.name}</p><p class="xs muted">${p.covers}</p></div>`).join('')}</div></div>`;
 }
 
-// ---------------------------------------------------------------------------
+// ===========================================================================
 // Render + events
-// ---------------------------------------------------------------------------
+// ===========================================================================
 const app = document.getElementById('app');
 function render() {
-	sparks.length = 0;
-	const banner = S.user ? `<div class="banner">Demo, sample data: signed in as <strong>${esc(me().name)}</strong>${isAgency() ? '' : ` (${ROLE_LABEL[roleIn(S.org)] ?? ''})`}<button data-act="switch">Switch user</button></div>` : '';
+	charts.length = 0;
+	if (!S.user) { app.innerHTML = viewSignIn(); return; }
 	let body;
-	if (!S.user) body = viewPicker();
-	else if (!S.org) body = viewPortfolio();
-	else body = clientShell({ overview: viewOverview, pipeline: viewPipeline, add: viewAdd, huddle: viewHuddle, team: viewTeam, kpis: viewKpis, connections: viewConnections }[S.view]());
-	app.innerHTML = banner + body;
-	// Portfolio table vs cards
-	app.querySelectorAll('.only-sm').forEach((el) => { el.style.display = matchMedia('(max-width: 700px)').matches ? '' : 'none'; });
+	if (S.page === 'client' && S.org) body = clientHeader() + ({ overview: viewOverview, pipeline: viewPipeline, add: viewAdd, huddle: viewHuddle, team: viewTeam, kpis: viewKpis, connections: viewConnections }[S.tab])();
+	else if (S.page === 'directory') body = viewDirectory();
+	else if (S.page === 'new') body = viewNewClient();
+	else body = viewHome();
+	app.innerHTML = shell(body);
+	renderSearch();
 }
-function go(patch) { Object.assign(S, patch); render(); window.scrollTo(0, 0); }
+function renderSearch() { const w = document.getElementById('gresults-wrap'); if (w) w.innerHTML = searchResults(); }
+function go(patch) { Object.assign(S, { navOpen: false, searchOpen: false, openLead: null, confirmRemove: null }, patch); render(); scrollTo(0, 0); }
+function openOrg(id) { go({ page: 'client', org: id, tab: 'overview', searchQ: '', newClient: false }); }
+function keepFocus(id, fn) { const el = document.getElementById(id), pos = el?.selectionStart; fn(); const n = document.getElementById(id); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch {} } }
 
 app.addEventListener('click', (e) => {
-	const t = e.target.closest('[data-act]'); if (!t) return;
+	const t = e.target.closest('[data-act]');
+	if (!e.target.closest('#gsearch') && S.searchOpen) { S.searchOpen = false; renderSearch(); }
+	if (!t) return;
 	const { act, id, v } = t.dataset;
-	if (act === 'signin') {
-		const orgs = db.profiles.find((p) => p.id === id)?.agency ? null : t.dataset.org;
-		return go({ user: id, org: orgs ?? null, view: 'overview', openLead: null, flash: null });
+	switch (act) {
+		case 'signin': {
+			S.user = id;
+			if (id === SUPER) { S.pins = loadPins() ?? defaultPins(); return go({ page: 'home', org: null }); }
+			const orgs = myOrgs();
+			return go({ page: 'client', org: t.dataset.org ?? orgs[0].id, tab: 'overview' });
+		}
+		case 'switch': return go({ user: null, page: 'home', org: null, personaQ: '' });
+		case 'page': return go({ page: v, org: v === 'client' ? S.org : null, newClient: false });
+		case 'open-org': e.stopPropagation(); return openOrg(id);
+		case 'tab': return go({ tab: v, newClient: v === 'team' ? S.newClient : false });
+		case 'pin': {
+			e.stopPropagation(); togglePin(id);
+			// Re-render the page (sidebar and My view change) but keep the search dropdown open.
+			if (S.searchOpen) return keepFocus('gsearch-in', render);
+			return render();
+		}
+		case 'focus-search': { const i = document.getElementById('gsearch-in'); S.searchOpen = true; renderSearch(); i?.focus(); i?.scrollIntoView({ block: 'center' }); return; }
+		case 'open-nav': S.navOpen = true; return render();
+		case 'close-nav': S.navOpen = false; return render();
+		case 'dir-filter': S.dir.status = v; S.dir.page = 0; return go({ page: 'directory' });
+		case 'dir-page': S.dir.page += Number(v); return render();
+		case 'sort': S.dir.asc = S.dir.sort === v ? !S.dir.asc : v === 'name'; S.dir.sort = v; return render();
+		case 'open-lead': S.openLead = S.openLead === id ? null : id; return render();
+		case 'log': {
+			const l = db.leads.find((x) => x.id === id);
+			db.activities.push({ org: l.org, lead: id, user: S.user, type: v, at: iso(new Date()) });
+			if (l.stage === 'new' && canEditLead(l)) { l.stage = 'attempted_contact'; l.changed = iso(new Date()); toast(`${t.dataset.l}. Moved to Attempted contact.`); } else toast(`${t.dataset.l}. Logged.`);
+			invalidate(l.org); return render();
+		}
+		case 'ask-remove': S.confirmRemove = id; return render();
+		case 'cancel-remove': S.confirmRemove = null; return render();
+		case 'remove': {
+			const o = curOrg(); S.confirmRemove = null;
+			if (id === S.user) { toast("You can't remove yourself"); return render(); }
+			const admins = db.members.filter((m) => m.org === o.id && m.role === 'admin');
+			if (admins.length === 1 && admins[0].user === id) { toast('Every client needs at least one admin'); return render(); }
+			db.members = db.members.filter((m) => !(m.org === o.id && m.user === id)); invalidate(o.id); toast('Access removed'); return render();
+		}
+		case 'connect': {
+			const ex = db.integrations.find((i) => i.org === S.org && i.provider === v);
+			if (ex) Object.assign(ex, { status: 'connected', error: '', synced: iso(new Date()) }); else db.integrations.push({ org: S.org, provider: v, status: 'connected', error: '', synced: iso(new Date()) });
+			invalidate(S.org); toast(`In the live app this opens ${PROVIDERS.find((p) => p.id === v).name}'s sign-in. Marked connected for the demo.`); return render();
+		}
+		case 'sync': db.integrations.find((x) => x.org === S.org && x.provider === v).synced = iso(new Date()); toast('Sync complete'); return render();
+		case 'disconnect': db.integrations = db.integrations.filter((x) => !(x.org === S.org && x.provider === v)); invalidate(S.org); toast('Disconnected. Historical data is kept.'); return render();
 	}
-	if (act === 'switch') return go({ user: null, org: null, personaQuery: '' });
-	if (act === 'portfolio') return isAgency() ? go({ org: null, view: 'overview' }) : go({ org: null });
-	if (act === 'open-org') return go({ org: id, view: 'overview', openLead: null });
-	if (act === 'view') return go({ view: v, openLead: null, confirmRemove: null, flash: v === 'team' ? S.flash : null });
-	if (act === 'filter') { S.filter = v; return render(); }
-	if (act === 'toggle-add') { S.adding = !S.adding; render(); return document.getElementById('nc-name')?.focus(); }
-	if (act === 'open-lead') { S.openLead = S.openLead === id ? null : id; return render(); }
-	if (act === 'log') {
-		const l = db.leads.find((x) => x.id === id);
-		db.activities.push({ org: l.org, lead: id, user: S.user, type: v, at: iso(new Date()) });
-		if (l.stage === 'new' && canEditLead(l)) { l.stage = 'attempted_contact'; l.changed = iso(new Date()); toast(`${t.dataset.l} ✓ Moved to Attempted contact`); }
-		else toast(`${t.dataset.l} ✓`);
-		return render();
-	}
-	if (act === 'ask-remove') { S.confirmRemove = id; return render(); }
-	if (act === 'cancel-remove') { S.confirmRemove = null; return render(); }
-	if (act === 'remove') {
-		const o = curOrg();
-		if (id === S.user) { S.confirmRemove = null; toast("You can't remove yourself"); return render(); }
-		const owners = db.members.filter((m) => m.org === o.id && m.role === 'owner');
-		if (owners.length === 1 && owners[0].user === id) { S.confirmRemove = null; toast('Every client needs at least one owner'); return render(); }
-		db.members = db.members.filter((m) => !(m.org === o.id && m.user === id)); S.confirmRemove = null; toast('Removed'); return render();
-	}
-	if (act === 'connect') {
-		const o = curOrg(), ex = db.integrations.find((i) => i.org === o.id && i.provider === v);
-		if (ex) { ex.status = 'connected'; ex.error = ''; ex.synced = iso(new Date()); } else db.integrations.push({ org: o.id, provider: v, status: 'connected', error: '', synced: iso(new Date()) });
-		toast(`In the live app this opens ${PROVIDERS.find((p) => p.id === v).name}'s sign-in. Marked connected for the demo.`); return render();
-	}
-	if (act === 'sync') { const i = db.integrations.find((x) => x.org === S.org && x.provider === v); i.synced = iso(new Date()); toast('Synced'); return render(); }
-	if (act === 'disconnect') { db.integrations = db.integrations.filter((x) => !(x.org === S.org && x.provider === v)); toast('Disconnected. Past data is kept.'); return render(); }
 });
-app.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.matches('tr[data-act]')) e.target.click(); });
-
+app.addEventListener('keydown', (e) => {
+	if (e.key === 'Enter' && e.target.matches('tr[data-act]')) return openOrg(e.target.dataset.id);
+	if (e.target.id === 'gsearch-in') {
+		const items = [...document.querySelectorAll('#gresults li[data-id]')];
+		if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); S.searchIdx = Math.max(0, Math.min(items.length - 1, S.searchIdx + (e.key === 'ArrowDown' ? 1 : -1))); renderSearch(); }
+		if (e.key === 'Enter' && items[S.searchIdx]) { e.preventDefault(); openOrg(items[S.searchIdx].dataset.id); }
+		if (e.key === 'Escape') { S.searchOpen = false; renderSearch(); e.target.blur(); }
+	}
+});
+document.addEventListener('keydown', (e) => { if (e.key === '/' && S.user && isSuper() && !e.target.matches('input, textarea, select')) { e.preventDefault(); const i = document.getElementById('gsearch-in'); S.searchOpen = true; renderSearch(); i?.focus(); } });
+app.addEventListener('focusin', (e) => { if (e.target.id === 'gsearch-in' && !S.searchOpen) { S.searchOpen = true; S.searchIdx = 0; renderSearch(); } });
 app.addEventListener('input', (e) => {
-	if (e.target.id === 'persona-q' || e.target.id === 'client-q') {
-		const k = e.target.id === 'persona-q' ? 'personaQuery' : 'query', pos = e.target.selectionStart;
-		S[k] = e.target.value; render(); const el = document.getElementById(e.target.id); el.focus(); el.setSelectionRange(pos, pos);
-	}
+	const el = e.target;
+	if (el.id === 'gsearch-in') { S.searchQ = el.value; S.searchOpen = true; S.searchIdx = 0; return renderSearch(); }
+	if (el.id === 'persona-q') { S.personaQ = el.value; return keepFocus('persona-q', render); }
+	if (el.id === 'dir-q') { S.dir.q = el.value; S.dir.page = 0; return keepFocus('dir-q', render); }
 });
-
 app.addEventListener('change', (e) => {
 	const el = e.target;
-	if (el.dataset.move) { const l = db.leads.find((x) => x.id === el.dataset.move); l.stage = el.value; l.changed = iso(new Date()); db.activities.push({ org: l.org, lead: l.id, user: S.user, type: 'stage_change', at: iso(new Date()) }); toast(`Moved to ${STAGES.find((s) => s[0] === el.value)[1]}`); return render(); }
+	if (el.id === 'dir-ind') { S.dir.industry = el.value; S.dir.page = 0; return render(); }
+	if (el.dataset.move) { const l = db.leads.find((x) => x.id === el.dataset.move); l.stage = el.value; l.changed = iso(new Date()); invalidate(l.org); toast(`Moved to ${STAGES.find((s) => s[0] === el.value)[1]}`); return render(); }
 	if (el.dataset.role) {
-		if (el.dataset.role === S.user && el.value !== 'owner') { toast("You can't demote yourself"); return render(); }
-		db.members.find((m) => m.org === S.org && m.user === el.dataset.role).role = el.value; toast('Role updated'); return render();
+		if (el.dataset.role === S.user && el.value !== 'admin') { toast("You can't lower your own access"); return render(); }
+		const admins = db.members.filter((m) => m.org === S.org && m.role === 'admin');
+		if (el.value !== 'admin' && admins.length === 1 && admins[0].user === el.dataset.role) { toast('Every client needs at least one admin'); return render(); }
+		db.members.find((m) => m.org === S.org && m.user === el.dataset.role).role = el.value; toast('Access level updated'); return render();
 	}
 	if (el.dataset.kpi) {
 		app.querySelector(`[data-target-wrap="${el.dataset.kpi}"]`).hidden = !el.checked;
-		const n = app.querySelectorAll('[data-kpi]:checked').length, c = document.getElementById('kpi-count');
-		c.textContent = `${n} of 6 selected`; c.className = `small ${n > 6 ? 'bad' : 'muted'}`;
+		const n = app.querySelectorAll('[data-kpi]:checked').length, c = document.getElementById('kpi-count'); c.textContent = `${n} of 6 selected`; c.className = `xs ${n > 6 ? 'bad' : 'muted'}`;
 	}
 });
-
 app.addEventListener('submit', (e) => {
 	e.preventDefault();
 	const f = e.target, o = curOrg(), val = (id) => document.getElementById(id)?.value.trim() ?? '';
 	if (f.id === 'new-client') {
 		const n = val('nc-name'), slug = slugify(n);
-		if (slug.length < 2) return toast('Name is too short');
-		if (db.orgs.some((x) => x.slug === slug)) return toast('That client already exists');
-		const id = newId(); db.orgs.push({ id, name: n, slug, industry: val('nc-ind') });
-		return go({ org: id, view: 'team', adding: false, flash: { newClient: true } });
+		if (slug.length < 2) return toast('Enter the business name');
+		if (db.orgs.some((x) => x.slug === slug)) return toast('A client with that name already exists');
+		const id = newId(); db.orgs.push({ id, name: n, slug, industry: val('nc-ind') || 'Other', since: iso(new Date()) }); db.snaps.set(id, []);
+		if (document.getElementById('nc-pin').checked) { S.pins = [...S.pins, id]; savePins(); }
+		toast(`${n} created`); return go({ page: 'client', org: id, tab: 'team', newClient: true });
 	}
 	if (f.id === 'add-lead') {
 		const amount = Number(val('l-val').replace(/[$,]/g, '') || 0);
 		if (!Number.isFinite(amount) || amount < 0) return toast('Deal value must be a positive number');
-		db.leads.push({ id: newId(), org: o.id, owner: S.user, name: val('l-name'), phone: val('l-phone'), company: val('l-co'), source: f.querySelector('[name=l-src]:checked').value, stage: 'new', value: amount, created: iso(new Date()), changed: iso(new Date()) });
-		toast(`Saved ${val('l-name')}`);
+		db.leads.push({ id: newId(), org: o.id, owner: isSuper() ? null : S.user, name: val('l-name'), phone: val('l-phone'), company: val('l-co'), source: f.querySelector('[name=l-src]:checked').value, stage: 'new', value: amount, created: iso(new Date()), changed: iso(new Date()) });
+		invalidate(o.id); toast(`Saved ${val('l-name')}`);
 		if (e.submitter?.dataset.again) { f.reset(); return document.getElementById('l-name').focus(); }
-		return go({ view: 'pipeline' });
+		return go({ tab: 'pipeline' });
 	}
 	if (f.id === 'huddle') {
 		const w = val('h-w'), b = val('h-b'), fo = val('h-f');
@@ -616,46 +915,53 @@ app.addEventListener('submit', (e) => {
 	if (f.id === 'invite') {
 		const email = val('i-email').toLowerCase(), role = f.querySelector('[name=i-role]:checked').value;
 		let p = db.profiles.find((x) => x.email === email);
-		if (!p) { p = { id: newId(), name: val('i-name') || email.split('@')[0], email, agency: false }; db.profiles.push(p); }
+		if (!p) { p = { id: newId(), name: val('i-name') || email.split('@')[0], email }; db.profiles.push(p); }
 		const ex = db.members.find((m) => m.org === o.id && m.user === p.id);
-		if (ex) ex.role = role; else db.members.push({ org: o.id, user: p.id, role });
-		S.flash = null; toast(`Invite sent to ${email}. You can now sign in as them from Switch user.`); return render();
+		if (ex) ex.role = role; else db.members.push({ org: o.id, user: p.id, role, added: iso(new Date()) });
+		invalidate(o.id); S.newClient = false; toast(`Invite sent to ${email}. Use Switch user to sign in as them.`); return render();
 	}
 	if (f.id === 'kpis') {
 		const boxes = [...app.querySelectorAll('[data-kpi]:checked')];
-		if (boxes.length > 6) return toast('Pick at most 6 headline KPIs');
-		for (const b of boxes) { const t = app.querySelector(`[data-target="${b.dataset.kpi}"]`).value.replace(/[$,]/g, '').trim(); if (t && (!Number.isFinite(Number(t)) || Number(t) < 0)) return toast('Goals must be positive numbers'); }
+		if (boxes.length > 6) return toast('Choose at most 6 headline KPIs');
+		const tv = (b) => app.querySelector(`[data-target="${b.dataset.kpi}"]`).value.replace(/[$,]/g, '').trim();
+		if (boxes.some((b) => tv(b) && (!Number.isFinite(Number(tv(b))) || Number(tv(b)) < 0))) return toast('Goals must be positive numbers');
 		db.kpis = db.kpis.filter((k) => k.org !== o.id);
-		for (const b of boxes) { const [source, metric] = b.dataset.kpi.split(':'), t = app.querySelector(`[data-target="${b.dataset.kpi}"]`).value.replace(/[$,]/g, '').trim(); db.kpis.push({ org: o.id, source, metric, position: METRICS.findIndex((m) => m.source === source && m.metric === metric), target: t === '' ? null : Number(t) }); }
-		toast(`Saved ${boxes.length} KPIs`); return render();
+		for (const b of boxes) { const [source, metric] = b.dataset.kpi.split(':'); db.kpis.push({ org: o.id, source, metric, position: METRICS.findIndex((m) => m.source === source && m.metric === metric), target: tv(b) === '' ? null : Number(tv(b)) }); }
+		invalidate(o.id); toast(`Saved ${boxes.length} KPIs`); return render();
 	}
 });
 
-// Drag and drop between pipeline stages (desktop)
+// Pipeline drag and drop (desktop)
 app.addEventListener('dragstart', (e) => { const li = e.target.closest?.('[data-drag]'); if (li) { S.dragging = li.dataset.drag; e.dataTransfer.effectAllowed = 'move'; } });
 app.addEventListener('dragover', (e) => { const col = e.target.closest?.('[data-drop]'); if (col && S.dragging) { e.preventDefault(); app.querySelectorAll('.col.drop').forEach((c) => c !== col && c.classList.remove('drop')); col.classList.add('drop'); } });
 app.addEventListener('drop', (e) => {
 	const col = e.target.closest?.('[data-drop]'); if (!col || !S.dragging) return; e.preventDefault();
 	const l = db.leads.find((x) => x.id === S.dragging); S.dragging = null;
-	if (!canEditLead(l)) { toast('Only the assigned rep or the owner can move this lead'); return render(); }
-	if (l.stage !== col.dataset.drop) { l.stage = col.dataset.drop; l.changed = iso(new Date()); toast(`Moved to ${STAGES.find((s) => s[0] === l.stage)[1]}`); }
+	if (!canEditLead(l)) { toast('Only the assigned rep or an admin can move this lead'); return render(); }
+	if (l.stage !== col.dataset.drop) { l.stage = col.dataset.drop; l.changed = iso(new Date()); invalidate(l.org); toast(`Moved to ${STAGES.find((s) => s[0] === l.stage)[1]}`); }
 	render();
 });
 app.addEventListener('dragend', () => { S.dragging = null; app.querySelectorAll('.col.drop').forEach((c) => c.classList.remove('drop')); });
 
-// Sparkline crosshair + tooltip
+// Chart hover: crosshair + tooltip
 app.addEventListener('pointermove', (e) => {
-	const wrap = e.target.closest?.('[data-spark]'); if (!wrap) return;
-	const { points, format } = sparks[wrap.dataset.spark], svg = wrap.querySelector('svg'), rect = svg.getBoundingClientRect();
-	const i = Math.max(0, Math.min(points.length - 1, Math.round(((e.clientX - rect.left) / rect.width) * (points.length - 1))));
-	const x = (i / (points.length - 1)) * 200, line = svg.querySelector('.cross');
-	line.setAttribute('x1', x); line.setAttribute('x2', x); line.setAttribute('visibility', 'visible');
+	const wrap = e.target.closest?.('[data-chart]'); if (!wrap) return;
+	const c = charts[wrap.dataset.chart], svg = wrap.querySelector('svg'), rect = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+	const pl = c.kind === 'area' ? 44 : 0, pr = c.kind === 'area' ? 8 : 0, W = vb.width;
+	const rel = ((e.clientX - rect.left) / rect.width) * W;
+	const i = Math.max(0, Math.min(c.points.length - 1, Math.round(((rel - pl) / (W - pl - pr)) * (c.points.length - 1))));
+	const x = pl + (i / (c.points.length - 1)) * (W - pl - pr);
+	const cross = svg.querySelector('.cross'); cross.setAttribute('x1', x); cross.setAttribute('x2', x); cross.setAttribute('visibility', 'visible');
+	let yPx = 0;
+	if (c.kind === 'area') {
+		const vals = c.points.map((p) => p.value), max = Math.max(...vals) * 1.08, pt = 12, pb = 26, y = pt + (1 - c.points[i].value / max) * (c.height - pt - pb);
+		const dot = svg.querySelector('.dot'); dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('visibility', 'visible'); yPx = (y / c.height) * rect.height;
+	}
 	let tip = wrap.querySelector('.tip'); if (!tip) { tip = document.createElement('div'); tip.className = 'tip'; wrap.append(tip); }
-	tip.style.left = `${(x / 200) * 100}%`;
-	tip.innerHTML = `<span class="faint">${new Date(points[i].day + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}</span> <strong>${fmt(points[i].value, format)}</strong>`;
+	tip.style.left = `${(x / W) * 100}%`; tip.style.top = `${yPx}px`;
+	tip.innerHTML = `${shortDate(c.points[i].day)} · <strong>${fmt(c.points[i].value, c.format)}</strong>`;
 });
-app.addEventListener('pointerout', (e) => { const wrap = e.target.closest?.('[data-spark]'); if (wrap && !wrap.contains(e.relatedTarget)) { wrap.querySelector('.tip')?.remove(); wrap.querySelector('.cross')?.setAttribute('visibility', 'hidden'); } });
-addEventListener('resize', () => app.querySelectorAll('.only-sm').forEach((el) => { el.style.display = matchMedia('(max-width: 700px)').matches ? '' : 'none'; }));
+app.addEventListener('pointerout', (e) => { const wrap = e.target.closest?.('[data-chart]'); if (wrap && !wrap.contains(e.relatedTarget)) { wrap.querySelector('.tip')?.remove(); wrap.querySelector('.cross')?.setAttribute('visibility', 'hidden'); wrap.querySelector('.dot')?.setAttribute('visibility', 'hidden'); } });
 
 render();
 </script>
