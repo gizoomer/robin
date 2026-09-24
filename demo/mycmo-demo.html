@@ -50,6 +50,53 @@ button { cursor: pointer; }
 .stack { display: flex; flex-direction: column; gap: 12px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
+/* App bar (top navigation) */
+.appbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: var(--nav); color: var(--nav-hi); }
+.appbar .in { display: flex; align-items: center; gap: 20px; min-height: 64px; padding-inline: 32px; max-width: 1440px; margin: 0 auto; }
+.appbar .brand { font-family: var(--serif); font-size: 22px; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; }
+.switcher { position: relative; }
+.switcher > button { display: flex; align-items: center; gap: 10px; border: 0; background: none; color: inherit; padding: 6px 10px; border-radius: 8px; text-align: left; max-width: 300px; }
+.switcher > button:hover, .switcher > button[aria-expanded="true"] { background: var(--nav-2); }
+.switcher small { display: block; font-size: 11px; color: var(--nav-ink); }
+.switcher b { display: block; font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.popover { position: absolute; top: calc(100% + 8px); left: 0; width: min(440px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); border: 1px solid var(--line-2); border-radius: 12px; box-shadow: var(--shadow); padding: 10px; z-index: 50; }
+.popover .master { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: none; border-radius: 6px; padding: 10px; text-align: left; font-weight: 600; }
+.popover .master:hover { background: var(--sunken); }
+.appnav { display: flex; gap: 4px; margin-left: auto; }
+.appnav button { border: 0; background: none; color: var(--nav-ink); padding: 8px 14px; border-radius: 6px; font-size: 14px; font-weight: 600; }
+.appnav button:hover { color: var(--nav-hi); }
+.appnav button[aria-current="page"] { color: var(--nav-hi); background: var(--nav-2); }
+.me { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex: none; }
+.viewas { background: var(--warn-soft); color: var(--ink); border-bottom: 1px solid var(--line); font-size: 13px; }
+.viewas .in { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 8px 16px; flex-wrap: wrap; }
+.page { max-width: 1440px; margin: 0 auto; padding: 32px 32px 64px; }
+/* Accounts table */
+.acct { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.acct .logo { width: 34px; height: 34px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-size: 12px; font-weight: 700; flex: none; }
+.acct button { border: 0; background: none; padding: 0; font-weight: 600; color: var(--ink); text-align: left; }
+.acct button:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.filters td { padding: 10px 14px; background: var(--sunken); }
+.filters input { width: 100%; min-height: 34px; border: 1px solid var(--line-2); background: var(--surface); border-radius: 6px; padding: 0 10px; font-size: 13px; }
+.filters input:focus { outline: none; border-color: var(--accent); }
+.acts-cell { display: flex; gap: 6px; justify-content: flex-end; }
+.sq { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line-2); background: var(--surface); border-radius: 8px; color: var(--ink-2); }
+.sq:hover { color: var(--ink); border-color: var(--ink-3); }
+.sq.danger:hover { color: var(--bad); border-color: var(--bad); }
+.sq[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.sq svg { width: 15px; height: 15px; }
+.plan { font-weight: 600; } .plan small { display: block; font-weight: 400; font-size: 12px; color: var(--ink-3); }
+.over { color: var(--warn); font-weight: 600; }
+/* Modal */
+.modal-bg { position: fixed; inset: 0; background: rgba(8, 14, 22, 0.45); z-index: 70; display: grid; place-items: center; padding: 16px; }
+.modal { background: var(--surface); border-radius: 14px; width: min(560px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; box-shadow: var(--shadow); }
+.modal header { padding: 20px 24px 0; }
+.modal header h2 { font-family: var(--serif); font-weight: 500; font-size: 24px; }
+.modal .body { padding: 18px 24px; display: flex; flex-direction: column; gap: 14px; }
+.modal footer { padding: 14px 24px 20px; display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--line); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 960px) { .appbar .in, .page { padding-inline: 16px; } .appnav { display: none; } .appbar .in { gap: 8px; } }
+@media (max-width: 560px) { .two { grid-template-columns: 1fr; } .switcher > button { max-width: 200px; } }
+
 /* Shell */
 .shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 100%; }
 .side { background: var(--nav); color: var(--nav-ink); padding: 20px 14px; display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
@@ -319,9 +366,17 @@ const PROVIDERS = [
 const STAGES = [['new', 'New lead'], ['attempted_contact', 'Attempted contact'], ['meeting_scheduled', 'Meeting scheduled'], ['proposal_sent', 'Proposal sent'], ['closed_won', 'Closed won'], ['closed_lost', 'Closed lost']];
 const LEAD_SOURCES = [['door_knock', 'Door knock'], ['referral', 'Referral'], ['web', 'Web'], ['phone', 'Phone'], ['social', 'Social'], ['other', 'Other']];
 const QUICK = [['call', 'Logged call'], ['voicemail', 'Left voicemail'], ['door_knock', 'Knocked door'], ['follow_up_scheduled', 'Follow-up set']];
+const PLANS = {
+	starter: { label: 'Starter', fee: 499, users: 5, covers: 'Analytics + social reporting' },
+	growth: { label: 'Growth', fee: 999, users: 15, covers: 'Adds CRM pipeline and one ad platform' },
+	pro: { label: 'Pro', fee: 1999, users: 50, covers: 'All channels, all ad platforms' },
+	enterprise: { label: 'Enterprise', fee: 3999, users: Infinity, covers: 'Unlimited users, custom reporting' }
+};
+const EXTRA_USER_FEE = 15;
 const ROLES = { admin: { label: 'Admin', help: 'Business owner. Sees all company data, connects accounts, adds and removes sub-users.' }, rep: { label: 'Sales rep', help: 'Sub-user. Works the pipeline and logs activity on their own leads.' }, viewer: { label: 'View only', help: 'Sub-user. Sees the dashboard, cannot change anything.' } };
 const ROLE_LABEL = { super: 'Super admin', admin: 'Admin', rep: 'Sales rep', viewer: 'View only' };
 
+const todayAnchor = (() => { const t = new Date(); return new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), 1)); })();
 function seed() {
 	const r = rng(7);
 	const db = { profiles: [{ id: SUPER, name: 'You', email: 'you@youragency.com', super: true }], orgs: [], members: [], leads: [], activities: [], huddles: [], spend: [], integrations: [], snaps: new Map(), kpis: [] };
@@ -337,7 +392,9 @@ function seed() {
 		const momentum = r() < 0.14 ? -1 : r() < 0.3 ? 0.3 : 1;
 		const providers = ci % 23 === 22 ? [] : baseChannels.filter((p, i) => i < 2 || r() > 0.25);
 		const broken = ci % 17 === 3;
-		db.orgs.push({ id: orgId, name: nm, slug, industry, since: iso(daysAgo(900 - ci * 8)) });
+		const plan = providers.length >= 4 ? 'pro' : providers.length === 3 ? 'growth' : ci % 11 === 0 ? 'enterprise' : 'starter';
+		const created = daysAgo(40 + Math.floor(r() * 1400)), renew = new Date(todayAnchor); renew.setUTCDate(created.getUTCDate() % 28 + 1); if (renew <= new Date()) renew.setUTCMonth(renew.getUTCMonth() + 1);
+		db.orgs.push({ id: orgId, name: nm, slug, industry, since: iso(created), accountId: String(24000 + Math.floor(r() * 96000)), plan, fee: PLANS[plan].fee, billedTo: ci % 5 === 0 ? 'Client direct' : 'Master account', renewal: iso(renew) });
 
 		const subCount = 2 + Math.floor(r() * 4);
 		const roles = ['admin', ...Array.from({ length: subCount }, (_, i) => i < Math.ceil(subCount * 0.6) ? 'rep' : 'viewer')];
@@ -474,21 +531,28 @@ const ICON = {
 	menu: '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 4h11M2.5 8h11M2.5 12h11" stroke-linecap="round"/></svg>',
 	x: '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m4 4 8 8M12 4l-8 8" stroke-linecap="round"/></svg>',
 	chart: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 13.5h11M4.5 11V8M8 11V4.5M11.5 11V6.5" stroke-linecap="round"/></svg>',
+	dash: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2.5 13.5h11M4.5 11V8M8 11V4.5M11.5 11V6.5" stroke-linecap="round"/></svg>',
+	edit: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10.5 2.5l3 3-8 8h-3v-3z" stroke-linejoin="round"/></svg>',
+	trash: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 9h5.8l.6-9" stroke-linejoin="round" stroke-linecap="round"/></svg>',
+	star: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m8 2.2 1.8 3.7 4 .6-2.9 2.8.7 4L8 11.4l-3.6 1.9.7-4L2.2 6.5l4-.6z" stroke-linejoin="round"/></svg>',
+	chev: '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m5 6.5 3-3 3 3M5 9.5l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 	board: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="2.5" width="3" height="11" rx=".5"/><rect x="6.5" y="2.5" width="3" height="7" rx=".5"/><rect x="10.5" y="2.5" width="3" height="9" rx=".5"/></svg>'
 };
 
 // ===========================================================================
 // Session, permissions (mirror of the SQL row-level security) and pins
 // ===========================================================================
-const S = { user: null, page: 'home', org: null, tab: 'overview', pins: [], dir: { q: '', status: 'all', industry: '', sort: 'name', asc: true, page: 0 }, personaQ: '', searchQ: '', searchOpen: false, searchIdx: 0, openLead: null, confirmRemove: null, newClient: false, navOpen: false, dragging: null };
-const me = () => db.profiles.find((p) => p.id === S.user);
+const S = { user: SUPER, viewAs: null, modal: null, acct: { q: '', id: '', tab: 'all', sort: 'name', asc: true, page: 0 }, page: 'accounts', org: null, tab: 'overview', pins: [], searchQ: '', searchOpen: false, searchIdx: 0, openLead: null, confirmRemove: null, newClient: false, navOpen: false, dragging: null };
+// While the super admin uses "View as", every permission check runs as that person.
+const actingId = () => S.viewAs ?? S.user;
+const me = () => db.profiles.find((p) => p.id === actingId());
 const isSuper = () => !!me()?.super;
-const roleIn = (orgId) => isSuper() ? 'super' : db.members.find((m) => m.org === orgId && m.user === S.user)?.role ?? null;
+const roleIn = (orgId) => isSuper() ? 'super' : db.members.find((m) => m.org === orgId && m.user === actingId())?.role ?? null;
 const canWork = (o) => ['super', 'admin', 'rep'].includes(roleIn(o));
 const canManage = (o) => ['super', 'admin'].includes(roleIn(o));
 const myOrgs = () => isSuper() ? db.orgs : db.orgs.filter((o) => roleIn(o.id));
 const curOrg = () => db.orgs.find((o) => o.id === S.org);
-const canEditLead = (l) => { const r = roleIn(l.org); return r === 'super' || r === 'admin' || (r === 'rep' && (l.owner === S.user || !l.owner)); };
+const canEditLead = (l) => { const r = roleIn(l.org); return r === 'super' || r === 'admin' || (r === 'rep' && (l.owner === actingId() || !l.owner)); };
 
 const PIN_KEY = 'mycmo-demo-pins';
 function loadPins() { try { const v = JSON.parse(localStorage.getItem(PIN_KEY) || 'null'); if (Array.isArray(v)) return v.filter((id) => db.orgs.some((o) => o.id === id)); } catch {} return null; }
@@ -532,50 +596,27 @@ function spark(points, { format, label, height = 36 } = {}) {
 // ===========================================================================
 // Views
 // ===========================================================================
-function viewSignIn() {
-	const q = S.personaQ.toLowerCase();
-	let groups = [...db.orgs].sort((a, b) => a.name.localeCompare(b.name)).map((o) => ({ o, people: db.members.filter((m) => m.org === o.id) }));
-	if (q) groups = groups.filter((g) => g.o.name.toLowerCase().includes(q) || g.o.industry.toLowerCase().includes(q) || g.people.some((p) => nameOf(p.user).toLowerCase().includes(q)));
-	const shown = groups.slice(0, q ? 24 : 9);
-	return `<main class="signin">
-		<p class="eyebrow">MYCMO · Interactive demo</p>
-		<h1 style="margin-top:10px">Choose who to sign in as</h1>
-		<p class="muted" style="margin-top:10px;max-width:60ch">Sample data for an agency with ${db.orgs.length} clients and ${db.members.length} client users. Each person sees exactly what their access level allows. Switch people any time from the top bar.</p>
-		<button class="super-card" data-act="signin" data-id="${SUPER}"><span><span style="font-family:var(--serif);font-size:22px">Super admin</span><small>You, the CMO. All ${db.orgs.length} clients, portfolio totals, create clients, set anyone's access.</small></span><span aria-hidden="true" style="font-size:20px">→</span></button>
-		<div class="row" style="justify-content:space-between;margin-top:40px">
-			<div><h2 style="font-family:var(--serif);font-weight:500;font-size:22px">Or sign in as a client's user</h2><p class="muted xs" style="margin-top:4px">Admin = the business owner. Sales rep and View only are the sub-users they manage.</p></div>
-			<input id="persona-q" class="input" style="max-width:280px" type="search" placeholder="Search ${db.orgs.length} clients or people" aria-label="Search clients or people" value="${esc(S.personaQ)}">
-		</div>
-		<div class="pgrid">${shown.map((g) => `<section class="panel" style="padding:12px"><p style="font-weight:600;padding:2px 8px">${esc(g.o.name)}</p><p class="xs faint" style="padding:0 8px 6px">${esc(g.o.industry)} · ${g.people.length} users</p><ul class="plain">${g.people.map((p) => `<li><button class="persona" data-act="signin" data-id="${p.user}" data-org="${g.o.id}"><span>${esc(nameOf(p.user))}</span><span class="xs faint">${ROLE_LABEL[p.role]}</span></button></li>`).join('')}</ul></section>`).join('')}</div>
-		${groups.length > shown.length ? `<p class="muted xs" style="margin-top:14px">Showing ${shown.length} of ${groups.length} clients. Search to find any of them.</p>` : ''}
-	</main>`;
-}
-
 function shell(body) {
-	const u = me(), orgs = myOrgs();
-	const pinned = isSuper() ? S.pins.map((id) => db.orgs.find((o) => o.id === id)).filter(Boolean) : orgs;
-	const nav = (page, label, icon, extra = '') => `<button class="nv" data-act="page" data-v="${page}" ${S.page === page ? 'aria-current="page"' : ''}>${ICON[icon]}<span>${label}</span>${extra}</button>`;
-	const orgLink = (o) => { const st = summary(o).status; return `<button class="nv pinned-link" data-act="open-org" data-id="${o.id}" ${S.page === 'client' && S.org === o.id ? 'aria-current="page"' : ''}><span class="dot" style="background:var(--${st === 'ok' ? 'good' : st === 'risk' ? 'warn' : 'bad'})"></span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(o.name)}</span></button>`; };
-	const side = `<aside class="side" aria-label="Main">
-		<div class="wordmark"><b>MYCMO</b><span>${isSuper() ? 'Agency' : 'Client'}</span></div>
-		${isSuper() ? `${nav('home', 'Portfolio', 'home')}${nav('directory', 'Client directory', 'list', `<span class="ct">${db.orgs.length}</span>`)}${nav('new', 'New client', 'plus')}` : ''}
-		<p class="grp">${isSuper() ? 'My view' : orgs.length > 1 ? 'Your businesses' : 'Your business'}</p>
-		${pinned.map(orgLink).join('') || '<p class="xs" style="padding:0 10px">Pin clients from search to keep them here.</p>'}
-		<div class="foot"><b>${esc(u.name)}</b>${isSuper() ? 'Super admin' : ROLE_LABEL[roleIn(S.org ?? orgs[0]?.id)]}</div>
-	</aside>`;
-	const search = isSuper() ? `<div class="search" id="gsearch">${ICON.search}<input id="gsearch-in" type="search" autocomplete="off" placeholder="Find a client, pin it to My view" aria-label="Find a client" aria-expanded="${S.searchOpen}" aria-controls="gresults" value="${esc(S.searchQ)}"><kbd>/</kbd><div id="gresults-wrap"></div></div>` : `<div style="flex:1"></div>`;
-	return `<div class="shell ${S.navOpen ? 'nav-open' : ''}">${side}<div class="scrim" data-act="close-nav"></div>
-		<div class="main"><div class="topbar"><div class="in"><button class="menu-btn" data-act="open-nav" aria-label="Open menu">${ICON.menu}</button>${search}
-		<p class="demo-note"><span class="who">Demo · signed in as <strong>${esc(u.name)}</strong> (${isSuper() ? 'Super admin' : ROLE_LABEL[roleIn(S.org)]})</span><button data-act="switch">Switch user</button></p></div></div>
-		<div class="content">${body}</div></div></div>`;
+	const u = db.profiles.find((p) => p.id === S.user), actor = me();
+	const inClient = S.page === 'client' && S.org;
+	const viewing = inClient ? curOrg().name : isSuper() ? 'Master account' : myOrgs()[0]?.name;
+	const nav = isSuper() ? [['accounts', 'Accounts'], ['dashboard', 'Dashboard']] : [];
+	const switcher = `<div class="switcher" id="gsearch"><button data-act="toggle-switcher" aria-expanded="${S.searchOpen}" aria-haspopup="listbox"><span style="min-width:0"><small>Viewing${isSuper() ? '' : ' account'}</small><b>${esc(viewing)}</b></span>${isSuper() ? ICON.chev : ''}</button>
+		${isSuper() && S.searchOpen ? `<div class="popover"><button class="master" data-act="page" data-v="accounts">${ICON.home.replace('<svg', '<svg width="16" height="16"')} Master account <span class="xs faint" style="font-weight:400;margin-left:auto">All ${db.orgs.length} accounts</span></button>
+			<div class="search" style="max-width:none;margin:6px 0">${ICON.search}<input id="gsearch-in" type="search" autocomplete="off" placeholder="Search accounts by name, industry or ID" aria-label="Search accounts" aria-controls="gresults" value="${esc(S.searchQ)}"></div><div id="gresults-wrap"></div></div>` : ''}</div>`;
+	return `${S.viewAs ? `<div class="viewas"><div class="in"><span>You're viewing MYCMO as <strong>${esc(actor.name)}</strong> (${ROLE_LABEL[roleIn(S.org)]}). This is exactly what they see.</span><button class="btn sm" data-act="exit-view-as">Back to super admin</button></div></div>` : ''}
+	<header class="appbar"><div class="in"><span class="brand">MYCMO</span>${switcher}
+		<nav class="appnav">${nav.map(([v, l]) => `<button data-act="page" data-v="${v}" ${S.page === v ? 'aria-current="page"' : ''}>${l}</button>`).join('')}</nav>
+		<span class="me" title="${esc(actor.name)}" style="${nav.length ? '' : 'margin-left:auto'}">${esc(initials(actor.name === 'You' ? 'Super Admin' : actor.name))}</span></div></header>
+	<main class="page">${body}</main>${modal()}`;
 }
 
 function searchResults() {
 	const q = S.searchQ.trim().toLowerCase();
 	if (!S.searchOpen) return '';
-	const list = (q ? db.orgs.filter((o) => o.name.toLowerCase().includes(q) || o.industry.toLowerCase().includes(q)) : db.orgs.filter((o) => !S.pins.includes(o.id)).sort((a, b) => summary(b).open - summary(a).open)).slice(0, 8);
+	const list = (q ? db.orgs.filter((o) => o.name.toLowerCase().includes(q) || o.industry.toLowerCase().includes(q) || o.accountId.includes(q)) : db.orgs.filter((o) => !S.pins.includes(o.id)).sort((a, b) => summary(b).open - summary(a).open)).slice(0, 8);
 	S.searchIdx = Math.min(S.searchIdx, Math.max(0, list.length - 1));
-	return `<ul class="plain results" id="gresults" role="listbox">${!q ? '<li class="xs faint" style="padding:6px 10px">Largest clients not in My view</li>' : ''}${list.map((o, i) => { const s = summary(o), pinned = S.pins.includes(o.id); return `<li role="option" aria-selected="${i === S.searchIdx}" data-idx="${i}" data-id="${o.id}"><button class="open" data-act="open-org" data-id="${o.id}"><span class="dot" style="width:8px;height:8px;border-radius:50%;flex:none;background:var(--${s.status === 'ok' ? 'good' : s.status === 'risk' ? 'warn' : 'bad'})"></span><span style="min-width:0"><span class="nm" style="display:block">${esc(o.name)}</span><span class="xs faint">${esc(o.industry)} · ${money(s.open)} pipeline</span></span></button><button class="pinbtn" data-act="pin" data-id="${o.id}" aria-pressed="${pinned}">${pinned ? 'In My view' : '+ My view'}</button></li>`; }).join('') || '<li class="muted" style="padding:10px">No clients match.</li>'}</ul>`;
+	return `<ul class="plain results" style="position:static;box-shadow:none;border:0;padding:0" id="gresults" role="listbox">${!q ? '<li class="xs faint" style="padding:6px 10px">Largest accounts not in My view</li>' : ''}${list.map((o, i) => { const s = summary(o), pinned = S.pins.includes(o.id); return `<li role="option" aria-selected="${i === S.searchIdx}" data-idx="${i}" data-id="${o.id}"><button class="open" data-act="open-org" data-id="${o.id}"><span class="dot" style="width:8px;height:8px;border-radius:50%;flex:none;background:var(--${s.status === 'ok' ? 'good' : s.status === 'risk' ? 'warn' : 'bad'})"></span><span style="min-width:0"><span class="nm" style="display:block">${esc(o.name)}</span><span class="xs faint">#${o.accountId} · ${esc(o.industry)} · ${PLANS[o.plan].label}</span></span></button><button class="pinbtn" data-act="pin" data-id="${o.id}" aria-pressed="${pinned}">${pinned ? 'In My view' : '+ My view'}</button></li>`; }).join('') || '<li class="muted" style="padding:10px">No clients match.</li>'}</ul>`;
 }
 
 function portfolioTotals() {
@@ -606,7 +647,7 @@ function viewHome() {
 	const pinned = S.pins.map((id) => db.orgs.find((o) => o.id === id)).filter(Boolean).map(summary);
 	const attention = T.all.filter((s) => s.status !== 'ok').sort((a, b) => (a.status === 'act' ? 0 : 1) - (b.status === 'act' ? 0 : 1) || b.open - a.open).slice(0, 6);
 	const updated = new Date(); updated.setHours(6, 17, 0, 0);
-	return `<div class="ph"><div><p class="eyebrow">Portfolio overview</p><h1 style="margin-top:6px">Good ${new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}</h1><p class="sub">${n} clients · ${T.users} client users · Data refreshed today at ${updated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</p></div><button class="btn primary" data-act="page" data-v="new">${ICON.plus.replace('<svg', '<svg width="14" height="14"')} New client</button></div>
+	return `<div class="ph"><div><p class="eyebrow">Master account</p><h1 style="margin-top:6px">Portfolio dashboard</h1><p class="sub">${n} clients · ${T.users} client users · Data refreshed today at ${updated.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</p></div><button class="btn primary" data-act="page" data-v="new">${ICON.plus.replace('<svg', '<svg width="14" height="14"')} Add account</button></div>
 
 	<section class="strip tnum" style="--n:5">
 		<div><p class="lbl">Open pipeline, all clients</p><p class="val hero-val">${money(T.pipeline)}</p><p class="dl">${T.leads} new leads in 30 days</p></div>
@@ -622,46 +663,69 @@ function viewHome() {
 			<div class="dist" role="img" aria-label="${T.counts.ok} on track, ${T.counts.risk} at risk, ${T.counts.act} need action"><div style="flex:${T.counts.ok};background:var(--good)"></div><div style="flex:${T.counts.risk};background:var(--warn)"></div><div style="flex:${T.counts.act};background:var(--bad)"></div></div>
 			<div class="legend"><span><i style="background:var(--good)"></i>On track <strong class="tnum">${T.counts.ok}</strong></span><span><i style="background:var(--warn)"></i>At risk <strong class="tnum">${T.counts.risk}</strong></span><span><i style="background:var(--bad)"></i>Action needed <strong class="tnum">${T.counts.act}</strong></span></div>
 			<ul class="plain" style="margin-top:18px">${attention.map((s) => `<li class="row" style="justify-content:space-between;padding:10px 0;border-top:1px solid var(--line);flex-wrap:nowrap"><button class="linkish" style="color:var(--ink);font-weight:600;text-align:left;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-act="open-org" data-id="${s.org.id}">${esc(s.org.name)}</button><span class="xs ${s.status === 'act' ? 'bad' : 'warn'}" style="text-align:right">${esc(s.issues[0])}</span></li>`).join('')}</ul>
-			<button class="linkish" style="margin-top:12px" data-act="dir-filter" data-v="attention">See all ${T.counts.risk + T.counts.act} clients that need attention →</button>
+			<button class="linkish" style="margin-top:12px" data-act="acct-tab" data-v="attention">See all ${T.counts.risk + T.counts.act} accounts that need attention →</button>
 		</div></section>
 	</div>
 
-	<section class="sec"><div class="sec-h"><div><h2>My view</h2><p class="muted xs" style="margin-top:4px">Clients you've pinned. Use the search bar to add any of your ${n} clients.</p></div><span class="xs faint">${pinned.length} pinned</span></div>
-		<div class="cards">${pinned.map(clientCard).join('')}<button class="addcard" data-act="focus-search">${ICON.plus.replace('<svg', '<svg width="22" height="22"')}<span style="font-weight:600">Add a client to My view</span><span class="xs faint">Search by name or industry</span></button></div>
+	<section class="sec"><div class="sec-h"><div><h2>My view</h2><p class="muted xs" style="margin-top:4px">Accounts you've starred. Star any of your ${n} accounts to add it here.</p></div><span class="xs faint">${pinned.length} pinned</span></div>
+		<div class="cards">${pinned.map(clientCard).join('')}<button class="addcard" data-act="acct-tab" data-v="all">${ICON.plus.replace('<svg', '<svg width="22" height="22"')}<span style="font-weight:600">Add a client to My view</span><span class="xs faint">Star any account in the Accounts list</span></button></div>
 	</section>`;
 }
 
-function viewDirectory() {
-	const D = S.dir, q = D.q.toLowerCase();
-	let rows = db.orgs.map(summary).filter((s) => (!q || s.org.name.toLowerCase().includes(q)) && (!D.industry || s.org.industry === D.industry) && (D.status === 'all' || (D.status === 'attention' ? s.status !== 'ok' : s.status === D.status)));
-	const key = { name: (s) => s.org.name, open: (s) => s.open, won: (s) => s.won30, leads: (s) => s.newLeads, visits: (s) => s.sessions ?? -1, att: (s) => s.att ?? -1, users: (s) => s.users, status: (s) => ({ act: 0, risk: 1, ok: 2 })[s.status] }[D.sort];
-	rows.sort((a, b) => { const x = key(a), y = key(b); return (x > y ? 1 : x < y ? -1 : 0) * (D.asc ? 1 : -1); });
-	const per = 25, pages = Math.max(1, Math.ceil(rows.length / per)); D.page = Math.min(D.page, pages - 1);
-	const slice = rows.slice(D.page * per, D.page * per + per);
-	const th = (k, l, num) => `<th class="${num ? 'num' : ''}"><button data-act="sort" data-v="${k}" ${D.sort === k ? `aria-sort="${D.asc ? 'ascending' : 'descending'}"` : ''}>${l}${D.sort === k ? (D.asc ? ' ↑' : ' ↓') : ''}</button></th>`;
-	const industries = [...new Set(db.orgs.map((o) => o.industry))].sort();
-	return `<div class="ph"><div><p class="eyebrow">Client directory</p><h1 style="margin-top:6px">All clients</h1><p class="sub">${db.orgs.length} clients. No limit on how many you add.</p></div><button class="btn primary" data-act="page" data-v="new">New client</button></div>
-	<div class="row" style="margin-bottom:14px">
-		<div class="seg" role="tablist">${[['all', 'All'], ['attention', 'Needs attention'], ['ok', 'On track'], ['risk', 'At risk'], ['act', 'Action needed']].map(([v, l]) => `<button role="tab" aria-selected="${D.status === v}" data-act="dir-filter" data-v="${v}">${l}</button>`).join('')}</div>
-		<select id="dir-ind" class="input" style="width:auto;min-height:38px;font-size:14px" aria-label="Industry"><option value="">All industries</option>${industries.map((i) => `<option ${D.industry === i ? 'selected' : ''}>${esc(i)}</option>`).join('')}</select>
-		<input id="dir-q" class="input" style="max-width:260px;min-height:38px;font-size:14px" type="search" placeholder="Filter by name" aria-label="Filter clients by name" value="${esc(D.q)}">
+function viewAccounts() {
+	const A = S.acct, q = A.q.toLowerCase().trim(), idq = A.id.trim();
+	const all = db.orgs.map(summary);
+	const counts = { all: all.length, pinned: S.pins.length, attention: all.filter((s) => s.status !== 'ok').length };
+	let rows = all.filter((s) => (A.tab === 'pinned' ? S.pins.includes(s.org.id) : A.tab === 'attention' ? s.status !== 'ok' : true) && (!q || s.org.name.toLowerCase().includes(q)) && (!idq || s.org.accountId.includes(idq)));
+	const key = { name: (s) => s.org.name.toLowerCase(), id: (s) => s.org.accountId, plan: (s) => s.org.fee, users: (s) => s.users, status: (s) => ({ act: 0, risk: 1, ok: 2 })[s.status], renewal: (s) => s.org.renewal, created: (s) => s.org.since, open: (s) => s.open }[A.sort];
+	rows.sort((a, b) => { const x = key(a), y = key(b); return (x > y ? 1 : x < y ? -1 : 0) * (A.asc ? 1 : -1); });
+	const per = 25, pages = Math.max(1, Math.ceil(rows.length / per)); A.page = Math.min(A.page, pages - 1);
+	const slice = rows.slice(A.page * per, A.page * per + per);
+	const mrr = db.orgs.reduce((a, o) => a + o.fee, 0) + all.reduce((a, s) => a + Math.max(0, s.users - PLANS[s.org.plan].users) * EXTRA_USER_FEE, 0);
+	const th = (k, l, cls = '') => `<th class="${cls}"><button data-act="acct-sort" data-v="${k}" ${A.sort === k ? `aria-sort="${A.asc ? 'ascending' : 'descending'}"` : ''}>${l}${A.sort === k ? (A.asc ? ' ↑' : ' ↓') : ''}</button></th>`;
+	const d = (x) => new Date(x).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+	return `<div class="ph" style="margin-bottom:20px"><div><h1>Accounts</h1><p class="sub">${db.orgs.length} client accounts · ${db.members.length} client users · ${money(mrr)} monthly recurring revenue</p></div><button class="btn primary" data-act="page" data-v="new">${ICON.plus.replace('<svg', '<svg width="14" height="14"')} Add account</button></div>
+	<div class="row" style="margin-bottom:14px;justify-content:space-between">
+		<div class="seg" role="tablist">${[['all', 'All accounts'], ['pinned', 'My view'], ['attention', 'Needs attention']].map(([v, l]) => `<button role="tab" aria-selected="${A.tab === v}" data-act="acct-tab" data-v="${v}">${l} <span class="tnum" style="opacity:.7">${counts[v]}</span></button>`).join('')}</div>
+		<p class="xs faint">Star an account to add it to My view.</p>
 	</div>
-	<section class="panel"><div class="tablewrap"><table class="tnum" style="min-width:880px"><thead><tr>${th('name', 'Client')}${th('status', 'Status')}${th('att', 'KPI goals')}${th('visits', 'Website visits', 1)}${th('leads', 'New leads', 1)}${th('open', 'Open pipeline', 1)}${th('won', 'Won, 30d', 1)}${th('users', 'Users', 1)}<th><span class="sr">My view</span></th></tr></thead><tbody>
-	${slice.map((s) => `<tr class="click" data-act="open-org" data-id="${s.org.id}" tabindex="0"><td><strong>${esc(s.org.name)}</strong><div class="xs faint">${esc(s.org.industry)}</div></td><td>${chip(s.status)}</td>
-		<td>${s.att == null ? '<span class="faint">Not set</span>' : `<div class="row" style="gap:8px;flex-wrap:nowrap"><div class="meter" style="width:64px"><div class="${meterCls(s.att)}" style="width:${Math.min(s.att, 1) * 100}%"></div></div>${pct(s.att)}</div>`}</td>
-		<td class="num">${s.sessions == null ? '—' : fmt(s.sessions)} ${s.sDelta != null ? `<span class="xs ${s.sDelta >= 0 ? 'good' : 'bad'}">${s.sDelta >= 0 ? '▲' : '▼'}${Math.abs(Math.round(s.sDelta * 100))}%</span>` : ''}</td>
-		<td class="num">${s.newLeads}</td><td class="num">${money(s.open)}</td><td class="num">${money(s.won30)}</td><td class="num">${s.users}</td>
-		<td class="num"><button class="pinbtn" data-act="pin" data-id="${s.org.id}" aria-pressed="${S.pins.includes(s.org.id)}">${S.pins.includes(s.org.id) ? 'In My view' : '+ My view'}</button></td></tr>`).join('') || '<tr><td colspan="9" class="muted" style="padding:24px">No clients match these filters.</td></tr>'}
-	</tbody></table></div>
-	<div class="pager"><span>${rows.length ? `${D.page * per + 1}–${Math.min(rows.length, D.page * per + per)} of ${rows.length}` : '0 clients'}</span><span class="row" style="gap:8px"><button class="btn sm" data-act="dir-page" data-v="-1" ${D.page === 0 ? 'disabled' : ''}>Previous</button><span>Page ${D.page + 1} of ${pages}</span><button class="btn sm" data-act="dir-page" data-v="1" ${D.page >= pages - 1 ? 'disabled' : ''}>Next</button></span></div></section>`;
+	<section class="panel"><div class="tablewrap"><table class="tnum" style="min-width:1180px">
+		<thead><tr>${th('name', 'Account name')}${th('id', 'Account ID')}${th('plan', 'Plan')}${th('users', 'Users')}<th>Billed to</th>${th('status', 'Status')}${th('open', 'Pipeline', 'num')}${th('renewal', 'Renewal date')}${th('created', 'Created')}<th class="num"><span class="sr">Actions</span></th></tr>
+		<tr class="filters"><td><input id="acct-q" type="search" placeholder="Search by name" aria-label="Search accounts by name" value="${esc(A.q)}"></td><td><input id="acct-id" type="search" inputmode="numeric" placeholder="Search by ID" aria-label="Search accounts by ID" value="${esc(A.id)}" style="min-width:120px"></td><td colspan="8"></td></tr></thead>
+		<tbody>${slice.map((s) => { const o = s.org, pl = PLANS[o.plan], extra = Math.max(0, s.users - pl.users), pinned = S.pins.includes(o.id); return `<tr>
+			<td><div class="acct"><span class="logo">${esc(initials(o.name))}</span><div style="min-width:0"><button data-act="open-org" data-id="${o.id}">${esc(o.name)}</button><div class="xs faint">${esc(o.industry)}</div></div></div></td>
+			<td>${o.accountId}</td>
+			<td><span class="plan">${pl.label}<small>${money(o.fee)}/mo${extra ? ` + ${money(extra * EXTRA_USER_FEE)} extra users` : ''}</small></span></td>
+			<td><span class="${extra ? 'over' : ''}">${s.users}</span><span class="faint"> / ${pl.users === Infinity ? '∞' : pl.users}</span></td>
+			<td>${esc(o.billedTo)}</td>
+			<td>${chip(s.status)}${s.issues.length ? `<div class="xs ${s.status === 'act' ? 'bad' : 'warn'}" style="margin-top:4px;max-width:220px">${esc(s.issues[0])}</div>` : ''}</td>
+			<td class="num">${money(s.open)}</td>
+			<td style="white-space:nowrap">${d(o.renewal)}</td><td style="white-space:nowrap">${d(o.since)}</td>
+			<td><div class="acts-cell"><button class="sq" data-act="pin" data-id="${o.id}" aria-pressed="${pinned}" aria-label="${pinned ? 'Remove from' : 'Add to'} My view" title="${pinned ? 'In My view' : 'Add to My view'}">${ICON.star}</button><button class="sq" data-act="open-org" data-id="${o.id}" aria-label="Open ${esc(o.name)} dashboard" title="Dashboard">${ICON.dash}</button><button class="sq" data-act="edit-acct" data-id="${o.id}" aria-label="Edit ${esc(o.name)}" title="Edit account">${ICON.edit}</button><button class="sq danger" data-act="delete-acct" data-id="${o.id}" aria-label="Delete ${esc(o.name)}" title="Delete account">${ICON.trash}</button></div></td></tr>`; }).join('') || `<tr><td colspan="10" class="muted" style="padding:28px 14px">${A.tab === 'pinned' ? 'Nothing in My view yet. Star any account to pin it here.' : 'No accounts match.'}</td></tr>`}</tbody>
+	</table></div>
+	<div class="pager"><span>${rows.length ? `${A.page * per + 1}–${Math.min(rows.length, A.page * per + per)} of ${rows.length}` : '0 accounts'}</span><span class="row" style="gap:8px"><button class="btn sm" data-act="acct-page" data-v="-1" ${A.page === 0 ? 'disabled' : ''}>Previous</button><span>Page ${A.page + 1} of ${pages}</span><button class="btn sm" data-act="acct-page" data-v="1" ${A.page >= pages - 1 ? 'disabled' : ''}>Next</button></span></div></section>`;
+}
+
+function modal() {
+	const m = S.modal; if (!m) return '';
+	const o = db.orgs.find((x) => x.id === m.id);
+	if (m.type === 'delete') return `<div class="modal-bg" data-act="close-modal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mh"><header><h2 id="mh">Delete ${esc(o.name)}?</h2></header><div class="body"><p class="muted">This removes the account, its ${summary(o).users} users' access, its leads and its connected platforms. Historical reports are deleted too. This can't be undone.</p><label><span class="label">Type the account ID <strong>${o.accountId}</strong> to confirm</span><input class="input" id="del-confirm" inputmode="numeric" autocomplete="off"></label></div><footer><button class="btn" data-act="close-modal">Cancel</button><button class="btn danger" data-act="confirm-delete" data-id="${o.id}">Delete account</button></footer></div></div>`;
+	return `<div class="modal-bg" data-act="close-modal"><form class="modal" id="edit-acct" role="dialog" aria-modal="true" aria-labelledby="mh"><header><h2 id="mh">Edit account</h2><p class="xs faint" style="margin-top:4px">Account ID ${o.accountId} · created ${new Date(o.since).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p></header>
+		<div class="body"><div><label class="label" for="ea-name">Account name</label><input class="input" id="ea-name" value="${esc(o.name)}" required></div>
+		<div class="two"><div><label class="label" for="ea-ind">Industry</label><input class="input" id="ea-ind" value="${esc(o.industry)}"></div><div><label class="label" for="ea-bill">Billed to</label><select class="input" id="ea-bill">${['Master account', 'Client direct'].map((b) => `<option ${b === o.billedTo ? 'selected' : ''}>${b}</option>`).join('')}</select></div></div>
+		<fieldset style="border:0;padding:0;margin:0"><legend class="label">Plan</legend><div class="stack" style="gap:8px">${Object.entries(PLANS).map(([k, pl]) => `<label class="radio-card"><input type="radio" name="ea-plan" value="${k}" ${k === o.plan ? 'checked' : ''}><span style="flex:1"><span class="row" style="justify-content:space-between;gap:8px"><strong>${pl.label}</strong><span class="tnum">${money(pl.fee)}/mo</span></span><span class="xs muted" style="display:block">${pl.covers} · ${pl.users === Infinity ? 'unlimited' : pl.users} users included</span></span></label>`).join('')}</div></fieldset>
+		<div class="two"><div><label class="label" for="ea-fee">Monthly fee override ($)</label><input class="input" id="ea-fee" inputmode="decimal" value="${o.fee}"></div><div><label class="label" for="ea-renew">Renewal date</label><input class="input" id="ea-renew" type="date" value="${o.renewal.slice(0, 10)}"></div></div>
+		<p class="xs faint">Users over the plan's limit are billed at ${money(EXTRA_USER_FEE)} each per month.</p></div>
+		<footer><button type="button" class="btn" data-act="close-modal">Cancel</button><button class="btn primary">Save changes</button></footer></form></div>`;
 }
 
 function viewNewClient() {
-	return `<div class="ph"><div><p class="eyebrow">Onboarding</p><h1 style="margin-top:6px">Add a client</h1><p class="sub">Three steps: create the client, invite their admin and sub-users, then set KPIs and connect their accounts.</p></div></div>
+	return `<div class="ph"><div><p class="eyebrow">Onboarding</p><h1 style="margin-top:6px">Add an account</h1><p class="sub">Create the account and pick a plan, then invite the business owner as Admin, set KPIs and connect their platforms.</p></div></div>
 	<form id="new-client" class="panel" style="max-width:640px;padding:24px"><div class="stack" style="gap:16px">
 		<div><label class="label" for="nc-name">Business name</label><input class="input" id="nc-name" required placeholder="Sunrise Pools"></div>
+		<fieldset style="border:0;padding:0;margin:0"><legend class="label">Plan</legend><div class="stack" style="gap:8px">${Object.entries(PLANS).map(([k, pl], i) => `<label class="radio-card"><input type="radio" name="nc-plan" value="${k}" ${i === 1 ? 'checked' : ''}><span style="flex:1"><span class="row" style="justify-content:space-between;gap:8px"><strong>${pl.label}</strong><span class="tnum">${money(pl.fee)}/mo</span></span><span class="xs muted" style="display:block">${pl.covers} · ${pl.users === Infinity ? 'unlimited' : pl.users} users included</span></span></label>`).join('')}</div></fieldset>
 		<div><label class="label" for="nc-ind">Industry</label><input class="input" id="nc-ind" placeholder="Pools" list="ind-list"><datalist id="ind-list">${[...new Set(db.orgs.map((o) => o.industry))].sort().map((i) => `<option>${esc(i)}</option>`).join('')}</datalist></div>
-		<div class="row" style="border-top:1px solid var(--line);padding-top:16px"><label class="check" style="flex:0 1 auto"><input type="checkbox" id="nc-pin" checked><span>Add to My view</span></label><button class="btn primary" style="margin-left:auto">Create client and invite team</button></div>
+		<div class="row" style="border-top:1px solid var(--line);padding-top:16px"><label class="check" style="flex:0 1 auto"><input type="checkbox" id="nc-pin" checked><span>Add to My view</span></label><button class="btn primary" style="margin-left:auto">Create account and invite team</button></div>
 	</div></form>`;
 }
 
@@ -669,8 +733,8 @@ function viewNewClient() {
 function clientHeader() {
 	const o = curOrg(), s = summary(o), r = roleIn(o.id);
 	const tabs = [['overview', 'Overview', true], ['pipeline', 'Pipeline', true], ['add', 'Add lead', canWork(o.id)], ['huddle', 'Huddle', true], ['team', 'Team & access', canManage(o.id)], ['kpis', 'KPIs & goals', canManage(o.id)], ['connections', 'Connections', canManage(o.id)]].filter((t) => t[2]);
-	return `${isSuper() ? `<p class="crumbs"><button data-act="page" data-v="home">Portfolio</button> / <button data-act="page" data-v="directory">Clients</button> / ${esc(o.name)}</p>` : ''}
-	<div class="ph" style="margin-bottom:18px"><div><h1>${esc(o.name)}</h1><p class="sub">${esc(o.industry)} · ${s.users} users · ${isSuper() ? chip(s.status) : `<span class="chip role plain">${ROLE_LABEL[r]}</span>`}</p></div>
+	return `${isSuper() ? `<p class="crumbs"><button data-act="page" data-v="accounts">Accounts</button> / ${esc(o.name)}</p>` : ''}
+	<div class="ph" style="margin-bottom:18px"><div><h1>${esc(o.name)}</h1><p class="sub">${isSuper() ? `#${o.accountId} · ${PLANS[o.plan].label} plan · ` : ''}${esc(o.industry)} · ${s.users} users · ${isSuper() ? chip(s.status) : `<span class="chip role plain">${ROLE_LABEL[r]}</span>`}</p></div>
 	${isSuper() ? `<button class="pinbtn" data-act="pin" data-id="${o.id}" aria-pressed="${S.pins.includes(o.id)}">${S.pins.includes(o.id) ? 'In My view' : '+ Add to My view'}</button>` : ''}</div>
 	<nav class="tabs" aria-label="${esc(o.name)} sections">${tabs.map(([v, l]) => `<button data-act="tab" data-v="${v}" ${S.tab === v ? 'aria-current="page"' : ''}>${l}</button>`).join('')}</nav>`;
 }
@@ -747,9 +811,9 @@ function viewTeam() {
 	const o = curOrg();
 	const people = db.members.filter((m) => m.org === o.id).map((m) => ({ ...m, p: db.profiles.find((p) => p.id === m.user) }));
 	const admins = people.filter((m) => m.role === 'admin'), subs = people.filter((m) => m.role !== 'admin').sort((a, b) => a.role.localeCompare(b.role) || a.p.name.localeCompare(b.p.name));
-	const row = (m) => `<li class="person"><span class="avatar">${initials(m.p.name)}</span><div style="flex:1;min-width:160px"><p style="font-weight:600">${esc(m.p.name)}${m.user === S.user ? ' <span class="xs faint">(you)</span>' : ''}</p><p class="xs muted">${esc(m.p.email)}</p></div>
+	const row = (m) => `<li class="person"><span class="avatar">${initials(m.p.name)}</span><div style="flex:1;min-width:160px"><p style="font-weight:600">${esc(m.p.name)}${m.user === actingId() ? ' <span class="xs faint">(you)</span>' : ''}</p><p class="xs muted">${esc(m.p.email)}</p></div>
 		<select class="input" style="width:auto;min-height:34px;font-size:13px" data-role="${m.user}" aria-label="Access level for ${esc(m.p.name)}">${Object.entries(ROLES).map(([r, v]) => `<option value="${r}" ${r === m.role ? 'selected' : ''}>${v.label}</option>`).join('')}</select>
-		${S.confirmRemove === m.user ? `<button class="btn sm danger" data-act="remove" data-id="${m.user}">Confirm remove</button><button class="btn sm" data-act="cancel-remove">Keep</button>` : `<button class="btn sm" data-act="ask-remove" data-id="${m.user}">Remove</button>`}</li>`;
+		${isSuper() ? `<button class="btn sm" data-act="view-as" data-id="${m.user}" title="See MYCMO exactly as ${esc(m.p.name)} does">View as</button>` : ''}${S.confirmRemove === m.user ? `<button class="btn sm danger" data-act="remove" data-id="${m.user}">Confirm remove</button><button class="btn sm" data-act="cancel-remove">Keep</button>` : `<button class="btn sm" data-act="ask-remove" data-id="${m.user}">Remove</button>`}</li>`;
 	return `${S.newClient ? `<p class="notice" style="margin-bottom:20px"><strong>${esc(o.name)}</strong> is created. Next, invite the business owner as Admin, then their sub-users. After that, set their KPIs and connect their accounts.</p>` : ''}
 	<div class="split-team">
 		<section class="panel"><div class="panel-h"><h2>Access hierarchy</h2><p class="xs faint">${people.length} users · no limit</p></div><div class="panel-b">
@@ -789,12 +853,11 @@ function viewConnections() {
 const app = document.getElementById('app');
 function render() {
 	charts.length = 0;
-	if (!S.user) { app.innerHTML = viewSignIn(); return; }
 	let body;
 	if (S.page === 'client' && S.org) body = clientHeader() + ({ overview: viewOverview, pipeline: viewPipeline, add: viewAdd, huddle: viewHuddle, team: viewTeam, kpis: viewKpis, connections: viewConnections }[S.tab])();
-	else if (S.page === 'directory') body = viewDirectory();
+	else if (S.page === 'dashboard') body = viewHome();
 	else if (S.page === 'new') body = viewNewClient();
-	else body = viewHome();
+	else body = viewAccounts();
 	app.innerHTML = shell(body);
 	renderSearch();
 }
@@ -805,18 +868,29 @@ function keepFocus(id, fn) { const el = document.getElementById(id), pos = el?.s
 
 app.addEventListener('click', (e) => {
 	const t = e.target.closest('[data-act]');
-	if (!e.target.closest('#gsearch') && S.searchOpen) { S.searchOpen = false; renderSearch(); }
+	if (!e.target.closest('#gsearch') && S.searchOpen) { S.searchOpen = false; if (!t) return render(); }
 	if (!t) return;
 	const { act, id, v } = t.dataset;
 	switch (act) {
-		case 'signin': {
-			S.user = id;
-			if (id === SUPER) { S.pins = loadPins() ?? defaultPins(); return go({ page: 'home', org: null }); }
-			const orgs = myOrgs();
-			return go({ page: 'client', org: t.dataset.org ?? orgs[0].id, tab: 'overview' });
+		case 'toggle-switcher': {
+			if (!isSuper()) return;
+			S.searchOpen = !S.searchOpen; S.searchIdx = 0; render();
+			return document.getElementById('gsearch-in')?.focus();
 		}
-		case 'switch': return go({ user: null, page: 'home', org: null, personaQ: '' });
-		case 'page': return go({ page: v, org: v === 'client' ? S.org : null, newClient: false });
+		case 'view-as': return go({ viewAs: id, page: 'client', tab: 'overview' });
+		case 'exit-view-as': return go({ viewAs: null, page: 'client', tab: 'team' });
+		case 'page': return go({ page: v, org: null, newClient: false });
+		case 'acct-tab': S.acct.tab = v; S.acct.page = 0; return go({ page: 'accounts', org: null });
+		case 'acct-sort': S.acct.asc = S.acct.sort === v ? !S.acct.asc : ['name', 'id'].includes(v); S.acct.sort = v; return render();
+		case 'acct-page': S.acct.page += Number(v); return render();
+		case 'edit-acct': case 'delete-acct': S.modal = { type: act === 'edit-acct' ? 'edit' : 'delete', id }; render(); return document.getElementById(act === 'edit-acct' ? 'ea-name' : 'del-confirm')?.focus();
+		case 'close-modal': if (e.target !== t) return; S.modal = null; return render();
+		case 'confirm-delete': {
+			const o = db.orgs.find((x) => x.id === id);
+			if (document.getElementById('del-confirm').value.trim() !== o.accountId) { toast('Type the account ID exactly to confirm'); return; }
+			db.orgs = db.orgs.filter((x) => x.id !== id); for (const k of ['members', 'leads', 'activities', 'huddles', 'spend', 'integrations', 'kpis']) db[k] = db[k].filter((x) => x.org !== id);
+			db.snaps.delete(id); invalidate(id); S.pins = S.pins.filter((x) => x !== id); savePins(); S.modal = null; toast(`${o.name} deleted`); return render();
+		}
 		case 'open-org': e.stopPropagation(); return openOrg(id);
 		case 'tab': return go({ tab: v, newClient: v === 'team' ? S.newClient : false });
 		case 'pin': {
@@ -825,16 +899,12 @@ app.addEventListener('click', (e) => {
 			if (S.searchOpen) return keepFocus('gsearch-in', render);
 			return render();
 		}
-		case 'focus-search': { const i = document.getElementById('gsearch-in'); S.searchOpen = true; renderSearch(); i?.focus(); i?.scrollIntoView({ block: 'center' }); return; }
 		case 'open-nav': S.navOpen = true; return render();
 		case 'close-nav': S.navOpen = false; return render();
-		case 'dir-filter': S.dir.status = v; S.dir.page = 0; return go({ page: 'directory' });
-		case 'dir-page': S.dir.page += Number(v); return render();
-		case 'sort': S.dir.asc = S.dir.sort === v ? !S.dir.asc : v === 'name'; S.dir.sort = v; return render();
 		case 'open-lead': S.openLead = S.openLead === id ? null : id; return render();
 		case 'log': {
 			const l = db.leads.find((x) => x.id === id);
-			db.activities.push({ org: l.org, lead: id, user: S.user, type: v, at: iso(new Date()) });
+			db.activities.push({ org: l.org, lead: id, user: actingId(), type: v, at: iso(new Date()) });
 			if (l.stage === 'new' && canEditLead(l)) { l.stage = 'attempted_contact'; l.changed = iso(new Date()); toast(`${t.dataset.l}. Moved to Attempted contact.`); } else toast(`${t.dataset.l}. Logged.`);
 			invalidate(l.org); return render();
 		}
@@ -842,7 +912,7 @@ app.addEventListener('click', (e) => {
 		case 'cancel-remove': S.confirmRemove = null; return render();
 		case 'remove': {
 			const o = curOrg(); S.confirmRemove = null;
-			if (id === S.user) { toast("You can't remove yourself"); return render(); }
+			if (id === actingId()) { toast("You can't remove yourself"); return render(); }
 			const admins = db.members.filter((m) => m.org === o.id && m.role === 'admin');
 			if (admins.length === 1 && admins[0].user === id) { toast('Every client needs at least one admin'); return render(); }
 			db.members = db.members.filter((m) => !(m.org === o.id && m.user === id)); invalidate(o.id); toast('Access removed'); return render();
@@ -862,23 +932,21 @@ app.addEventListener('keydown', (e) => {
 		const items = [...document.querySelectorAll('#gresults li[data-id]')];
 		if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); S.searchIdx = Math.max(0, Math.min(items.length - 1, S.searchIdx + (e.key === 'ArrowDown' ? 1 : -1))); renderSearch(); }
 		if (e.key === 'Enter' && items[S.searchIdx]) { e.preventDefault(); openOrg(items[S.searchIdx].dataset.id); }
-		if (e.key === 'Escape') { S.searchOpen = false; renderSearch(); e.target.blur(); }
+		if (e.key === 'Escape') { S.searchOpen = false; render(); }
 	}
 });
-document.addEventListener('keydown', (e) => { if (e.key === '/' && S.user && isSuper() && !e.target.matches('input, textarea, select')) { e.preventDefault(); const i = document.getElementById('gsearch-in'); S.searchOpen = true; renderSearch(); i?.focus(); } });
-app.addEventListener('focusin', (e) => { if (e.target.id === 'gsearch-in' && !S.searchOpen) { S.searchOpen = true; S.searchIdx = 0; renderSearch(); } });
+document.addEventListener('keydown', (e) => { if (e.key === '/' && isSuper() && !e.target.matches('input, textarea, select')) { e.preventDefault(); S.searchOpen = true; render(); document.getElementById('gsearch-in')?.focus(); }
+	if (e.key === 'Escape' && S.modal) { S.modal = null; render(); } });
 app.addEventListener('input', (e) => {
 	const el = e.target;
 	if (el.id === 'gsearch-in') { S.searchQ = el.value; S.searchOpen = true; S.searchIdx = 0; return renderSearch(); }
-	if (el.id === 'persona-q') { S.personaQ = el.value; return keepFocus('persona-q', render); }
-	if (el.id === 'dir-q') { S.dir.q = el.value; S.dir.page = 0; return keepFocus('dir-q', render); }
+	if (el.id === 'acct-q' || el.id === 'acct-id') { S.acct[el.id === 'acct-q' ? 'q' : 'id'] = el.value; S.acct.page = 0; return keepFocus(el.id, render); }
 });
 app.addEventListener('change', (e) => {
 	const el = e.target;
-	if (el.id === 'dir-ind') { S.dir.industry = el.value; S.dir.page = 0; return render(); }
 	if (el.dataset.move) { const l = db.leads.find((x) => x.id === el.dataset.move); l.stage = el.value; l.changed = iso(new Date()); invalidate(l.org); toast(`Moved to ${STAGES.find((s) => s[0] === el.value)[1]}`); return render(); }
 	if (el.dataset.role) {
-		if (el.dataset.role === S.user && el.value !== 'admin') { toast("You can't lower your own access"); return render(); }
+		if (el.dataset.role === actingId() && el.value !== 'admin') { toast("You can't lower your own access"); return render(); }
 		const admins = db.members.filter((m) => m.org === S.org && m.role === 'admin');
 		if (el.value !== 'admin' && admins.length === 1 && admins[0].user === el.dataset.role) { toast('Every client needs at least one admin'); return render(); }
 		db.members.find((m) => m.org === S.org && m.user === el.dataset.role).role = el.value; toast('Access level updated'); return render();
@@ -895,14 +963,23 @@ app.addEventListener('submit', (e) => {
 		const n = val('nc-name'), slug = slugify(n);
 		if (slug.length < 2) return toast('Enter the business name');
 		if (db.orgs.some((x) => x.slug === slug)) return toast('A client with that name already exists');
-		const id = newId(); db.orgs.push({ id, name: n, slug, industry: val('nc-ind') || 'Other', since: iso(new Date()) }); db.snaps.set(id, []);
+		const id = newId(), plan = f.querySelector('[name=nc-plan]:checked').value, renew = new Date(); renew.setUTCMonth(renew.getUTCMonth() + 1);
+		db.orgs.push({ id, name: n, slug, industry: val('nc-ind') || 'Other', since: iso(new Date()), accountId: String(120000 + db.orgs.length), plan, fee: PLANS[plan].fee, billedTo: 'Master account', renewal: iso(renew) }); db.snaps.set(id, []);
 		if (document.getElementById('nc-pin').checked) { S.pins = [...S.pins, id]; savePins(); }
 		toast(`${n} created`); return go({ page: 'client', org: id, tab: 'team', newClient: true });
+	}
+	if (f.id === 'edit-acct') {
+		const o2 = db.orgs.find((x) => x.id === S.modal.id), fee = Number(val('ea-fee').replace(/[$,]/g, ''));
+		if (!val('ea-name')) return toast('Enter the account name');
+		if (!Number.isFinite(fee) || fee < 0) return toast('Monthly fee must be a positive number');
+		const plan = f.querySelector('[name=ea-plan]:checked').value;
+		Object.assign(o2, { name: val('ea-name'), industry: val('ea-ind'), billedTo: document.getElementById('ea-bill').value, plan, fee: plan !== o2.plan && fee === o2.fee ? PLANS[plan].fee : fee, renewal: iso(new Date(val('ea-renew') + 'T12:00:00Z')) });
+		invalidate(o2.id); S.modal = null; toast('Account saved'); return render();
 	}
 	if (f.id === 'add-lead') {
 		const amount = Number(val('l-val').replace(/[$,]/g, '') || 0);
 		if (!Number.isFinite(amount) || amount < 0) return toast('Deal value must be a positive number');
-		db.leads.push({ id: newId(), org: o.id, owner: isSuper() ? null : S.user, name: val('l-name'), phone: val('l-phone'), company: val('l-co'), source: f.querySelector('[name=l-src]:checked').value, stage: 'new', value: amount, created: iso(new Date()), changed: iso(new Date()) });
+		db.leads.push({ id: newId(), org: o.id, owner: isSuper() ? null : actingId(), name: val('l-name'), phone: val('l-phone'), company: val('l-co'), source: f.querySelector('[name=l-src]:checked').value, stage: 'new', value: amount, created: iso(new Date()), changed: iso(new Date()) });
 		invalidate(o.id); toast(`Saved ${val('l-name')}`);
 		if (e.submitter?.dataset.again) { f.reset(); return document.getElementById('l-name').focus(); }
 		return go({ tab: 'pipeline' });
@@ -963,5 +1040,6 @@ app.addEventListener('pointermove', (e) => {
 });
 app.addEventListener('pointerout', (e) => { const wrap = e.target.closest?.('[data-chart]'); if (wrap && !wrap.contains(e.relatedTarget)) { wrap.querySelector('.tip')?.remove(); wrap.querySelector('.cross')?.setAttribute('visibility', 'hidden'); wrap.querySelector('.dot')?.setAttribute('visibility', 'hidden'); } });
 
+S.pins = loadPins() ?? defaultPins();
 render();
 </script>
