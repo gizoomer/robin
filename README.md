@@ -1,5 +1,7 @@
 # MYCMO
 
+> **Developers start here:** [`docs/HANDOFF.md`](docs/HANDOFF.md) covers install, hosting, environment variables, the Google/Meta/Ads accounts to create, and what is still to build.
+
 A client-facing marketing + sales dashboard. Each client business logs in and sees:
 
 - **Marketing:** Google Analytics 4, Google Search Console, YouTube, Facebook Page, Instagram
