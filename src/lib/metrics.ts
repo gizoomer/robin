@@ -3,10 +3,13 @@
  * Connectors write rows keyed by (source, metric); this maps them to labels.
  * Adding a new platform = add its entries here + a connector in $lib/server/connectors.
  */
-export type SourceId = 'ga4' | 'gsc' | 'youtube' | 'facebook' | 'instagram' | 'google_ads' | 'meta_ads';
+export type SourceId = 'ga4' | 'gsc' | 'youtube' | 'facebook' | 'instagram' | 'google_ads' | 'meta_ads' | 'whatconverts';
+
+/** Partner apps report under their own source id, e.g. "app:twin". */
+export type AppSourceId = `app:${string}`;
 
 export interface MetricDef {
-	source: SourceId;
+	source: SourceId | AppSourceId;
 	metric: string;
 	label: string;
 	/** 'sum' for flows (sessions per day), 'last' for stocks (follower count) */
@@ -25,7 +28,8 @@ export const SOURCES: Record<SourceId, { label: string; provider: string }> = {
 	facebook: { label: 'Facebook', provider: 'meta' },
 	instagram: { label: 'Instagram', provider: 'meta' },
 	google_ads: { label: 'Google Ads', provider: 'google_ads' },
-	meta_ads: { label: 'Meta Ads', provider: 'meta_ads' }
+	meta_ads: { label: 'Meta Ads', provider: 'meta_ads' },
+	whatconverts: { label: 'Calls & forms (WhatConverts)', provider: 'whatconverts' }
 };
 
 export const METRICS: MetricDef[] = [
@@ -48,7 +52,12 @@ export const METRICS: MetricDef[] = [
 	{ source: 'google_ads', metric: 'conversions', label: 'Ad conversions', agg: 'sum' },
 	{ source: 'meta_ads', metric: 'spend', label: 'Meta Ads spend', agg: 'sum', format: 'money', neutral: true },
 	{ source: 'meta_ads', metric: 'clicks', label: 'Ad clicks', agg: 'sum' },
-	{ source: 'meta_ads', metric: 'leads', label: 'Ad leads', agg: 'sum' }
+	{ source: 'meta_ads', metric: 'leads', label: 'Ad leads', agg: 'sum' },
+	{ source: 'whatconverts', metric: 'leads', label: 'Tracked leads', agg: 'sum' },
+	{ source: 'whatconverts', metric: 'calls', label: 'Phone calls', agg: 'sum' },
+	{ source: 'whatconverts', metric: 'forms', label: 'Form fills', agg: 'sum' },
+	{ source: 'whatconverts', metric: 'quotable', label: 'Quotable leads', agg: 'sum' },
+	{ source: 'whatconverts', metric: 'sales_value', label: 'Sales value', agg: 'sum', format: 'money' }
 ];
 
 /** Sources whose `spend` metric counts toward marketing spend on the overview. */

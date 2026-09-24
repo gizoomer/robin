@@ -104,6 +104,38 @@ Sign in as agency staff > **+ New client** > invite the owner and staff on **Set
   `src/lib/server/connectors/meta.ts` and should be checked against the current Graph API changelog
   before launch; they have not yet been tested against a live Meta app.
 
+## WhatConverts
+
+Connects with an API token and secret instead of a sign-in button (WhatConverts > Account settings >
+API Keys). A master key covers every client; each MYCMO client then picks its WhatConverts profile.
+MYCMO rolls leads up by day into tracked leads, calls, form fills, quotable leads and sales value.
+The connector has not yet been run against a live WhatConverts key: check the numbers against
+WhatConverts for one client before rolling it out.
+
+## Partner API (outside firms sending data in)
+
+1. Agency staff register the firm on **Partner apps** (`/app/partners`) with the metrics it may send.
+2. A client's admin creates that firm a key on the client's **Connections** page. The key is shown
+   once, stored only as a SHA-256 hash, and writes to that one client only.
+3. The firm posts daily numbers:
+
+```bash
+curl -X POST https://app.yourdomain.com/api/v1/partner/metrics \
+  -H "Authorization: Bearer mycmo_pk_..." -H "Content-Type: application/json" \
+  -d '{"metrics":[{"metric":"calls","date":"2026-09-23","value":12}]}'
+```
+
+The numbers appear on the client dashboard under the firm's name. `GET /api/v1/partner/me` checks a key.
+Firms that expose an MCP server instead of an API are planned, not built.
+
+## AI report assistant (Claude and ChatGPT)
+
+"Ask about this report" on each client dashboard answers questions and gives advice from that
+dashboard's numbers. Set `ANTHROPIC_API_KEY` for Claude and/or `OPENAI_API_KEY` + `OPENAI_MODEL`
+for ChatGPT; each appears only when configured. Only a text summary of the numbers is sent (no lead
+names or phone numbers). Each client's admin can switch it off on Connections. Conversations are not
+stored.
+
 ## Adding another platform (TikTok, LinkedIn, Google Ads, Google Business Profile, ...)
 
 1. Implement the `Connector` interface in `src/lib/server/connectors/<name>.ts`
@@ -127,7 +159,8 @@ Against a scratch Postgres 16 database:
 
 ```bash
 psql "$SCRATCH_DB" -f supabase/tests/auth_stub.sql -f supabase/migrations/0001_init.sql \
-  -f supabase/migrations/0002_agency_kpis_ads.sql -f supabase/tests/rls_test.sql
+  -f supabase/migrations/0002_agency_kpis_ads.sql -f supabase/migrations/0003_whatconverts_partner_apps.sql \
+  -f supabase/migrations/0004_ai_assistant.sql -f supabase/tests/rls_test.sql
 ```
 
 Every line should print `PASS`. (The one `ERROR` line is the expected rejection of a self-promotion attempt.)

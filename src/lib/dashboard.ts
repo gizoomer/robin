@@ -27,7 +27,8 @@ function aggregate(values: number[], agg: MetricDef['agg']) {
  * Turns raw daily snapshots into dashboard tiles: current window vs the
  * equally long window before it. `today` is injectable for testing.
  */
-export function buildTiles(rows: SnapshotRow[], days = 30, today = new Date()): Record<SourceId, Tile[]> {
+/** `extra` adds metric definitions beyond the built-in catalog (partner apps register their own). */
+export function buildTiles(rows: SnapshotRow[], days = 30, today = new Date(), extra: MetricDef[] = []): Record<string, Tile[]> {
 	const end = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
 	const cut = new Date(end);
 	cut.setUTCDate(cut.getUTCDate() - days);
@@ -36,9 +37,9 @@ export function buildTiles(rows: SnapshotRow[], days = 30, today = new Date()): 
 	const cutIso = cut.toISOString().slice(0, 10);
 	const priorIso = priorCut.toISOString().slice(0, 10);
 
-	const out = Object.fromEntries(Object.keys(SOURCES).map((s) => [s, [] as Tile[]])) as Record<SourceId, Tile[]>;
+	const out: Record<string, Tile[]> = Object.fromEntries(Object.keys(SOURCES).map((s) => [s, [] as Tile[]]));
 
-	for (const def of METRICS) {
+	for (const def of [...METRICS, ...extra]) {
 		const series = rows
 			.filter((r) => r.source === def.source && r.metric === def.metric)
 			.sort((a, b) => a.day.localeCompare(b.day));
@@ -49,7 +50,7 @@ export function buildTiles(rows: SnapshotRow[], days = 30, today = new Date()): 
 		const value = aggregate(cur.map((r) => Number(r.value)), def.agg)!;
 		const prior = aggregate(prev.map((r) => Number(r.value)), def.agg);
 		const delta = prior == null || prior === 0 ? null : (value - prior) / Math.abs(prior);
-		out[def.source].push({ def, value, prior, delta, spark: cur.map((r) => ({ day: r.day, value: Number(r.value) })) });
+		(out[def.source] ??= []).push({ def, value, prior, delta, spark: cur.map((r) => ({ day: r.day, value: Number(r.value) })) });
 	}
 	return out;
 }

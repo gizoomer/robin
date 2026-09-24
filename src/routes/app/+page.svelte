@@ -29,7 +29,8 @@
 		<div class="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4">
 			<span class="text-sm font-bold tracking-wide text-accent">MYCMO</span>
 			<span class="font-semibold">{data.isAgency ? 'All clients' : 'Your businesses'}</span>
-			<form method="POST" action="/logout" class="ml-auto"><button class="text-sm text-ink-2 hover:text-ink">Sign out</button></form>
+			{#if data.isAgency}<a href="/app/partners" class="ml-auto text-sm text-ink-2 hover:text-ink">Partner apps</a>{/if}
+			<form method="POST" action="/logout" class={data.isAgency ? '' : 'ml-auto'}><button class="text-sm text-ink-2 hover:text-ink">Sign out</button></form>
 		</div>
 	</header>
 

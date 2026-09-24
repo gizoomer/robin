@@ -8,6 +8,7 @@
 	let { data, form } = $props();
 
 	let busy = $state<string | null>(null);
+	let keyFormFor = $state<string | null>(null);
 	let byProvider = $derived(Object.fromEntries(data.integrations.map((i) => [i.provider, i])));
 	let live = $derived(PROVIDERS.filter((p) => p.available));
 	let soon = $derived(PROVIDERS.filter((p) => !p.available));
@@ -43,6 +44,7 @@
 		<p class="mt-4 rounded-lg bg-good/10 px-3 py-2 text-sm text-good" role="status">Synced {form.synced} data points.</p>
 		{#each form.warnings ?? [] as w}<p class="mt-1 text-xs text-ink-2">{w}</p>{/each}
 	{/if}
+	{#if form && 'connected' in form}<p class="mt-4 rounded-lg bg-good/10 px-3 py-2 text-sm text-good" role="status">Credentials verified. Pick what to report on below, then Save and sync.</p>{/if}
 	{#if form && 'error' in form && form.error}<p class="mt-4 text-sm text-bad">{form.error}</p>{/if}
 
 	<div class="mt-6 space-y-4">
@@ -63,9 +65,15 @@
 						{/if}
 					</div>
 					<div class="flex gap-2">
-						<a class={integ ? 'btn-ghost' : 'btn-primary'} href="/api/integrations/{p.id}/start?org={data.org.slug}" data-sveltekit-reload>
-							{integ ? 'Reconnect' : 'Connect'}
-						</a>
+						{#if p.auth === 'apikey'}
+							<button class={integ ? 'btn-ghost' : 'btn-primary'} onclick={() => (keyFormFor = keyFormFor === p.id ? null : p.id)} aria-expanded={keyFormFor === p.id}>
+								{integ ? 'Update API key' : 'Connect'}
+							</button>
+						{:else}
+							<a class={integ ? 'btn-ghost' : 'btn-primary'} href="/api/integrations/{p.id}/start?org={data.org.slug}" data-sveltekit-reload>
+								{integ ? 'Reconnect' : 'Connect'}
+							</a>
+						{/if}
 						{#if integ}
 							<form method="POST" action="?/disconnect" use:enhance={submitting(`dc-${p.id}`)}>
 								<input type="hidden" name="provider" value={p.id} />
@@ -75,6 +83,22 @@
 					</div>
 				</div>
 
+				{#if keyFormFor === p.id}
+					<form method="POST" action="?/credentials" class="mt-4 grid gap-3 border-t border-line pt-4 sm:grid-cols-2" use:enhance={submitting(`key-${p.id}`)}>
+						<input type="hidden" name="provider" value={p.id} />
+						{#each data.credentialFields[p.id] ?? [] as cf (cf.key)}
+							<label class="block">
+								<span class="label">{cf.label}</span>
+								<input class="input" name={cf.key} type={cf.secret ? 'password' : 'text'} autocomplete="off" required />
+								{#if cf.help}<span class="text-xs text-ink-3">{cf.help}</span>{/if}
+							</label>
+						{/each}
+						<div class="sm:col-span-2 flex items-center gap-3">
+							<button class="btn-primary" disabled={busy !== null}>{busy === `key-${p.id}` ? 'Checking…' : 'Save and verify'}</button>
+							<span class="text-xs text-ink-3">Stored encrypted. Nobody can view it again after saving.</span>
+						</div>
+					</form>
+				{/if}
 				{#if integ}
 					{#if optErr}
 						<p class="mt-3 text-sm text-bad">{optErr}</p>
@@ -85,7 +109,7 @@
 								<label class="block">
 									<span class="label">{f.label}</span>
 									<select class="input" name={f.field} value={integ.config?.[f.field] ?? opts(p.id, f.key)[0]?.id ?? ''}>
-										<option value="">Don't track</option>
+										<option value="">{f.emptyLabel ?? "Don't track"}</option>
 										{#each opts(p.id, f.key) as o (o.id)}<option value={o.id}>{o.label}</option>{/each}
 									</select>
 									{#if opts(p.id, f.key).length === 0}<span class="text-xs text-ink-3">None found on this account.</span>{/if}
@@ -122,6 +146,57 @@
 			</div>
 		{/each}
 	</div>
+
+	<section class="card mt-8 p-4">
+		<div class="flex flex-wrap items-start justify-between gap-3">
+			<div>
+				<h2 class="font-semibold">AI report assistant</h2>
+				<p class="max-w-xl text-sm text-ink-2">
+					Lets {data.org.name}'s team ask questions about their dashboard and get advice from
+					{data.aiProviders.length ? data.aiProviders.map((p) => (p === 'claude' ? 'Claude' : 'ChatGPT')).join(' or ') : 'Claude or ChatGPT (not set up on the server yet)'}.
+					When on, a summary of this dashboard's numbers is sent to that AI provider with each question. Lead names and phone numbers are never sent.
+				</p>
+			</div>
+			<form method="POST" action="?/ai" use:enhance>
+				<input type="hidden" name="enabled" value={String(!data.aiEnabled)} />
+				<button class={data.aiEnabled ? 'btn-ghost' : 'btn-primary'}>{data.aiEnabled ? 'Turn off' : 'Turn on'}</button>
+			</form>
+		</div>
+		<p class="mt-2 text-xs {data.aiEnabled ? 'text-good' : 'text-ink-3'}">● {data.aiEnabled ? 'On' : 'Off'}</p>
+	</section>
+
+	<section class="card mt-8 p-4">
+		<h2 class="font-semibold">Partner apps</h2>
+		<p class="text-sm text-ink-2">Firms that send their numbers straight into this dashboard. Create a key and give it to the partner. It only works for {data.org.name}.</p>
+		{#if form && 'newKey' in form}
+			<div class="mt-3 rounded-lg border border-accent p-3" role="status">
+				<p class="text-sm font-semibold">Copy this key now. It won't be shown again.</p>
+				<code class="mt-1 block break-all rounded bg-bg p-2 text-xs select-all">{form.newKey}</code>
+			</div>
+		{/if}
+		<ul class="mt-3 divide-y divide-line">
+			{#each data.partnerApps as app (app.id)}
+				{@const keys = data.partnerKeys.filter((k) => k.app_id === app.id)}
+				<li class="flex flex-wrap items-center gap-3 py-3">
+					<div class="min-w-0 flex-1">
+						<p class="font-medium">{app.name}</p>
+						<p class="text-xs text-ink-2">{app.description ?? ''}</p>
+						{#each keys as k (k.id)}
+							<p class="mt-1 text-xs text-ink-3">
+								Key <code>{k.key_prefix}…</code> · {k.last_used_at ? `last used ${new Date(k.last_used_at).toLocaleString()}` : 'not used yet'}
+							</p>
+						{/each}
+					</div>
+					{#each keys as k (k.id)}
+						<form method="POST" action="?/revokeKey" use:enhance><input type="hidden" name="key" value={k.id} /><button class="btn-ghost text-bad">Revoke key</button></form>
+					{/each}
+					<form method="POST" action="?/createKey" use:enhance><input type="hidden" name="app" value={app.id} /><button class="btn-ghost">{keys.length ? 'New key' : 'Create key'}</button></form>
+				</li>
+			{:else}
+				<li class="py-3 text-sm text-ink-3">No partner apps are registered yet.</li>
+			{/each}
+		</ul>
+	</section>
 
 	<section class="card mt-8 p-4">
 		<h2 class="font-semibold">Other marketing spend</h2>

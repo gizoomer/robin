@@ -7,6 +7,8 @@ export interface Picker {
 	key: string; // key in the connector's listAccounts() result
 	field: string; // key stored in integrations.config
 	label: string;
+	/** Label for the empty choice. Defaults to "Don't track". */
+	emptyLabel?: string;
 }
 
 export interface ProviderInfo {
@@ -15,6 +17,8 @@ export interface ProviderInfo {
 	covers: string;
 	category: 'analytics' | 'social' | 'ads' | 'calls' | 'local';
 	available: boolean;
+	/** 'apikey' platforms take pasted credentials instead of a sign-in redirect. */
+	auth?: 'oauth' | 'apikey';
 	pickers: Picker[];
 }
 
@@ -58,7 +62,15 @@ export const PROVIDERS: ProviderInfo[] = [
 	{ id: 'tiktok_ads', name: 'TikTok Ads', covers: 'Spend, views, conversions', category: 'ads', available: false, pickers: [] },
 	{ id: 'linkedin_ads', name: 'LinkedIn Ads', covers: 'Spend, leads, CPL', category: 'ads', available: false, pickers: [] },
 	{ id: 'gbp', name: 'Google Business Profile', covers: 'Calls, direction requests, reviews', category: 'local', available: false, pickers: [] },
-	{ id: 'callrail', name: 'CallRail', covers: 'Tracked calls by source', category: 'calls', available: false, pickers: [] }
+	{
+		id: 'whatconverts',
+		name: 'WhatConverts',
+		covers: 'Calls, forms and chats, quotable leads and sales value',
+		category: 'calls',
+		available: true,
+		auth: 'apikey',
+		pickers: [{ key: 'profiles', field: 'profileId', label: 'WhatConverts profile', emptyLabel: 'All leads on this API key' }]
+	}
 ];
 
 export const providerInfo = (id: string) => PROVIDERS.find((p) => p.id === id);

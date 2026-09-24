@@ -30,7 +30,9 @@ export async function GET({ params, url, locals }) {
 	if (upsertErr || !integ) error(403, 'You do not have permission to connect accounts for this client');
 
 	const redirectUri = `${publicEnv.PUBLIC_APP_URL}/api/integrations/${params.provider}/callback`;
-	const tokens = await connectors[params.provider].exchangeCode(code, redirectUri);
+	const exchange = connectors[params.provider].exchangeCode;
+	if (!exchange) error(400, 'This platform does not use sign-in');
+	const tokens = await exchange(code, redirectUri);
 	await saveTokens(supabaseAdmin(), integ.id, tokens);
 
 	redirect(303, `${back}?connected=${params.provider}`);

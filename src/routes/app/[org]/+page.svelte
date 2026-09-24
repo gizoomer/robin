@@ -1,10 +1,12 @@
 <script lang="ts">
+	import AskPanel from '$lib/components/AskPanel.svelte';
 	import StatTile from '$lib/components/StatTile.svelte';
 	import { SOURCES, formatValue, money, type SourceId } from '$lib/metrics';
 
 	let { data } = $props();
 
-	let sources = $derived((Object.keys(SOURCES) as SourceId[]).filter((s) => data.tiles[s].length));
+	let sources = $derived([...(Object.keys(SOURCES) as SourceId[]), ...Object.keys(data.appSources)].filter((s) => data.tiles[s]?.length));
+	const sourceLabel = (s: string) => (s in SOURCES ? SOURCES[s as SourceId].label : data.appSources[s]);
 	const pct = (v: number | null) => (v == null ? '—' : `${Math.round(v * 100)}%`);
 </script>
 
@@ -59,7 +61,7 @@
 
 {#each sources as source (source)}
 	<section class="mt-8">
-		<h2 class="mb-3 text-lg font-semibold">{SOURCES[source].label} <span class="text-sm font-normal text-ink-3">last 30 days</span></h2>
+		<h2 class="mb-3 text-lg font-semibold">{sourceLabel(source)} <span class="text-sm font-normal text-ink-3">last 30 days</span></h2>
 		<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 			{#each data.tiles[source] as t (t.def.metric)}
 				<StatTile
@@ -114,3 +116,5 @@
 		{/if}
 	</section>
 </div>
+
+<AskPanel slug={data.org.slug} clientName={data.org.name} providers={data.aiProviders} />

@@ -66,3 +66,25 @@ select t('outsider cannot see KPIs', (select count(*) from org_kpis)=0);
 set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000b';
 insert into integrations (org_id, provider) values ('10000000-0000-0000-0000-000000000001','google_ads');
 select t('owner connects Google Ads', (select count(*) from integrations where provider='google_ads')=1);
+
+-- 0003: partner apps and keys
+reset role;
+insert into partner_apps (id, name, slug) values ('40000000-0000-0000-0000-000000000001', 'Twin Demo', 'twin-demo');
+insert into partner_app_metrics (app_id, metric, label) values ('40000000-0000-0000-0000-000000000001', 'calls', 'Calls');
+set role authenticated;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000c';
+select t('rep can browse partner catalog', (select count(*) from partner_apps)=1);
+do $$ begin insert into partner_apps (name, slug) values ('x','x-app'); perform t('rep cannot register partner apps', false); exception when others then perform t('rep cannot register partner apps', true); end $$;
+do $$ begin insert into partner_keys (app_id, org_id, key_prefix, key_hash, created_by) values ('40000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001','mycmo_pk_00000001','h',auth.uid()); perform t('rep cannot create partner keys', false); exception when others then perform t('rep cannot create partner keys', true); end $$;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000b';
+insert into partner_keys (app_id, org_id, key_prefix, key_hash, created_by) values ('40000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001','mycmo_pk_00000002','h',auth.uid());
+select t('owner creates a partner key for their client', (select count(*) from partner_keys)=1);
+do $$ begin insert into partner_keys (app_id, org_id, key_prefix, key_hash, created_by) values ('40000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000002','mycmo_pk_00000003','h',auth.uid()); perform t('owner cannot create keys for another client', false); exception when others then perform t('owner cannot create keys for another client', true); end $$;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000f';
+select t('other client cannot see those keys', (select count(*) from partner_keys)=0);
+
+-- 0004: AI switch is an admin-only setting
+set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000c';
+with u as (update organizations set ai_enabled = false where id = '10000000-0000-0000-0000-000000000001' returning 1) select t('rep cannot switch AI off', (select count(*) from u)=0);
+set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000b';
+with u as (update organizations set ai_enabled = false where id = '10000000-0000-0000-0000-000000000001' returning 1) select t('owner can switch AI off', (select count(*) from u)=1);

@@ -51,6 +51,7 @@ export const actions = {
 		const industry = String(form.get('industry') ?? '').trim() || null;
 		const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48);
 		if (slug.length < 2) return fail(400, { error: 'Name is too short' });
+		if (slug === 'partners') return fail(400, { error: 'That name is reserved. Add a word, e.g. "Partners Group".' });
 		const { error } = await locals.supabase.from('organizations').insert({ name, slug, industry });
 		if (error) return fail(400, { error: error.code === '23505' ? 'That client already exists' : error.message });
 		// New client: go straight to inviting their team.

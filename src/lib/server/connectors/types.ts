@@ -21,10 +21,26 @@ export interface DateRange {
 	end: string; // YYYY-MM-DD inclusive
 }
 
+export interface CredentialField {
+	key: string;
+	label: string;
+	secret?: boolean;
+	help?: string;
+}
+
 export interface Connector<Config = Record<string, string | undefined>, Accounts = Record<string, AccountOption[]>> {
 	provider: string;
-	authorizeUrl(state: string, redirectUri: string): string;
-	exchangeCode(code: string, redirectUri: string): Promise<TokenSet>;
+	/**
+	 * 'oauth' connectors send the user to the provider's sign-in page.
+	 * 'apikey' connectors take pasted credentials (credentialFields); the
+	 * stored "access token" is then those credentials as JSON.
+	 */
+	auth?: 'oauth' | 'apikey';
+	credentialFields?: CredentialField[];
+	/** API-key connectors: throws with a readable message when the credentials don't work. */
+	verify?(credentials: Record<string, string>): Promise<void>;
+	authorizeUrl?(state: string, redirectUri: string): string;
+	exchangeCode?(code: string, redirectUri: string): Promise<TokenSet>;
 	/** Returns fresh tokens, or null when the provider has no refresh flow (user must reconnect). */
 	refresh(tokens: TokenSet): Promise<TokenSet | null>;
 	/** What the client can pick from after connecting (GA4 properties, pages, ...). */
