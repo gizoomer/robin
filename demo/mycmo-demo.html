@@ -1,0 +1,661 @@
+<title>MYCMO Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Same tokens as the app (src/app.css). */
+:root {
+	--bg: #f6f6f4; --surface: #fcfcfb; --border: #e4e3de; --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #8a8983;
+	--accent: #2a78d6; --accent-soft: rgba(42, 120, 214, 0.1); --good: #137a3a; --good-soft: rgba(19, 122, 58, 0.1);
+	--bad: #c2312f; --bad-soft: rgba(194, 49, 47, 0.1); --series-1: #2a78d6; --banner: #0b0b0b; --banner-ink: #f6f6f4;
+}
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		color-scheme: dark;
+		--bg: #111110; --surface: #1a1a19; --border: #2d2d2b; --ink: #ffffff; --ink-2: #c3c2b7; --ink-3: #8a8983;
+		--accent: #3987e5; --accent-soft: rgba(57, 135, 229, 0.16); --good: #4cc27a; --good-soft: rgba(76, 194, 122, 0.14);
+		--bad: #f07472; --bad-soft: rgba(240, 116, 114, 0.14); --series-1: #3987e5; --banner: #2d2d2b; --banner-ink: #ffffff;
+	}
+}
+:root[data-theme="dark"] {
+	color-scheme: dark;
+	--bg: #111110; --surface: #1a1a19; --border: #2d2d2b; --ink: #ffffff; --ink-2: #c3c2b7; --ink-3: #8a8983;
+	--accent: #3987e5; --accent-soft: rgba(57, 135, 229, 0.16); --good: #4cc27a; --good-soft: rgba(76, 194, 122, 0.14);
+	--bad: #f07472; --bad-soft: rgba(240, 116, 114, 0.14); --series-1: #3987e5; --banner: #2d2d2b; --banner-ink: #ffffff;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 14px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tnum { font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1152px; margin: 0 auto; padding-inline: 16px; }
+.muted { color: var(--ink-2); } .faint { color: var(--ink-3); } .small { font-size: 12px; } .good { color: var(--good); } .bad { color: var(--bad); }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 1px solid var(--border); background: var(--surface); transition: transform .08s; white-space: nowrap; }
+.btn:active { transform: scale(.98); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-sm { min-height: 36px; padding: 0 10px; font-size: 12px; }
+.input { width: 100%; min-height: 44px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); padding: 0 12px; font-size: 16px; }
+textarea.input { padding: 8px 12px; min-height: 64px; }
+.input:focus { outline: none; border-color: var(--accent); }
+.label { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 500; color: var(--ink-2); }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.grid { display: grid; gap: 12px; }
+.g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 900px) { .g4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .g3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .g3, .g2 { grid-template-columns: 1fr; } }
+.banner { background: var(--banner); color: var(--banner-ink); font-size: 12px; text-align: center; padding: 6px 16px; }
+.banner button { background: none; border: 0; color: inherit; font-weight: 700; text-decoration: underline; padding: 0 0 0 10px; }
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--border); }
+header.top .wrap { display: flex; align-items: center; gap: 12px; height: 56px; }
+.brand { font-size: 13px; font-weight: 700; letter-spacing: .06em; color: var(--accent); }
+.pill { border: 1px solid var(--border); border-radius: 999px; padding: 2px 8px; font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+.nav { display: flex; gap: 4px; margin-left: auto; }
+.nav button, .linkbtn { background: none; border: 0; padding: 8px 12px; border-radius: 6px; color: var(--ink-2); font-size: 14px; }
+.nav button[aria-current="page"] { background: var(--bg); color: var(--ink); font-weight: 600; }
+.bottomnav { display: none; }
+@media (max-width: 700px) {
+	.nav { display: none; }
+	.bottomnav { display: grid; position: fixed; inset: auto 0 0 0; z-index: 20; background: var(--surface); border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom, 0px); }
+	.bottomnav button { background: none; border: 0; min-height: 56px; font-size: 12px; color: var(--ink-2); }
+	.bottomnav button[aria-current="page"] { color: var(--accent); font-weight: 600; }
+	main { padding-bottom: 80px !important; }
+	.hide-sm { display: none !important; }
+}
+main { padding-block: 24px 48px; }
+.tile { padding: 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.tile .v { font-size: 24px; font-weight: 600; letter-spacing: -.01em; }
+.hero { font-size: 48px; font-weight: 600; letter-spacing: -.02em; line-height: 1.1; }
+.sec-h { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 32px 0 12px; }
+.sec-h h2 { font-size: 18px; }
+.meter { height: 8px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.meter > div { height: 100%; border-radius: 999px; }
+.fill-good { background: var(--good); } .fill-ok { background: var(--accent); } .fill-bad { background: var(--bad); }
+.spark { position: relative; margin-top: 8px; }
+.spark svg { display: block; width: 100%; height: 40px; overflow: visible; touch-action: none; }
+.tip { position: absolute; top: -34px; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 2px 8px; font-size: 12px; white-space: nowrap; pointer-events: none; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-weight: 500; color: var(--ink-2); padding: 10px 8px; }
+td { padding: 10px 8px; border-top: 1px solid var(--border); }
+.scroll-x { overflow-x: auto; }
+tr.click { cursor: pointer; } tr.click:hover td { background: var(--bg); }
+.seg { display: inline-flex; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 3px; }
+.seg button { background: none; border: 0; padding: 6px 12px; border-radius: 6px; color: var(--ink-2); }
+.seg button[aria-selected="true"] { background: var(--bg); color: var(--ink); font-weight: 600; }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 24px; overflow-x: auto; }
+.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 8px 12px; color: var(--ink-2); white-space: nowrap; }
+.tabs button[aria-current="page"] { border-color: var(--accent); color: var(--ink); font-weight: 600; }
+.board { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 16px; margin-inline: -16px; padding-inline: 16px; }
+.col { flex: 0 0 min(85vw, 288px); scroll-snap-align: start; display: flex; flex-direction: column; }
+.col.drop { border-color: var(--accent); }
+.col header { padding: 12px; border-bottom: 1px solid var(--border); }
+.col ul { list-style: none; margin: 0; padding: 8px; display: flex; flex-direction: column; gap: 8px; min-height: 96px; }
+.lead { border: 1px solid var(--border); background: var(--bg); border-radius: 8px; padding: 12px; }
+.lead > button { all: unset; display: block; width: 100%; cursor: pointer; }
+.lead .acts { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+.toast { position: fixed; left: 50%; bottom: 88px; transform: translateX(-50%); z-index: 40; background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: 14px; box-shadow: 0 4px 16px rgba(0,0,0,.2); max-width: calc(100vw - 32px); text-align: center; }
+.alert { padding: 8px 12px; border-radius: 8px; font-size: 14px; }
+.alert-bad { background: var(--bad-soft); color: var(--bad); } .alert-good { background: var(--good-soft); color: var(--good); } .alert-info { background: var(--accent-soft); }
+.chip { border-radius: 999px; padding: 2px 8px; font-size: 12px; font-weight: 500; }
+.chip-ads { background: var(--accent-soft); color: var(--accent); }
+.persona { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 44px; background: none; border: 0; border-radius: 8px; padding: 0 8px; text-align: left; }
+.persona:hover { background: var(--bg); }
+.check { display: flex; align-items: center; gap: 12px; min-height: 44px; flex: 1; cursor: pointer; }
+.check input { width: 20px; height: 20px; accent-color: var(--accent); }
+.radio-card { display: flex; gap: 8px; border: 1px solid var(--border); border-radius: 8px; padding: 8px; cursor: pointer; }
+.radio-card:has(input:checked) { border-color: var(--accent); }
+.src-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.src-grid label { display: flex; align-items: center; justify-content: center; min-height: 44px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); font-size: 12px; font-weight: 600; cursor: pointer; }
+.src-grid label:has(input:checked) { border-color: var(--accent); color: var(--accent); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+ul.plain { list-style: none; margin: 0; padding: 0; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div id="app"></div>
+
+<script>
+// ---------------------------------------------------------------------------
+// Sample data: same generator as src/lib/server/demo.ts (20 clients, 3-4 staff each)
+// ---------------------------------------------------------------------------
+function rng(seed) { return () => { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const DAY = 86400000;
+const daysAgo = (n) => new Date(Date.now() - n * DAY);
+const iso = (d) => d.toISOString();
+const dayStr = (d) => d.toISOString().slice(0, 10);
+const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+let uid = 0; const newId = () => 'id' + (++uid);
+
+const SUPER = 'super-admin';
+const CLIENTS = [
+	['Acme Roofing', 'Roofing', 14, 1.0, 1, ['google', 'meta', 'google_ads', 'meta_ads']],
+	['Bright Smile Dental', 'Dental', 6, 0.7, 1, ['google', 'meta', 'google_ads']],
+	['Summit HVAC', 'HVAC', 9, 0.9, 1, ['google', 'google_ads']],
+	['Harbor Law Group', 'Legal', 22, 0.5, 0.5, ['google', 'meta']],
+	['Evergreen Landscaping', 'Landscaping', 5, 0.6, 1, ['google', 'meta', 'meta_ads']],
+	['Peak Fitness Studio', 'Fitness', 1.2, 0.8, -1, ['google', 'meta', 'meta_ads']],
+	['Coastal Realty', 'Real estate', 18, 1.3, 1, ['google', 'meta', 'google_ads', 'meta_ads']],
+	['Blue Ridge Plumbing', 'Plumbing', 4, 0.8, 1, ['google', 'google_ads']],
+	['Urban Bites Catering', 'Catering', 3, 0.4, 0.5, ['google', 'meta']],
+	['Northside Auto Repair', 'Auto repair', 2, 0.6, -0.5, ['google']],
+	['Lumen Med Spa', 'Med spa', 2.5, 0.7, 1, ['google', 'meta', 'meta_ads']],
+	['Keystone Builders', 'Construction', 45, 0.4, 1, ['google', 'google_ads']],
+	['Silver Oak Senior Living', 'Senior care', 30, 0.5, 0.5, ['google', 'meta']],
+	['Prairie Solar', 'Solar', 26, 0.9, 1, ['google', 'meta', 'google_ads', 'meta_ads']],
+	['Metro Pest Control', 'Pest control', 1.5, 0.7, 0.5, ['google', 'google_ads']],
+	['Willow Veterinary', 'Veterinary', 1, 0.6, 1, ['google', 'meta']],
+	['Titan Garage Doors', 'Garage doors', 3, 0.5, -1, ['google']],
+	['Clearview Windows', 'Windows', 12, 0.8, 1, ['google', 'meta', 'meta_ads']],
+	['Redline Moving Co.', 'Moving', 2.2, 0.6, 0.5, ['google', 'google_ads']],
+	['Horizon Financial', 'Financial advice', 8, 0.5, 0, []]
+];
+const FIRST = ['Maria', 'James', 'Priya', 'Carlos', 'Aisha', 'Tom', 'Grace', 'Omar', 'Leah', 'Victor', 'Nina', 'Derek', 'Sofia', 'Ben', 'Hana', 'Luis', 'Zoe', 'Ravi', 'Emma', 'Jake'];
+const LAST = ['Lopez', 'Carter', 'Shah', 'Nguyen', 'Brooks', 'Reed', 'Kim', 'Patel', 'Diaz', 'Hughes', 'Ward', 'Singh', 'Ellis', 'Moreno', 'Fox'];
+const LEAD_NAMES = ['Robert Mills', 'Angela Brooks', 'Dave Kim', 'Linda Torres', 'Mark Ellison', 'Sofia Nguyen', 'Tom Becker', 'Rachel Green', 'Owen Patel', 'Carla Diaz', 'Ben Foster', 'Nina Hart', 'Greg Walsh', 'Emily Stone', 'Victor Reyes', 'Holly Price', 'Sam Ortiz', 'Julia Chen', 'Aaron Webb', 'Kate Lin', 'Paula Grant', 'Ian Brooks', 'Maya Cole', 'Eric Tran'];
+
+const SOURCES = {
+	ga4: { label: 'Website (Google Analytics)', provider: 'google' }, gsc: { label: 'Google Search', provider: 'google' },
+	youtube: { label: 'YouTube', provider: 'google' }, facebook: { label: 'Facebook', provider: 'meta' },
+	instagram: { label: 'Instagram', provider: 'meta' }, google_ads: { label: 'Google Ads', provider: 'google_ads' },
+	meta_ads: { label: 'Meta Ads', provider: 'meta_ads' }
+};
+const METRICS = [
+	{ source: 'ga4', metric: 'sessions', label: 'Website visits', agg: 'sum' },
+	{ source: 'ga4', metric: 'totalUsers', label: 'Visitors', agg: 'sum' },
+	{ source: 'ga4', metric: 'keyEvents', label: 'Conversions', agg: 'sum' },
+	{ source: 'gsc', metric: 'clicks', label: 'Search clicks', agg: 'sum' },
+	{ source: 'gsc', metric: 'impressions', label: 'Search impressions', agg: 'sum' },
+	{ source: 'gsc', metric: 'position', label: 'Avg. search position', agg: 'avg', format: 'decimal', upIsGood: false },
+	{ source: 'youtube', metric: 'views', label: 'Video views', agg: 'sum' },
+	{ source: 'youtube', metric: 'estimatedMinutesWatched', label: 'Minutes watched', agg: 'sum' },
+	{ source: 'youtube', metric: 'subscribersNet', label: 'Net subscribers', agg: 'sum' },
+	{ source: 'facebook', metric: 'followers', label: 'Page followers', agg: 'last' },
+	{ source: 'facebook', metric: 'page_post_engagements', label: 'Post engagements', agg: 'sum' },
+	{ source: 'instagram', metric: 'followers', label: 'Followers', agg: 'last' },
+	{ source: 'instagram', metric: 'reach', label: 'Accounts reached', agg: 'sum' },
+	{ source: 'google_ads', metric: 'spend', label: 'Google Ads spend', agg: 'sum', format: 'money', neutral: true },
+	{ source: 'google_ads', metric: 'clicks', label: 'Ad clicks', agg: 'sum' },
+	{ source: 'google_ads', metric: 'conversions', label: 'Ad conversions', agg: 'sum' },
+	{ source: 'meta_ads', metric: 'spend', label: 'Meta Ads spend', agg: 'sum', format: 'money', neutral: true },
+	{ source: 'meta_ads', metric: 'clicks', label: 'Ad clicks', agg: 'sum' },
+	{ source: 'meta_ads', metric: 'leads', label: 'Ad leads', agg: 'sum' }
+];
+const PROVIDERS = [
+	{ id: 'google', name: 'Google', covers: 'Google Analytics 4, Search Console, YouTube', ads: false, available: true, pickers: ['Google Analytics property', 'Search Console site', 'YouTube channel'] },
+	{ id: 'meta', name: 'Meta', covers: 'Facebook Page, Instagram Business', ads: false, available: true, pickers: ['Facebook Page (and linked Instagram)'] },
+	{ id: 'google_ads', name: 'Google Ads', covers: 'Spend, clicks, conversions, cost per conversion', ads: true, available: true, pickers: ['Google Ads account'] },
+	{ id: 'meta_ads', name: 'Meta Ads', covers: 'Facebook + Instagram ad spend, clicks, leads', ads: true, available: true, pickers: ['Ad account'] },
+	{ id: 'tiktok_ads', name: 'TikTok Ads', covers: 'Spend, views, conversions', available: false },
+	{ id: 'linkedin_ads', name: 'LinkedIn Ads', covers: 'Spend, leads, CPL', available: false },
+	{ id: 'gbp', name: 'Google Business Profile', covers: 'Calls, direction requests, reviews', available: false },
+	{ id: 'callrail', name: 'CallRail', covers: 'Tracked calls by source', available: false }
+];
+const STAGES = [['new', 'New lead'], ['attempted_contact', 'Attempted contact'], ['meeting_scheduled', 'Meeting scheduled'], ['proposal_sent', 'Proposal sent'], ['closed_won', 'Closed won'], ['closed_lost', 'Closed lost']];
+const LEAD_SOURCES = [['door_knock', 'Door knock'], ['referral', 'Referral'], ['web', 'Web'], ['phone', 'Phone'], ['social', 'Social'], ['other', 'Other']];
+const QUICK = [['call', 'Logged call'], ['voicemail', 'Left voicemail'], ['door_knock', 'Knocked door'], ['follow_up_scheduled', 'Scheduled follow-up']];
+const ROLES = [['owner', 'Owner', 'Everything: dashboard, team, KPIs, connections, all leads'], ['rep', 'Sales rep', 'Pipeline, add leads, log activity on their own leads'], ['viewer', 'View only', 'Sees the dashboard, cannot change anything']];
+const ROLE_LABEL = { agency: 'Super admin', owner: 'Owner', rep: 'Sales rep', viewer: 'View only' };
+
+function seed() {
+	const r = rng(42);
+	const db = { profiles: [{ id: SUPER, name: 'You (CMO)', email: 'cmo@youragency.com', agency: true }], orgs: [], members: [], leads: [], activities: [], huddles: [], spend: [], integrations: [], snaps: [], kpis: [] };
+	const monthStart = (back) => { const d = new Date(); return dayStr(new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - back, 1))); };
+	CLIENTS.forEach(([name, industry, dealK, scale, momentum, providers], ci) => {
+		const orgId = newId(); const slug = slugify(name);
+		db.orgs.push({ id: orgId, name, slug, industry });
+		const roles = ['owner', 'rep', 'rep', ...(ci % 3 === 0 ? [] : ['viewer'])];
+		const staff = roles.map((role, i) => {
+			const first = FIRST[(ci * 3 + i) % FIRST.length], last = LAST[(ci * 7 + i * 3) % LAST.length], id = newId();
+			db.profiles.push({ id, name: `${first} ${last}`, email: `${first.toLowerCase()}@${slug}.com`, agency: false });
+			db.members.push({ org: orgId, user: id, role });
+			return { id, role };
+		});
+		const sellers = staff.filter((s) => s.role !== 'viewer');
+		const bag = ['new', 'new', 'new', 'attempted_contact', 'attempted_contact', 'meeting_scheduled', 'meeting_scheduled', 'proposal_sent', 'proposal_sent', 'closed_won', 'closed_won', 'closed_lost', 'closed_lost'];
+		const srcs = ['door_knock', 'referral', 'web', 'phone', 'social'];
+		const n = 10 + Math.floor(r() * 14), leadIds = [];
+		for (let i = 0; i < n; i++) {
+			const stage = bag[Math.floor(r() * bag.length)], created = daysAgo(2 + Math.floor(r() * 80)), id = newId();
+			leadIds.push(id);
+			db.leads.push({ id, org: orgId, owner: sellers[i % sellers.length].id, name: LEAD_NAMES[(ci * 5 + i) % LEAD_NAMES.length],
+				company: r() > 0.5 ? `${LAST[(ci + i) % LAST.length]} ${['Holdings', 'Residence', 'LLC', 'Group'][i % 4]}` : '',
+				phone: `(555) ${String(100 + ci).slice(-3)}-${String(1000 + i * 37).slice(-4)}`, source: srcs[Math.floor(r() * srcs.length)], stage,
+				value: Math.round(dealK * (0.5 + r()) * 1000), created: iso(created),
+				changed: iso(daysAgo(stage.startsWith('closed') ? 2 + Math.floor(r() * 25) : Math.floor(r() * 6))) });
+		}
+		const types = ['call', 'call', 'voicemail', 'door_knock', 'follow_up_scheduled', 'email'];
+		const na = 8 + Math.floor(r() * 30);
+		for (let i = 0; i < na; i++) db.activities.push({ org: orgId, lead: leadIds[i % leadIds.length], user: sellers[Math.floor(r() * sellers.length)].id, type: types[i % types.length], at: iso(daysAgo(r() * 6.5)) });
+		db.huddles.push({ id: newId(), org: orgId, date: dayStr(daysAgo(ci % 3)), wins: `Closed ${LEAD_NAMES[ci % LEAD_NAMES.length]} ($${Math.round(dealK * 1.1)}K). Two new referrals this week.`, blockers: ci % 2 ? 'Waiting on a financing approval for one proposal.' : '', focus: 'Follow up on every open proposal before Friday.' });
+		for (const back of [0, 1, 2, 3]) db.spend.push({ id: newId(), org: orgId, channel: 'SEO retainer', month: monthStart(back), amount: Math.round(800 + dealK * 40) });
+		const broken = name === 'Harbor Law Group';
+		for (const p of providers) db.integrations.push({ org: orgId, provider: p, status: broken && p === 'meta' ? 'error' : 'connected', error: broken && p === 'meta' ? 'Access expired. Reconnect this account.' : '', synced: iso(daysAgo(broken && p === 'meta' ? 9 : 0.3)) });
+		const has = (p) => providers.includes(p);
+		const push = (source, metric, d, value) => db.snaps.push({ org: orgId, source, metric, day: dayStr(d), value });
+		for (let i = 62; i >= 1; i--) {
+			const d = daysAgo(i), growth = 1 + (62 - i) * 0.005 * momentum, wk = [0.7, 1.05, 1.1, 1.08, 1.02, 0.95, 0.75][d.getUTCDay()], nz = () => 0.88 + r() * 0.24;
+			if (has('google')) {
+				const s = Math.round(420 * scale * growth * wk * nz());
+				push('ga4', 'sessions', d, s); push('ga4', 'totalUsers', d, Math.round(s * 0.72)); push('ga4', 'keyEvents', d, Math.round(s * 0.026 * nz()));
+				const imp = Math.round(5200 * scale * growth * wk * nz());
+				push('gsc', 'impressions', d, imp); push('gsc', 'clicks', d, Math.round(imp * 0.029 * nz())); push('gsc', 'position', d, +(14.2 - (62 - i) * 0.04 * momentum + r() * 0.6).toFixed(1));
+				if (ci % 4 === 0) { const v = Math.round(310 * scale * growth * nz()); push('youtube', 'views', d, v); push('youtube', 'estimatedMinutesWatched', d, Math.round(v * 2.9 * nz())); push('youtube', 'subscribersNet', d, Math.round(1 + r() * 5)); }
+			}
+			if (has('meta') && !(broken && i < 9)) {
+				push('facebook', 'followers', d, Math.round(3120 * scale) + Math.round((62 - i) * 2.1 * momentum)); push('facebook', 'page_post_engagements', d, Math.round(80 * scale * growth * nz()));
+				push('instagram', 'followers', d, Math.round(5400 * scale) + Math.round((62 - i) * 3.4 * momentum)); push('instagram', 'reach', d, Math.round(1400 * scale * growth * wk * nz()));
+			}
+			if (has('google_ads')) { const sp = +(85 * scale * nz()).toFixed(2), c = Math.round(sp / 3.1 * nz()); push('google_ads', 'spend', d, sp); push('google_ads', 'clicks', d, c); push('google_ads', 'conversions', d, Math.round(c * 0.07 * growth * nz())); }
+			if (has('meta_ads')) { const sp = +(55 * scale * nz()).toFixed(2), c = Math.round(sp / 1.4 * nz()); push('meta_ads', 'spend', d, sp); push('meta_ads', 'clicks', d, c); push('meta_ads', 'leads', d, Math.round(c * 0.05 * growth * nz())); }
+		}
+		const k = [];
+		if (has('google')) k.push(['ga4', 'sessions', Math.round(13000 * scale * 1.1)], ['ga4', 'keyEvents', Math.round(340 * scale * 1.1)]);
+		if (has('google_ads')) k.push(['google_ads', 'conversions', Math.round(620 * scale / 10)]);
+		if (has('meta_ads')) k.push(['meta_ads', 'leads', Math.round(1200 * scale / 20)]);
+		if (has('meta') && k.length < 4) k.push(['instagram', 'reach', Math.round(40000 * scale)]);
+		if (has('google') && k.length < 4) k.push(['gsc', 'clicks', Math.round(4500 * scale)]);
+		k.slice(0, 4).forEach(([source, metric, target], position) => db.kpis.push({ org: orgId, source, metric, position, target }));
+	});
+	return db;
+}
+const db = seed();
+
+// ---------------------------------------------------------------------------
+// Dashboard math: same as src/lib/dashboard.ts and src/lib/portfolio.ts
+// ---------------------------------------------------------------------------
+const agg = (vals, how) => { if (!vals.length) return null; if (how === 'last') return vals[vals.length - 1]; const s = vals.reduce((a, b) => a + b, 0); return how === 'avg' ? s / vals.length : s; };
+function buildTiles(rows, days = 30) {
+	const t = new Date(); const end = Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate());
+	const cut = dayStr(new Date(end - days * DAY)), prior = dayStr(new Date(end - 2 * days * DAY));
+	const out = Object.fromEntries(Object.keys(SOURCES).map((s) => [s, []]));
+	for (const def of METRICS) {
+		const series = rows.filter((r) => r.source === def.source && r.metric === def.metric).sort((a, b) => a.day.localeCompare(b.day));
+		const cur = series.filter((r) => r.day >= cut); if (!cur.length) continue;
+		const prev = series.filter((r) => r.day >= prior && r.day < cut);
+		const value = agg(cur.map((r) => r.value), def.agg), p = agg(prev.map((r) => r.value), def.agg);
+		out[def.source].push({ def, value, prior: p, delta: p == null || p === 0 ? null : (value - p) / Math.abs(p), spark: cur.map((r) => ({ day: r.day, value: r.value })) });
+	}
+	return out;
+}
+function pipelineStats(leads) {
+	const open = leads.filter((l) => !l.stage.startsWith('closed')), won = leads.filter((l) => l.stage === 'closed_won'), lost = leads.filter((l) => l.stage === 'closed_lost');
+	return { openValue: open.reduce((a, l) => a + l.value, 0), openCount: open.length, wonValue: won.reduce((a, l) => a + l.value, 0), wonCount: won.length, winRate: won.length + lost.length ? won.length / (won.length + lost.length) : null };
+}
+function kpiProgress(tiles, kpis) {
+	return [...kpis].sort((a, b) => a.position - b.position).flatMap((k) => {
+		const def = METRICS.find((m) => m.source === k.source && m.metric === k.metric); if (!def) return [];
+		const t = tiles[k.source]?.find((x) => x.def.metric === k.metric), value = t?.value ?? 0, target = k.target ?? null;
+		let pct = null; if (target && t) pct = def.upIsGood === false ? (value ? target / value : null) : value / target;
+		return [{ def, value, target, pct }];
+	});
+}
+function summarize(org) {
+	const leads = db.leads.filter((l) => l.org === org.id), tiles = buildTiles(db.snaps.filter((s) => s.org === org.id));
+	const integ = db.integrations.filter((i) => i.org === org.id), since = iso(daysAgo(30));
+	const sessions = tiles.ga4.find((t) => t.def.metric === 'sessions');
+	const adSpend = [...tiles.google_ads, ...tiles.meta_ads].filter((t) => t.def.metric === 'spend').reduce((a, t) => a + t.value, 0);
+	const prog = kpiProgress(tiles, db.kpis.filter((k) => k.org === org.id)).filter((k) => k.pct != null);
+	const att = prog.length ? prog.reduce((a, k) => a + Math.min(k.pct, 1.5), 0) / prog.length : null;
+	const alerts = [];
+	const broken = integ.filter((i) => i.status === 'error');
+	if (broken.length) alerts.push(`${broken.map((b) => b.provider.replace('_', ' ')).join(', ')} needs reconnecting`);
+	if (!integ.length) alerts.push('No accounts connected');
+	if (att != null && att < 0.8) alerts.push(`KPIs at ${Math.round(att * 100)}% of goal`);
+	if (sessions?.delta != null && sessions.delta < -0.1) alerts.push(`Website visits down ${Math.round(-sessions.delta * 100)}%`);
+	return { org, members: db.members.filter((m) => m.org === org.id).length, open: pipelineStats(leads).openValue, newLeads: leads.filter((l) => l.created >= since).length, sessions: sessions?.value ?? null, sDelta: sessions?.delta ?? null, adSpend, att, alerts };
+}
+
+// ---------------------------------------------------------------------------
+// Formatting
+// ---------------------------------------------------------------------------
+const compact = new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 });
+const whole = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+const moneyC = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', notation: 'compact', maximumFractionDigits: 1 });
+const money = (v) => moneyC.format(Math.abs(v) < 1000 ? Math.round(v) : v);
+const fmt = (v, f) => f === 'decimal' ? v.toFixed(1) : f === 'money' ? money(v) : Math.abs(v) >= 10000 ? compact.format(v) : whole.format(v);
+const pct = (v) => v == null ? '—' : `${Math.round(v * 100)}%`;
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const name = (id) => db.profiles.find((p) => p.id === id)?.name ?? '';
+
+// ---------------------------------------------------------------------------
+// Session + permissions (mirror of the SQL row-level security)
+// ---------------------------------------------------------------------------
+const S = { user: null, org: null, view: 'overview', openLead: null, filter: 'all', query: '', personaQuery: '', adding: false, flash: null, confirmRemove: null, dragging: null };
+const me = () => db.profiles.find((p) => p.id === S.user);
+const isAgency = () => !!me()?.agency;
+function roleIn(orgId) { if (isAgency()) return 'agency'; return db.members.find((m) => m.org === orgId && m.user === S.user)?.role ?? null; }
+const canWork = (o) => ['agency', 'owner', 'rep'].includes(roleIn(o));
+const canManage = (o) => ['agency', 'owner'].includes(roleIn(o));
+const myOrgs = () => isAgency() ? db.orgs : db.orgs.filter((o) => roleIn(o.id));
+const curOrg = () => db.orgs.find((o) => o.id === S.org);
+function canEditLead(l) { const r = roleIn(l.org); return r === 'agency' || r === 'owner' || (r === 'rep' && (l.owner === S.user || !l.owner)); }
+
+let toastTimer;
+function toast(msg) { clearTimeout(toastTimer); S.toast = msg; renderToast(); toastTimer = setTimeout(() => { S.toast = null; renderToast(); }, 2600); }
+function renderToast() { let el = document.getElementById('toast'); if (!S.toast) { el?.remove(); return; } if (!el) { el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; el.setAttribute('role', 'status'); document.body.append(el); } el.textContent = S.toast; }
+
+// ---------------------------------------------------------------------------
+// Components
+// ---------------------------------------------------------------------------
+const sparks = [];
+function spark(points, label, format) {
+	if (points.length < 2) return '';
+	const id = sparks.push({ points, format }) - 1, W = 200, H = 40;
+	const vals = points.map((p) => p.value), min = Math.min(...vals), max = Math.max(...vals);
+	const x = (i) => (i / (points.length - 1)) * W, y = (v) => max === min ? H / 2 : H - 3 - ((v - min) / (max - min)) * (H - 6);
+	const d = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.value).toFixed(1)}`).join('');
+	return `<div class="spark" data-spark="${id}"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(label)} daily trend"><path d="${d}" fill="none" stroke="var(--series-1)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/><line class="cross" x1="0" x2="0" y1="0" y2="${H}" stroke="var(--ink-3)" stroke-width="1" vector-effect="non-scaling-stroke" visibility="hidden"/></svg></div>`;
+}
+function tile(label, value, { delta = null, upIsGood = true, neutral = false, sparkPts = [], format } = {}) {
+	const good = neutral || delta == null || delta === 0 ? null : (delta > 0) === upIsGood;
+	return `<div class="card tile"><p class="muted">${esc(label)}</p><p class="v tnum">${value}</p>${delta != null ? `<p class="small muted"><span style="font-weight:600" class="${good === null ? '' : good ? 'good' : 'bad'}">${delta > 0 ? '▲' : delta < 0 ? '▼' : '•'} ${Math.abs(delta * 100).toFixed(0)}%</span> vs prior 30 days</p>` : ''}${spark(sparkPts, label, format)}</div>`;
+}
+const meterClass = (p) => p >= 1 ? 'fill-good' : p >= 0.8 ? 'fill-ok' : 'fill-bad';
+
+// ---------------------------------------------------------------------------
+// Views
+// ---------------------------------------------------------------------------
+function viewPicker() {
+	const q = S.personaQuery.toLowerCase();
+	const groups = [...db.orgs].sort((a, b) => a.name.localeCompare(b.name)).map((o) => ({ o, people: db.members.filter((m) => m.org === o.id) }))
+		.filter((g) => !q || g.o.name.toLowerCase().includes(q) || g.people.some((p) => name(p.user).toLowerCase().includes(q)));
+	return `<main class="wrap" style="max-width:780px">
+		<p class="brand">MYCMO DEMO</p>
+		<h1 style="font-size:26px;margin-top:4px">Who do you want to sign in as?</h1>
+		<p class="muted" style="margin-top:4px">Everything here is sample data. Switch people any time from the bar at the top. Changes you make last until you reload.</p>
+		<button class="card" data-act="signin" data-id="${SUPER}" style="display:flex;justify-content:space-between;align-items:center;gap:16px;width:100%;margin-top:24px;padding:16px;text-align:left;border-color:var(--accent)">
+			<span><span style="display:block;font-weight:600">Super admin (you, the CMO)</span><span class="muted" style="display:block">All 20 clients, portfolio view, set up each client's access, KPIs and connections</span></span><span style="color:var(--accent)" aria-hidden="true">→</span>
+		</button>
+		<div class="row" style="justify-content:space-between;margin-top:32px">
+			<h2 style="font-size:18px">Or sign in as a client's employee</h2>
+			<input id="persona-q" class="input" style="max-width:240px" type="search" placeholder="Search clients or people" aria-label="Search clients or people" value="${esc(S.personaQuery)}">
+		</div>
+		<div class="grid g2" style="margin-top:12px">${groups.map((g) => `<section class="card" style="padding:12px"><h3 style="font-size:15px;padding:0 4px">${esc(g.o.name)}</h3><ul class="plain" style="margin-top:8px">${g.people.map((p) => `<li><button class="persona" data-act="signin" data-id="${p.user}" data-org="${g.o.id}"><span>${esc(name(p.user))}</span><span class="small faint">${ROLE_LABEL[p.role]}</span></button></li>`).join('')}</ul></section>`).join('')}</div>
+	</main>`;
+}
+
+function viewPortfolio() {
+	const all = db.orgs.map(summarize), attention = all.filter((c) => c.alerts.length);
+	const q = S.query.toLowerCase();
+	const rows = (S.filter === 'attention' ? attention : [...all].sort((a, b) => b.alerts.length - a.alerts.length || a.org.name.localeCompare(b.org.name))).filter((c) => !q || c.org.name.toLowerCase().includes(q));
+	const status = (c) => c.alerts.length ? `<span class="small bad" style="font-weight:600">⚠ ${esc(c.alerts[0])}</span>` : `<span class="small good">● On track</span>`;
+	const kpiCell = (c) => c.att == null ? '<span class="faint">Not set</span>' : `<div class="row" style="gap:8px;flex-wrap:nowrap"><div class="meter" style="width:64px;height:6px"><div class="${meterClass(c.att)}" style="width:${Math.min(c.att, 1) * 100}%"></div></div><span>${pct(c.att)}</span></div>`;
+	return `<header class="top"><div class="wrap"><span class="brand">MYCMO</span><span style="font-weight:600">All clients</span></div></header>
+	<main class="wrap">
+		<section class="grid g4">
+			${tile('Active clients', all.length)}${tile('Needs attention', attention.length)}
+			${tile('Client pipeline (open)', money(all.reduce((a, c) => a + c.open, 0)))}${tile('Ad spend managed, 30 days', money(all.reduce((a, c) => a + c.adSpend, 0)))}
+		</section>
+		<div class="row" style="margin-top:24px">
+			<div class="seg" role="tablist"><button role="tab" aria-selected="${S.filter === 'all'}" data-act="filter" data-v="all">All ${all.length}</button><button role="tab" aria-selected="${S.filter === 'attention'}" data-act="filter" data-v="attention">Needs attention ${attention.length}</button></div>
+			<input id="client-q" class="input" style="max-width:220px" type="search" placeholder="Search clients" aria-label="Search clients" value="${esc(S.query)}">
+			<button class="btn btn-primary" style="margin-left:auto" data-act="toggle-add">+ New client</button>
+		</div>
+		${S.adding ? `<form id="new-client" class="card grid" style="margin-top:12px;padding:16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));align-items:end">
+			<div><label class="label" for="nc-name">Business name</label><input class="input" id="nc-name" required placeholder="Sunrise Pools"></div>
+			<div><label class="label" for="nc-ind">Industry</label><input class="input" id="nc-ind" placeholder="Pools"></div>
+			<button class="btn btn-primary">Create and invite team</button></form>` : ''}
+		<div class="card scroll-x hide-sm" style="margin-top:16px"><table class="tnum"><thead><tr><th style="padding-left:16px">Client</th><th>KPI goals</th><th>Website visits</th><th>New leads</th><th>Open pipeline</th><th>Ad spend</th><th>Users</th><th>Status</th></tr></thead><tbody>
+			${rows.map((c) => `<tr class="click" data-act="open-org" data-id="${c.org.id}" tabindex="0"><td style="padding-left:16px"><span style="font-weight:600">${esc(c.org.name)}</span><div class="small faint">${esc(c.org.industry ?? '')}</div></td><td>${kpiCell(c)}</td>
+			<td>${c.sessions == null ? '—' : fmt(c.sessions)} ${c.sDelta != null ? `<span class="small ${c.sDelta >= 0 ? 'good' : 'bad'}">${c.sDelta >= 0 ? '▲' : '▼'}${Math.abs(Math.round(c.sDelta * 100))}%</span>` : ''}</td>
+			<td>${c.newLeads}</td><td>${money(c.open)}</td><td>${c.adSpend ? money(c.adSpend) : '—'}</td><td>${c.members}</td><td>${status(c)}</td></tr>`).join('')}
+		</tbody></table></div>
+		<ul class="plain stack only-sm" style="margin-top:16px">${rows.map((c) => `<li class="show-sm"><button class="card" data-act="open-org" data-id="${c.org.id}" style="display:block;width:100%;text-align:left;padding:16px"><span class="row" style="justify-content:space-between"><span style="font-weight:600">${esc(c.org.name)}</span><span class="tnum">${money(c.open)}</span></span><span class="small muted" style="display:block;margin-top:4px">KPI goals ${pct(c.att)} · ${c.newLeads} new leads · ${c.members} users</span>${c.alerts.length ? `<span class="small bad" style="display:block;margin-top:4px;font-weight:600">⚠ ${esc(c.alerts.join(' · '))}</span>` : ''}</button></li>`).join('')}</ul>
+		<p class="small faint" style="margin-top:12px">Last 30 days. KPI goals = average progress toward each client's monthly targets. Click a client to open their dashboard.</p>
+	</main>`;
+}
+
+function clientShell(body) {
+	const o = curOrg(), role = roleIn(o.id);
+	const links = [['overview', 'Overview', true], ['pipeline', 'Pipeline', true], ['add', 'Add lead', canWork(o.id)], ['huddle', 'Huddle', true], ['team', 'Setup', canManage(o.id)]].filter((l) => l[2]);
+	const active = (v) => v === S.view || (v === 'team' && ['team', 'kpis', 'connections'].includes(S.view));
+	const back = isAgency() || myOrgs().length > 1;
+	return `<header class="top"><div class="wrap">
+		${back ? `<button class="linkbtn" style="padding-left:0" data-act="portfolio">← <span class="hide-sm">All clients</span></button>` : '<span class="brand">MYCMO</span>'}
+		<span style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(o.name)}</span><span class="pill hide-sm">${ROLE_LABEL[role]}</span>
+		<nav class="nav">${links.map(([v, l]) => `<button data-act="view" data-v="${v}" ${active(v) ? 'aria-current="page"' : ''}>${l}</button>`).join('')}</nav>
+	</div></header>
+	<main class="wrap">${body}</main>
+	<nav class="bottomnav" style="grid-template-columns:repeat(${links.length},1fr)">${links.map(([v, l]) => `<button data-act="view" data-v="${v}" ${active(v) ? 'aria-current="page"' : ''}>${l}</button>`).join('')}</nav>`;
+}
+
+function viewOverview() {
+	const o = curOrg(), leads = db.leads.filter((l) => l.org === o.id), tiles = buildTiles(db.snaps.filter((s) => s.org === o.id));
+	const goals = kpiProgress(tiles, db.kpis.filter((k) => k.org === o.id)), ps = pipelineStats(leads);
+	const spendFrom = (() => { const d = daysAgo(90); return dayStr(new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1))); })();
+	const adSpend = db.snaps.filter((s) => s.org === o.id && s.metric === 'spend' && s.day >= spendFrom).reduce((a, s) => a + s.value, 0);
+	const totalSpend = db.spend.filter((s) => s.org === o.id && s.month >= spendFrom).reduce((a, s) => a + s.amount, 0) + adSpend;
+	const winLeads = leads.filter((l) => l.created >= spendFrom), won = leads.filter((l) => l.stage === 'closed_won' && l.changed >= spendFrom).reduce((a, l) => a + l.value, 0);
+	const acts = new Map(); for (const a of db.activities) if (a.org === o.id && a.at >= iso(daysAgo(7))) acts.set(a.user, (acts.get(a.user) ?? 0) + 1);
+	const repIds = [...new Set([...leads.map((l) => l.owner).filter(Boolean), ...acts.keys()])];
+	const reps = repIds.map((id) => { const mine = leads.filter((l) => l.owner === id); return { id, name: name(id), leads: mine.length, ...pipelineStats(mine), acts: acts.get(id) ?? 0 }; }).sort((a, b) => b.wonValue - a.wonValue || b.acts - a.acts);
+	const huddle = db.huddles.filter((h) => h.org === o.id).sort((a, b) => b.date.localeCompare(a.date))[0];
+	const sources = Object.keys(SOURCES).filter((s) => tiles[s].length);
+	return `${goals.length ? `<section style="margin-bottom:32px"><div class="sec-h" style="margin-top:0"><h2>Goals <span class="small faint" style="font-weight:400">last 30 days vs monthly goal</span></h2>${canManage(o.id) ? '<button class="linkbtn" style="color:var(--accent)" data-act="view" data-v="kpis">Edit KPIs</button>' : ''}</div>
+		<div class="grid g4">${goals.map((g) => `<div class="card tile"><p class="muted">${esc(g.def.label)}</p><p class="v tnum">${fmt(g.value, g.def.format)}</p>${g.target != null ? `<div class="meter" style="margin-top:8px" role="meter" aria-valuenow="${Math.round((g.pct ?? 0) * 100)}" aria-valuemin="0" aria-valuemax="100" aria-label="${esc(g.def.label)} progress to goal"><div class="${meterClass(g.pct ?? 0)}" style="width:${Math.min(g.pct ?? 0, 1) * 100}%"></div></div><p class="small muted">${Math.round((g.pct ?? 0) * 100)}% of ${fmt(g.target, g.def.format)} goal</p>` : ''}</div>`).join('')}</div></section>` : ''}
+	<section><p class="muted">Open pipeline</p><p class="hero tnum">${money(ps.openValue)}</p><p class="muted" style="margin-top:4px">${ps.openCount} open deals · ${ps.wonCount} won all-time · win rate ${pct(ps.winRate)}</p></section>
+	<section class="grid g4" style="margin-top:24px">${tile('Won revenue', money(won))}${tile('Marketing spend', money(totalSpend))}${tile('Cost per lead', totalSpend && winLeads.length ? money(totalSpend / winLeads.length) : '—')}${tile('Marketing ROI', totalSpend ? pct((won - totalSpend) / totalSpend) : '—')}</section>
+	<p class="small faint" style="margin-top:8px">Spend includes synced Google Ads and Meta Ads spend, since ${new Date(spendFrom + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' })}.</p>
+	${!sources.length ? `<div class="card" style="margin-top:32px;padding:24px"><h2 style="font-size:16px">No marketing data yet</h2><p class="muted" style="margin-top:4px">Connect Google, Meta and ad accounts to see traffic, search, social and ads here. ${canManage(o.id) ? '<button class="linkbtn" style="color:var(--accent);padding:0;font-weight:600" data-act="view" data-v="connections">Connect accounts</button>' : ''}</p></div>` : ''}
+	${sources.map((s) => `<section><div class="sec-h"><h2>${SOURCES[s].label} <span class="small faint" style="font-weight:400">last 30 days</span></h2></div><div class="grid g3">${tiles[s].map((t) => tile(t.def.label, fmt(t.value, t.def.format), { delta: t.def.agg === 'last' ? null : t.delta, upIsGood: t.def.upIsGood ?? true, neutral: t.def.neutral, sparkPts: t.def.agg === 'last' ? [] : t.spark, format: t.def.format })).join('')}</div></section>`).join('')}
+	<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:32px;align-items:start">
+		<section class="card scroll-x" style="padding:16px"><h2 style="font-size:16px">Rep scoreboard</h2>${reps.length ? `<table class="tnum" style="margin-top:8px;min-width:440px"><thead><tr><th>Rep</th><th>Leads</th><th>Win rate</th><th>Won</th><th>Activity (7d)</th></tr></thead><tbody>${reps.map((r) => `<tr><td style="font-weight:500">${esc(r.name)}</td><td>${r.leads}</td><td>${pct(r.winRate)}</td><td>${money(r.wonValue)}</td><td>${r.acts}</td></tr>`).join('')}</tbody></table>` : '<p class="muted" style="margin-top:8px">No leads or activity yet.</p>'}</section>
+		<section class="card" style="padding:16px"><div class="row" style="justify-content:space-between"><h2 style="font-size:16px">Latest huddle</h2><button class="linkbtn" style="color:var(--accent);padding:0" data-act="view" data-v="huddle">All</button></div>${huddle ? `<p class="small faint">${huddle.date}</p><div class="stack" style="gap:8px;margin-top:8px">${huddle.wins ? `<div><p class="small muted" style="font-weight:500">Wins</p><p>${esc(huddle.wins)}</p></div>` : ''}${huddle.blockers ? `<div><p class="small muted" style="font-weight:500">Blockers</p><p>${esc(huddle.blockers)}</p></div>` : ''}${huddle.focus ? `<div><p class="small muted" style="font-weight:500">Today's focus</p><p>${esc(huddle.focus)}</p></div>` : ''}</div>` : '<p class="muted" style="margin-top:8px">No huddle logged yet.</p>'}</section>
+	</div>`;
+}
+
+function viewPipeline() {
+	const o = curOrg(), since = iso(daysAgo(30));
+	const leads = db.leads.filter((l) => l.org === o.id && (!l.stage.startsWith('closed') || l.changed >= since)).sort((a, b) => b.changed.localeCompare(a.changed));
+	return `<div class="row" style="justify-content:space-between;margin-bottom:16px"><h1 style="font-size:20px">Pipeline</h1>${canWork(o.id) ? '<button class="btn btn-primary" data-act="view" data-v="add">+ Lead</button>' : ''}</div>
+	<p class="small muted" style="margin:-8px 0 12px">Tap a lead for quick actions. On a computer you can also drag leads between stages.</p>
+	<div class="board">${STAGES.map(([id, label]) => { const items = leads.filter((l) => l.stage === id); return `<section class="card col" data-drop="${id}" aria-label="${label}"><header><h2 style="font-size:14px">${label} <span class="faint" style="font-weight:400">${items.length}</span></h2><p class="small muted tnum">${money(items.reduce((a, l) => a + l.value, 0))}</p></header><ul>${items.map((l) => `<li class="lead" draggable="${canEditLead(l)}" data-drag="${l.id}"><button data-act="open-lead" data-id="${l.id}"><span style="display:block;font-weight:500">${esc(l.name)}</span>${l.company ? `<span class="muted" style="display:block">${esc(l.company)}</span>` : ''}<span class="small faint" style="display:block;margin-top:4px">${money(l.value)}${l.owner ? ' · ' + esc(name(l.owner)) : ''}</span></button>
+		${S.openLead === l.id ? `<div class="acts">${l.phone ? `<p class="small muted">Phone: <span class="tnum" style="color:var(--ink);user-select:all">${esc(l.phone)}</span></p>` : ''}${canWork(o.id) ? `<div class="grid g2" style="grid-template-columns:1fr 1fr;gap:8px">${QUICK.map(([t, lb]) => `<button class="btn btn-sm" data-act="log" data-id="${l.id}" data-v="${t}" data-l="${lb}">${lb}</button>`).join('')}</div>${canEditLead(l) ? `<label><span class="label">Move to</span><select class="input" data-move="${l.id}">${STAGES.map(([s, sl]) => `<option value="${s}" ${s === l.stage ? 'selected' : ''}>${sl}</option>`).join('')}</select></label>` : '<p class="small faint">This lead belongs to another rep, so only they or the owner can move it.</p>'}` : '<p class="small faint">View-only access.</p>'}</div>` : ''}</li>`).join('')}</ul></section>`; }).join('')}</div>`;
+}
+
+function viewAdd() {
+	return `<div style="max-width:440px;margin:0 auto"><h1 style="font-size:20px">Quick-add lead</h1>
+	<form id="add-lead" class="stack" style="margin-top:16px">
+		<div><label class="label" for="l-name">Name *</label><input class="input" id="l-name" required autocomplete="off"></div>
+		<div><label class="label" for="l-phone">Phone</label><input class="input" id="l-phone" type="tel" inputmode="tel" autocomplete="off"></div>
+		<div><label class="label" for="l-co">Company</label><input class="input" id="l-co" autocomplete="off"></div>
+		<div><label class="label" for="l-addr">Address</label><input class="input" id="l-addr" autocomplete="off"></div>
+		<fieldset style="border:0;padding:0;margin:0"><legend class="label">Lead source</legend><div class="src-grid">${LEAD_SOURCES.map(([id, lb], i) => `<label><input class="sr" type="radio" name="l-src" value="${id}" ${i === 0 ? 'checked' : ''}>${lb}</label>`).join('')}</div></fieldset>
+		<div><label class="label" for="l-val">Estimated deal value ($)</label><input class="input" id="l-val" inputmode="decimal" placeholder="0"></div>
+		<div class="grid g2" style="grid-template-columns:1fr 1fr"><button class="btn" type="submit" data-again="1">Save + add another</button><button class="btn btn-primary" type="submit">Save lead</button></div>
+	</form></div>`;
+}
+
+function viewHuddle() {
+	const o = curOrg(), notes = db.huddles.filter((h) => h.org === o.id).sort((a, b) => b.date.localeCompare(a.date));
+	return `<div style="max-width:680px;margin:0 auto"><h1 style="font-size:20px">Daily sales huddle</h1>
+	${canWork(o.id) ? `<form id="huddle" class="card stack" style="margin-top:16px;padding:16px"><div><label class="label" for="h-w">Wins since yesterday</label><textarea class="input" id="h-w" rows="2"></textarea></div><div><label class="label" for="h-b">Blockers</label><textarea class="input" id="h-b" rows="2"></textarea></div><div><label class="label" for="h-f">Today's focus</label><textarea class="input" id="h-f" rows="2"></textarea></div><button class="btn btn-primary" style="align-self:flex-start">Post huddle</button></form>` : ''}
+	<ol class="plain stack" style="margin-top:24px">${notes.map((n) => `<li class="card" style="padding:16px"><p class="small faint" style="font-weight:600">${n.date}</p>${n.wins ? `<p style="margin-top:8px"><span class="muted" style="font-weight:500">Wins:</span> ${esc(n.wins)}</p>` : ''}${n.blockers ? `<p style="margin-top:4px"><span class="muted" style="font-weight:500">Blockers:</span> ${esc(n.blockers)}</p>` : ''}${n.focus ? `<p style="margin-top:4px"><span class="muted" style="font-weight:500">Focus:</span> ${esc(n.focus)}</p>` : ''}</li>`).join('')}</ol></div>`;
+}
+
+const setupTabs = () => `<nav class="tabs" aria-label="Client setup">${[['team', 'Team & access'], ['kpis', 'KPIs & goals'], ['connections', 'Connections']].map(([v, l]) => `<button data-act="view" data-v="${v}" ${S.view === v ? 'aria-current="page"' : ''}>${l}</button>`).join('')}</nav>`;
+
+function viewTeam() {
+	const o = curOrg(), order = { owner: 0, rep: 1, viewer: 2 };
+	const members = db.members.filter((m) => m.org === o.id).map((m) => ({ ...m, p: db.profiles.find((p) => p.id === m.user) })).sort((a, b) => order[a.role] - order[b.role] || a.p.name.localeCompare(b.p.name));
+	return `${setupTabs()}${S.flash?.newClient ? `<p class="alert alert-info" style="margin-bottom:16px"><strong>${esc(o.name)}</strong> is set up. Next: invite the owner and their staff, then pick their KPIs and connect their accounts.</p>` : ''}
+	<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));align-items:start">
+		<section class="card"><h2 style="font-size:16px;padding:12px 16px;border-bottom:1px solid var(--border)">People with access <span class="faint" style="font-weight:400">${members.length}</span></h2>
+		<ul class="plain">${members.map((m) => `<li class="row" style="padding:12px 16px;border-bottom:1px solid var(--border)"><div style="flex:1;min-width:0"><p style="font-weight:500;overflow:hidden;text-overflow:ellipsis">${esc(m.p.name)}${m.user === S.user ? ' <span class="small faint">(you)</span>' : ''}</p><p class="small muted" style="overflow:hidden;text-overflow:ellipsis">${esc(m.p.email)}</p></div>
+			<select class="input" style="width:auto;min-height:36px;font-size:13px" data-role="${m.user}" aria-label="Role for ${esc(m.p.name)}">${ROLES.map(([r, l]) => `<option value="${r}" ${r === m.role ? 'selected' : ''}>${l}</option>`).join('')}</select>
+			${S.confirmRemove === m.user ? `<button class="btn btn-sm" style="color:var(--bad);border-color:var(--bad)" data-act="remove" data-id="${m.user}">Confirm remove</button><button class="linkbtn small" data-act="cancel-remove">Cancel</button>` : `<button class="linkbtn small bad" data-act="ask-remove" data-id="${m.user}">Remove</button>`}</li>`).join('') || '<li style="padding:24px 16px" class="muted">Nobody yet. Invite the business owner first.</li>'}</ul></section>
+		<section class="card" style="padding:16px"><h2 style="font-size:16px">Invite someone</h2><p class="muted">They get an email and can sign in with Google, Microsoft or an email link.</p>
+		<form id="invite" class="stack" style="margin-top:12px"><div><label class="label" for="i-name">Name</label><input class="input" id="i-name" autocomplete="off"></div><div><label class="label" for="i-email">Email *</label><input class="input" id="i-email" type="email" required autocomplete="off"></div>
+		<fieldset style="border:0;padding:0;margin:0"><legend class="label">Role</legend><div class="stack" style="gap:8px">${ROLES.map(([r, l, h], i) => `<label class="radio-card"><input type="radio" name="i-role" value="${r}" ${i === 1 ? 'checked' : ''}><span><span style="font-weight:500">${l}</span><span class="small muted" style="display:block">${h}</span></span></label>`).join('')}</div></fieldset>
+		<button class="btn btn-primary">Send invite</button></form></section>
+	</div>`;
+}
+
+function viewKpis() {
+	const o = curOrg(), chosen = db.kpis.filter((k) => k.org === o.id), connected = db.integrations.filter((i) => i.org === o.id).map((i) => i.provider);
+	const key = (s, m) => `${s}:${m}`, sel = new Map(chosen.map((k) => [key(k.source, k.metric), k]));
+	return `${setupTabs()}<p class="muted" style="max-width:640px">Pick up to 6 headline KPIs. They appear at the top of ${esc(o.name)}'s dashboard with progress toward the monthly goal, and roll up into your all-clients view.</p>
+	<form id="kpis" class="stack" style="margin-top:16px">${Object.keys(SOURCES).map((s) => { const on = connected.includes(SOURCES[s].provider); return `<section class="card" style="padding:16px;${on ? '' : 'opacity:.6'}"><h2 style="font-size:15px">${SOURCES[s].label} ${on ? '' : '<span class="small faint" style="font-weight:400">not connected yet</span>'}</h2><ul class="plain">${METRICS.filter((m) => m.source === s).map((m) => { const k = key(s, m.metric), cur = sel.get(k); return `<li class="row" style="border-top:1px solid var(--border);padding-block:4px"><label class="check"><input type="checkbox" data-kpi="${k}" ${cur ? 'checked' : ''}><span>${m.label}</span></label><label class="row small muted" style="gap:8px" ${cur ? '' : 'hidden'} data-target-wrap="${k}">${m.upIsGood === false ? 'Goal (at or below)' : 'Monthly goal'}<input class="input" style="width:120px" inputmode="decimal" placeholder="optional" data-target="${k}" value="${cur?.target ?? ''}"></label></li>`; }).join('')}</ul></section>`; }).join('')}
+	<div class="card row" style="position:sticky;bottom:72px;padding:12px"><span class="small muted" id="kpi-count">${chosen.length} of 6 selected</span><button class="btn btn-primary" style="margin-left:auto">Save KPIs</button></div></form>`;
+}
+
+function viewConnections() {
+	const o = curOrg(), integ = Object.fromEntries(db.integrations.filter((i) => i.org === o.id).map((i) => [i.provider, i]));
+	return `${setupTabs()}<p class="muted" style="max-width:640px">Connect once. Data refreshes every night, and you can sync any time. Each platform connects separately, so a client can share ads without sharing analytics.</p>
+	<div class="stack" style="margin-top:16px;max-width:760px">${PROVIDERS.filter((p) => p.available).map((p) => { const i = integ[p.id]; return `<section class="card" style="padding:16px"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><h2 style="font-size:16px">${p.name} ${p.ads ? '<span class="chip chip-ads">Ads</span>' : ''}</h2><p class="muted">${p.covers}</p>${i ? `<p class="small ${i.status === 'error' ? 'bad' : 'faint'}" style="margin-top:4px;${i.status === 'error' ? 'font-weight:600' : ''}">${i.status === 'error' ? '⚠ Needs attention' : '● Connected'} · last sync ${new Date(i.synced).toLocaleString()}</p>${i.error ? `<p class="small muted">${esc(i.error)}</p>` : ''}` : ''}</div>
+		<div class="row" style="gap:8px"><button class="btn ${i ? '' : 'btn-primary'}" data-act="connect" data-v="${p.id}">${i ? 'Reconnect' : 'Connect'}</button>${i ? `<button class="btn" data-act="sync" data-v="${p.id}">Sync now</button><button class="btn" style="color:var(--bad)" data-act="disconnect" data-v="${p.id}">Disconnect</button>` : ''}</div></div>
+		${i ? `<div class="stack" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">${p.pickers.map((pk) => `<label><span class="label">${pk}</span><select class="input"><option>${esc(o.name)} (${pk.toLowerCase().includes('site') ? slugify(o.name).replace(/-/g, '') + '.com' : 'main'})</option><option>Don't track</option></select></label>`).join('')}</div>` : ''}</section>`; }).join('')}</div>
+	<h2 style="font-size:16px;margin-top:32px">Coming soon</h2><div class="grid g2" style="margin-top:12px;max-width:760px">${PROVIDERS.filter((p) => !p.available).map((p) => `<div class="card row" style="padding:16px;justify-content:space-between;opacity:.7"><div><p style="font-weight:500">${p.name}</p><p class="small muted">${p.covers}</p></div><span class="pill">Soon</span></div>`).join('')}</div>`;
+}
+
+// ---------------------------------------------------------------------------
+// Render + events
+// ---------------------------------------------------------------------------
+const app = document.getElementById('app');
+function render() {
+	sparks.length = 0;
+	const banner = S.user ? `<div class="banner">Demo, sample data: signed in as <strong>${esc(me().name)}</strong>${isAgency() ? '' : ` (${ROLE_LABEL[roleIn(S.org)] ?? ''})`}<button data-act="switch">Switch user</button></div>` : '';
+	let body;
+	if (!S.user) body = viewPicker();
+	else if (!S.org) body = viewPortfolio();
+	else body = clientShell({ overview: viewOverview, pipeline: viewPipeline, add: viewAdd, huddle: viewHuddle, team: viewTeam, kpis: viewKpis, connections: viewConnections }[S.view]());
+	app.innerHTML = banner + body;
+	// Portfolio table vs cards
+	app.querySelectorAll('.only-sm').forEach((el) => { el.style.display = matchMedia('(max-width: 700px)').matches ? '' : 'none'; });
+}
+function go(patch) { Object.assign(S, patch); render(); window.scrollTo(0, 0); }
+
+app.addEventListener('click', (e) => {
+	const t = e.target.closest('[data-act]'); if (!t) return;
+	const { act, id, v } = t.dataset;
+	if (act === 'signin') {
+		const orgs = db.profiles.find((p) => p.id === id)?.agency ? null : t.dataset.org;
+		return go({ user: id, org: orgs ?? null, view: 'overview', openLead: null, flash: null });
+	}
+	if (act === 'switch') return go({ user: null, org: null, personaQuery: '' });
+	if (act === 'portfolio') return isAgency() ? go({ org: null, view: 'overview' }) : go({ org: null });
+	if (act === 'open-org') return go({ org: id, view: 'overview', openLead: null });
+	if (act === 'view') return go({ view: v, openLead: null, confirmRemove: null, flash: v === 'team' ? S.flash : null });
+	if (act === 'filter') { S.filter = v; return render(); }
+	if (act === 'toggle-add') { S.adding = !S.adding; render(); return document.getElementById('nc-name')?.focus(); }
+	if (act === 'open-lead') { S.openLead = S.openLead === id ? null : id; return render(); }
+	if (act === 'log') {
+		const l = db.leads.find((x) => x.id === id);
+		db.activities.push({ org: l.org, lead: id, user: S.user, type: v, at: iso(new Date()) });
+		if (l.stage === 'new' && canEditLead(l)) { l.stage = 'attempted_contact'; l.changed = iso(new Date()); toast(`${t.dataset.l} ✓ Moved to Attempted contact`); }
+		else toast(`${t.dataset.l} ✓`);
+		return render();
+	}
+	if (act === 'ask-remove') { S.confirmRemove = id; return render(); }
+	if (act === 'cancel-remove') { S.confirmRemove = null; return render(); }
+	if (act === 'remove') {
+		const o = curOrg();
+		if (id === S.user) { S.confirmRemove = null; toast("You can't remove yourself"); return render(); }
+		const owners = db.members.filter((m) => m.org === o.id && m.role === 'owner');
+		if (owners.length === 1 && owners[0].user === id) { S.confirmRemove = null; toast('Every client needs at least one owner'); return render(); }
+		db.members = db.members.filter((m) => !(m.org === o.id && m.user === id)); S.confirmRemove = null; toast('Removed'); return render();
+	}
+	if (act === 'connect') {
+		const o = curOrg(), ex = db.integrations.find((i) => i.org === o.id && i.provider === v);
+		if (ex) { ex.status = 'connected'; ex.error = ''; ex.synced = iso(new Date()); } else db.integrations.push({ org: o.id, provider: v, status: 'connected', error: '', synced: iso(new Date()) });
+		toast(`In the live app this opens ${PROVIDERS.find((p) => p.id === v).name}'s sign-in. Marked connected for the demo.`); return render();
+	}
+	if (act === 'sync') { const i = db.integrations.find((x) => x.org === S.org && x.provider === v); i.synced = iso(new Date()); toast('Synced'); return render(); }
+	if (act === 'disconnect') { db.integrations = db.integrations.filter((x) => !(x.org === S.org && x.provider === v)); toast('Disconnected. Past data is kept.'); return render(); }
+});
+app.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.matches('tr[data-act]')) e.target.click(); });
+
+app.addEventListener('input', (e) => {
+	if (e.target.id === 'persona-q' || e.target.id === 'client-q') {
+		const k = e.target.id === 'persona-q' ? 'personaQuery' : 'query', pos = e.target.selectionStart;
+		S[k] = e.target.value; render(); const el = document.getElementById(e.target.id); el.focus(); el.setSelectionRange(pos, pos);
+	}
+});
+
+app.addEventListener('change', (e) => {
+	const el = e.target;
+	if (el.dataset.move) { const l = db.leads.find((x) => x.id === el.dataset.move); l.stage = el.value; l.changed = iso(new Date()); db.activities.push({ org: l.org, lead: l.id, user: S.user, type: 'stage_change', at: iso(new Date()) }); toast(`Moved to ${STAGES.find((s) => s[0] === el.value)[1]}`); return render(); }
+	if (el.dataset.role) {
+		if (el.dataset.role === S.user && el.value !== 'owner') { toast("You can't demote yourself"); return render(); }
+		db.members.find((m) => m.org === S.org && m.user === el.dataset.role).role = el.value; toast('Role updated'); return render();
+	}
+	if (el.dataset.kpi) {
+		app.querySelector(`[data-target-wrap="${el.dataset.kpi}"]`).hidden = !el.checked;
+		const n = app.querySelectorAll('[data-kpi]:checked').length, c = document.getElementById('kpi-count');
+		c.textContent = `${n} of 6 selected`; c.className = `small ${n > 6 ? 'bad' : 'muted'}`;
+	}
+});
+
+app.addEventListener('submit', (e) => {
+	e.preventDefault();
+	const f = e.target, o = curOrg(), val = (id) => document.getElementById(id)?.value.trim() ?? '';
+	if (f.id === 'new-client') {
+		const n = val('nc-name'), slug = slugify(n);
+		if (slug.length < 2) return toast('Name is too short');
+		if (db.orgs.some((x) => x.slug === slug)) return toast('That client already exists');
+		const id = newId(); db.orgs.push({ id, name: n, slug, industry: val('nc-ind') });
+		return go({ org: id, view: 'team', adding: false, flash: { newClient: true } });
+	}
+	if (f.id === 'add-lead') {
+		const amount = Number(val('l-val').replace(/[$,]/g, '') || 0);
+		if (!Number.isFinite(amount) || amount < 0) return toast('Deal value must be a positive number');
+		db.leads.push({ id: newId(), org: o.id, owner: S.user, name: val('l-name'), phone: val('l-phone'), company: val('l-co'), source: f.querySelector('[name=l-src]:checked').value, stage: 'new', value: amount, created: iso(new Date()), changed: iso(new Date()) });
+		toast(`Saved ${val('l-name')}`);
+		if (e.submitter?.dataset.again) { f.reset(); return document.getElementById('l-name').focus(); }
+		return go({ view: 'pipeline' });
+	}
+	if (f.id === 'huddle') {
+		const w = val('h-w'), b = val('h-b'), fo = val('h-f');
+		if (!w && !b && !fo) return toast('Write at least one line');
+		db.huddles.push({ id: newId(), org: o.id, date: dayStr(new Date()), wins: w, blockers: b, focus: fo }); toast('Huddle posted'); return render();
+	}
+	if (f.id === 'invite') {
+		const email = val('i-email').toLowerCase(), role = f.querySelector('[name=i-role]:checked').value;
+		let p = db.profiles.find((x) => x.email === email);
+		if (!p) { p = { id: newId(), name: val('i-name') || email.split('@')[0], email, agency: false }; db.profiles.push(p); }
+		const ex = db.members.find((m) => m.org === o.id && m.user === p.id);
+		if (ex) ex.role = role; else db.members.push({ org: o.id, user: p.id, role });
+		S.flash = null; toast(`Invite sent to ${email}. You can now sign in as them from Switch user.`); return render();
+	}
+	if (f.id === 'kpis') {
+		const boxes = [...app.querySelectorAll('[data-kpi]:checked')];
+		if (boxes.length > 6) return toast('Pick at most 6 headline KPIs');
+		for (const b of boxes) { const t = app.querySelector(`[data-target="${b.dataset.kpi}"]`).value.replace(/[$,]/g, '').trim(); if (t && (!Number.isFinite(Number(t)) || Number(t) < 0)) return toast('Goals must be positive numbers'); }
+		db.kpis = db.kpis.filter((k) => k.org !== o.id);
+		for (const b of boxes) { const [source, metric] = b.dataset.kpi.split(':'), t = app.querySelector(`[data-target="${b.dataset.kpi}"]`).value.replace(/[$,]/g, '').trim(); db.kpis.push({ org: o.id, source, metric, position: METRICS.findIndex((m) => m.source === source && m.metric === metric), target: t === '' ? null : Number(t) }); }
+		toast(`Saved ${boxes.length} KPIs`); return render();
+	}
+});
+
+// Drag and drop between pipeline stages (desktop)
+app.addEventListener('dragstart', (e) => { const li = e.target.closest?.('[data-drag]'); if (li) { S.dragging = li.dataset.drag; e.dataTransfer.effectAllowed = 'move'; } });
+app.addEventListener('dragover', (e) => { const col = e.target.closest?.('[data-drop]'); if (col && S.dragging) { e.preventDefault(); app.querySelectorAll('.col.drop').forEach((c) => c !== col && c.classList.remove('drop')); col.classList.add('drop'); } });
+app.addEventListener('drop', (e) => {
+	const col = e.target.closest?.('[data-drop]'); if (!col || !S.dragging) return; e.preventDefault();
+	const l = db.leads.find((x) => x.id === S.dragging); S.dragging = null;
+	if (!canEditLead(l)) { toast('Only the assigned rep or the owner can move this lead'); return render(); }
+	if (l.stage !== col.dataset.drop) { l.stage = col.dataset.drop; l.changed = iso(new Date()); toast(`Moved to ${STAGES.find((s) => s[0] === l.stage)[1]}`); }
+	render();
+});
+app.addEventListener('dragend', () => { S.dragging = null; app.querySelectorAll('.col.drop').forEach((c) => c.classList.remove('drop')); });
+
+// Sparkline crosshair + tooltip
+app.addEventListener('pointermove', (e) => {
+	const wrap = e.target.closest?.('[data-spark]'); if (!wrap) return;
+	const { points, format } = sparks[wrap.dataset.spark], svg = wrap.querySelector('svg'), rect = svg.getBoundingClientRect();
+	const i = Math.max(0, Math.min(points.length - 1, Math.round(((e.clientX - rect.left) / rect.width) * (points.length - 1))));
+	const x = (i / (points.length - 1)) * 200, line = svg.querySelector('.cross');
+	line.setAttribute('x1', x); line.setAttribute('x2', x); line.setAttribute('visibility', 'visible');
+	let tip = wrap.querySelector('.tip'); if (!tip) { tip = document.createElement('div'); tip.className = 'tip'; wrap.append(tip); }
+	tip.style.left = `${(x / 200) * 100}%`;
+	tip.innerHTML = `<span class="faint">${new Date(points[i].day + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}</span> <strong>${fmt(points[i].value, format)}</strong>`;
+});
+app.addEventListener('pointerout', (e) => { const wrap = e.target.closest?.('[data-spark]'); if (wrap && !wrap.contains(e.relatedTarget)) { wrap.querySelector('.tip')?.remove(); wrap.querySelector('.cross')?.setAttribute('visibility', 'hidden'); } });
+addEventListener('resize', () => app.querySelectorAll('.only-sm').forEach((el) => { el.style.display = matchMedia('(max-width: 700px)').matches ? '' : 'none'; }));
+
+render();
+</script>
