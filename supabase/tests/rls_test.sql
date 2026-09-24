@@ -52,3 +52,17 @@ set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000a';
 select t('agency sees all orgs', (select count(*) from organizations)=2);
 insert into organizations (name, slug) values ('Org3','org3');
 select t('agency creates org', (select count(*) from organizations)=3);
+
+-- 0002: KPI settings
+set role authenticated;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000b';
+insert into org_kpis (org_id, source, metric, monthly_target) values ('10000000-0000-0000-0000-000000000001','ga4','sessions',1000);
+select t('owner sets client KPIs', (select count(*) from org_kpis)=1);
+set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000c';
+select t('rep sees client KPIs', (select count(*) from org_kpis)=1);
+do $$ begin insert into org_kpis (org_id, source, metric) values ('10000000-0000-0000-0000-000000000001','gsc','clicks'); perform t('rep cannot change KPIs', false); exception when others then perform t('rep cannot change KPIs', true); end $$;
+set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000f';
+select t('outsider cannot see KPIs', (select count(*) from org_kpis)=0);
+set request.jwt.claim.sub = '00000000-0000-0000-0000-00000000000b';
+insert into integrations (org_id, provider) values ('10000000-0000-0000-0000-000000000001','google_ads');
+select t('owner connects Google Ads', (select count(*) from integrations where provider='google_ads')=1);

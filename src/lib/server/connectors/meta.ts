@@ -33,7 +33,7 @@ export interface MetaAccounts {
 	[k: string]: AccountOption[];
 }
 
-const graph = (path: string) => `https://graph.facebook.com/${env.META_GRAPH_VERSION || 'v23.0'}/${path}`;
+export const graph = (path: string) => `https://graph.facebook.com/${env.META_GRAPH_VERSION || 'v23.0'}/${path}`;
 
 interface InsightsResponse {
 	data: { name: string; values: { value: number | Record<string, number>; end_time: string }[] }[];
@@ -46,53 +46,59 @@ function insightDay(endTime: string) {
 	return isoDay(d);
 }
 
+/** Meta login pieces shared by the Page/Instagram and Ads connectors. */
+export function metaOAuth(scopes: string[]) {
+	return {
+		authorizeUrl(state: string, redirectUri: string) {
+			const p = new URLSearchParams({
+				client_id: env.META_APP_ID ?? '',
+				redirect_uri: redirectUri,
+				state,
+				scope: scopes.join(','),
+				response_type: 'code'
+			});
+			return `https://www.facebook.com/${env.META_GRAPH_VERSION || 'v23.0'}/dialog/oauth?${p}`;
+		},
+
+		async exchangeCode(code: string, redirectUri: string) {
+			const short = await fetchJson<{ access_token: string }>(
+				'meta',
+				graph(
+					`oauth/access_token?${new URLSearchParams({
+						client_id: env.META_APP_ID ?? '',
+						client_secret: env.META_APP_SECRET ?? '',
+						redirect_uri: redirectUri,
+						code
+					})}`
+				)
+			);
+			const long = await fetchJson<{ access_token: string; expires_in?: number }>(
+				'meta',
+				graph(
+					`oauth/access_token?${new URLSearchParams({
+						grant_type: 'fb_exchange_token',
+						client_id: env.META_APP_ID ?? '',
+						client_secret: env.META_APP_SECRET ?? '',
+						fb_exchange_token: short.access_token
+					})}`
+				)
+			);
+			return {
+				accessToken: long.access_token,
+				refreshToken: null,
+				expiresAt: new Date(Date.now() + (long.expires_in ?? 60 * 24 * 3600) * 1000)
+			};
+		},
+
+		async refresh() {
+			return null;
+		}
+	};
+}
+
 export const meta: Connector<MetaConfig, MetaAccounts> = {
 	provider: 'meta',
-
-	authorizeUrl(state, redirectUri) {
-		const p = new URLSearchParams({
-			client_id: env.META_APP_ID ?? '',
-			redirect_uri: redirectUri,
-			state,
-			scope: SCOPES.join(','),
-			response_type: 'code'
-		});
-		return `https://www.facebook.com/${env.META_GRAPH_VERSION || 'v23.0'}/dialog/oauth?${p}`;
-	},
-
-	async exchangeCode(code, redirectUri) {
-		const short = await fetchJson<{ access_token: string }>(
-			'meta',
-			graph(
-				`oauth/access_token?${new URLSearchParams({
-					client_id: env.META_APP_ID ?? '',
-					client_secret: env.META_APP_SECRET ?? '',
-					redirect_uri: redirectUri,
-					code
-				})}`
-			)
-		);
-		const long = await fetchJson<{ access_token: string; expires_in?: number }>(
-			'meta',
-			graph(
-				`oauth/access_token?${new URLSearchParams({
-					grant_type: 'fb_exchange_token',
-					client_id: env.META_APP_ID ?? '',
-					client_secret: env.META_APP_SECRET ?? '',
-					fb_exchange_token: short.access_token
-				})}`
-			)
-		);
-		return {
-			accessToken: long.access_token,
-			refreshToken: null,
-			expiresAt: new Date(Date.now() + (long.expires_in ?? 60 * 24 * 3600) * 1000)
-		};
-	},
-
-	async refresh() {
-		return null;
-	},
+	...metaOAuth(SCOPES),
 
 	async listAccounts(token) {
 		const r = await fetchJson<{

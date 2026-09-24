@@ -6,6 +6,7 @@
 		value,
 		delta = null,
 		upIsGood = true,
+		neutral = false,
 		period = 'prior 30 days',
 		spark = [],
 		format = (v: number) => String(v)
@@ -14,12 +15,13 @@
 		value: string;
 		delta?: number | null;
 		upIsGood?: boolean;
+		neutral?: boolean;
 		period?: string;
 		spark?: { day: string; value: number }[];
 		format?: (v: number) => string;
 	} = $props();
 
-	let good = $derived(delta == null || delta === 0 ? null : delta > 0 === upIsGood);
+	let good = $derived(neutral || delta == null || delta === 0 ? null : delta > 0 === upIsGood);
 </script>
 
 <div class="card flex flex-col gap-1 p-4">

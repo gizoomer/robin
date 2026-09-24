@@ -3,7 +3,7 @@
  * Connectors write rows keyed by (source, metric); this maps them to labels.
  * Adding a new platform = add its entries here + a connector in $lib/server/connectors.
  */
-export type SourceId = 'ga4' | 'gsc' | 'youtube' | 'facebook' | 'instagram';
+export type SourceId = 'ga4' | 'gsc' | 'youtube' | 'facebook' | 'instagram' | 'google_ads' | 'meta_ads';
 
 export interface MetricDef {
 	source: SourceId;
@@ -11,17 +11,21 @@ export interface MetricDef {
 	label: string;
 	/** 'sum' for flows (sessions per day), 'last' for stocks (follower count) */
 	agg: 'sum' | 'last' | 'avg';
-	format?: 'number' | 'percent' | 'decimal' | 'duration';
+	format?: 'number' | 'percent' | 'decimal' | 'duration' | 'money';
 	/** false when a lower number is better (e.g. average search position) */
 	upIsGood?: boolean;
+	/** true when direction is neither good nor bad (e.g. ad spend): delta is shown without color */
+	neutral?: boolean;
 }
 
-export const SOURCES: Record<SourceId, { label: string; provider: 'google' | 'meta' }> = {
+export const SOURCES: Record<SourceId, { label: string; provider: string }> = {
 	ga4: { label: 'Website (Google Analytics)', provider: 'google' },
 	gsc: { label: 'Google Search', provider: 'google' },
 	youtube: { label: 'YouTube', provider: 'google' },
 	facebook: { label: 'Facebook', provider: 'meta' },
-	instagram: { label: 'Instagram', provider: 'meta' }
+	instagram: { label: 'Instagram', provider: 'meta' },
+	google_ads: { label: 'Google Ads', provider: 'google_ads' },
+	meta_ads: { label: 'Meta Ads', provider: 'meta_ads' }
 };
 
 export const METRICS: MetricDef[] = [
@@ -37,8 +41,18 @@ export const METRICS: MetricDef[] = [
 	{ source: 'facebook', metric: 'followers', label: 'Page followers', agg: 'last' },
 	{ source: 'facebook', metric: 'page_post_engagements', label: 'Post engagements', agg: 'sum' },
 	{ source: 'instagram', metric: 'followers', label: 'Followers', agg: 'last' },
-	{ source: 'instagram', metric: 'reach', label: 'Accounts reached', agg: 'sum' }
+	{ source: 'instagram', metric: 'reach', label: 'Accounts reached', agg: 'sum' },
+	// Ad spend is also added to marketing spend automatically for ROI. More spend is not "good", so no color.
+	{ source: 'google_ads', metric: 'spend', label: 'Google Ads spend', agg: 'sum', format: 'money', neutral: true },
+	{ source: 'google_ads', metric: 'clicks', label: 'Ad clicks', agg: 'sum' },
+	{ source: 'google_ads', metric: 'conversions', label: 'Ad conversions', agg: 'sum' },
+	{ source: 'meta_ads', metric: 'spend', label: 'Meta Ads spend', agg: 'sum', format: 'money', neutral: true },
+	{ source: 'meta_ads', metric: 'clicks', label: 'Ad clicks', agg: 'sum' },
+	{ source: 'meta_ads', metric: 'leads', label: 'Ad leads', agg: 'sum' }
 ];
+
+/** Sources whose `spend` metric counts toward marketing spend on the overview. */
+export const AD_SPEND_SOURCES: SourceId[] = ['google_ads', 'meta_ads'];
 
 export function metricDef(source: string, metric: string) {
 	return METRICS.find((m) => m.source === source && m.metric === metric);
@@ -82,5 +96,6 @@ export const money = new Intl.NumberFormat('en-US', {
 export function formatValue(v: number, format: MetricDef['format'] = 'number') {
 	if (format === 'percent') return `${(v * 100).toFixed(1)}%`;
 	if (format === 'decimal') return v.toFixed(1);
+	if (format === 'money') return money.format(v);
 	return Math.abs(v) >= 10_000 ? compact.format(v) : full.format(v);
 }

@@ -15,11 +15,17 @@ npm install && npm run build
 DEMO_MODE=true npx vite preview
 ```
 
-Open http://localhost:4173/app. The whole app runs on built-in sample data for a fictional
-"Acme Roofing" (no Supabase, Google or Meta needed), and new leads and stage moves work until
-you restart. Screenshots are in `screenshots/`. Never set `DEMO_MODE` in production.
+Open http://localhost:4173 and pick who to sign in as:
 
-![Overview](screenshots/desktop-1-overview.png)
+- **Super admin (the CMO):** portfolio of 20 sample clients with KPI progress and alerts, create
+  clients, invite each client's staff, set each client's KPIs and monthly goals, connect platforms.
+- **Any client employee** (3-4 per client, as owner, sales rep or view-only): sees only their own
+  business, with exactly the permissions that role has in production.
+
+Everything is sample data (no Supabase, Google or Meta needed). Changes last until you restart.
+Screenshots are in `screenshots/`. Never set `DEMO_MODE` in production.
+
+![All clients](screenshots/02-admin-all-clients.png)
 
 ## How it fits together
 
@@ -50,7 +56,7 @@ a table with RLS on and **no** policies, so only server code using the service r
 
 ## Setup (about an hour, not counting platform approvals)
 
-1. **Supabase:** create a project. In the SQL editor, run `supabase/migrations/0001_init.sql`.
+1. **Supabase:** create a project. In the SQL editor, run each file in `supabase/migrations/` in order.
    Under Authentication > URL Configuration, add `{APP_URL}/auth/callback` as a redirect URL.
 2. **Env:** `cp .env.example .env` and fill it in. Generate the encryption key with `openssl rand -base64 32`.
 3. **Make yourself agency staff:** invite yourself under Authentication > Users, then run
@@ -66,9 +72,9 @@ a table with RLS on and **no** policies, so only server code using the service r
 
 ### Adding a client
 
-Sign in as agency staff > add client > invite the owner in Supabase Auth > insert their
-`org_members` row with role `owner`. The owner then connects Google and Meta from **Connections**.
-(A self-serve invite screen is a good next feature.)
+Sign in as agency staff > **+ New client** > invite the owner and staff on **Setup > Team & access**
+> pick their headline KPIs and monthly goals on **Setup > KPIs & goals** > connect their accounts on
+**Setup > Connections** (or let the owner do it, since owners can manage their own setup).
 
 ## Read this before promising clients a launch date
 
@@ -81,6 +87,9 @@ Sign in as agency staff > add client > invite the owner in Supabase Auth > inser
   anyone who isn't a role-holder on your app can connect.
 - **Meta tokens expire.** Meta gives no refresh token. Long-lived user tokens last about 60 days, so
   a client has to click **Reconnect** occasionally. The Connections page shows when that is needed.
+- **Google Ads developer token.** Needs a manager (MCC) account and Google's Basic Access approval
+  before it returns real client data. Apply early.
+- **Meta Ads.** `ads_read` also needs Advanced Access through App Review.
 - **Meta metric churn.** Meta retires Insights metrics regularly. Each metric is fetched separately so a
   retired one shows as a warning instead of breaking the sync. The metric names live in
   `src/lib/server/connectors/meta.ts` and should be checked against the current Graph API changelog
@@ -108,7 +117,8 @@ reps can't edit each other's leads, nobody can read tokens, nobody can promote t
 Against a scratch Postgres 16 database:
 
 ```bash
-psql "$SCRATCH_DB" -f supabase/tests/auth_stub.sql -f supabase/migrations/0001_init.sql -f supabase/tests/rls_test.sql
+psql "$SCRATCH_DB" -f supabase/tests/auth_stub.sql -f supabase/migrations/0001_init.sql \
+  -f supabase/migrations/0002_agency_kpis_ads.sql -f supabase/tests/rls_test.sql
 ```
 
 Every line should print `PASS`. (The one `ERROR` line is the expected rejection of a self-promotion attempt.)

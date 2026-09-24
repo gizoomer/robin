@@ -1,11 +1,12 @@
 import { createServerClient } from '@supabase/ssr';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { env as publicEnv } from '$env/dynamic/public';
-import { demoClient, isDemo } from '$lib/server/demo';
+import { DEMO_COOKIE, demoClient, demoUserExists, isDemo } from '$lib/server/demo';
 
 export const handle: Handle = async ({ event, resolve }) => {
+	const demoUser = event.cookies.get(DEMO_COOKIE);
 	event.locals.supabase = isDemo()
-		? demoClient()
+		? demoClient(demoUser && demoUserExists(demoUser) ? demoUser : null)
 		: createServerClient(publicEnv.PUBLIC_SUPABASE_URL!, publicEnv.PUBLIC_SUPABASE_ANON_KEY!, {
 			cookies: {
 				getAll: () => event.cookies.getAll(),
@@ -33,7 +34,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	if (event.url.pathname.startsWith('/app')) {
 		const { user } = await event.locals.safeGetSession();
-		if (!user) redirect(303, `/login?next=${encodeURIComponent(event.url.pathname)}`);
+		if (!user) redirect(303, isDemo() ? '/demo' : `/login?next=${encodeURIComponent(event.url.pathname)}`);
 	}
 
 	return resolve(event, {

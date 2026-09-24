@@ -22,7 +22,7 @@ export interface DateRange {
 }
 
 export interface Connector<Config = Record<string, string | undefined>, Accounts = Record<string, AccountOption[]>> {
-	provider: 'google' | 'meta';
+	provider: string;
 	authorizeUrl(state: string, redirectUri: string): string;
 	exchangeCode(code: string, redirectUri: string): Promise<TokenSet>;
 	/** Returns fresh tokens, or null when the provider has no refresh flow (user must reconnect). */

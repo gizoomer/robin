@@ -1,14 +1,11 @@
 import { error, fail } from '@sveltejs/kit';
+import { providerInfo } from '$lib/providers';
 import { connectors, isProvider } from '$lib/server/connectors';
 import { getAccessToken, syncIntegration } from '$lib/server/integrations';
 import { orgFromEvent } from '$lib/server/org';
 import { demoAccountOptions, isDemo } from '$lib/server/demo';
 import { supabaseAdmin } from '$lib/server/supabaseAdmin';
 
-const CONFIG_KEYS: Record<string, string[]> = {
-	google: ['ga4PropertyId', 'gscSiteUrl', 'youtubeChannelId'],
-	meta: ['pageId']
-};
 
 export async function load({ locals, parent }) {
 	const { org, canManage } = await parent();
@@ -25,7 +22,7 @@ export async function load({ locals, parent }) {
 	await Promise.all(
 		(integrations ?? []).map(async (i: { id: string; provider: string }) => {
 			if (!isProvider(i.provider)) return;
-			if (isDemo()) return void (options[i.provider] = demoAccountOptions[i.provider]);
+			if (isDemo()) return void (options[i.provider] = demoAccountOptions(i.provider, org.name));
 			try {
 				const token = await getAccessToken(admin, i.id, i.provider);
 				options[i.provider] = await connectors[i.provider].listAccounts(token);
@@ -47,7 +44,7 @@ export const actions = {
 		if (!isProvider(provider)) return fail(400, { error: 'Unknown provider' });
 
 		const config: Record<string, string> = {};
-		for (const k of CONFIG_KEYS[provider]) {
+		for (const k of providerInfo(provider)?.pickers.map((p) => p.field) ?? []) {
 			const v = String(f.get(k) ?? '');
 			if (v) config[k] = v;
 		}

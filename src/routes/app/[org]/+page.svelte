@@ -8,6 +8,29 @@
 	const pct = (v: number | null) => (v == null ? '—' : `${Math.round(v * 100)}%`);
 </script>
 
+{#if data.goals.length}
+	<section class="mb-8">
+		<div class="mb-3 flex items-baseline justify-between">
+			<h2 class="text-lg font-semibold">Goals <span class="text-sm font-normal text-ink-3">last 30 days vs monthly goal</span></h2>
+			{#if data.canManage}<a href="/app/{data.org.slug}/kpis" class="text-sm text-accent">Edit KPIs</a>{/if}
+		</div>
+		<div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+			{#each data.goals as g (g.def.source + g.def.metric)}
+				<div class="card p-4">
+					<p class="text-sm text-ink-2">{g.def.label}</p>
+					<p class="text-2xl font-semibold tracking-tight">{formatValue(g.value, g.def.format)}</p>
+					{#if g.target != null}
+						<div class="mt-2 h-2 rounded-full bg-line" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow={Math.round((g.pct ?? 0) * 100)} aria-label="{g.def.label} progress to goal">
+							<div class="h-2 rounded-full {(g.pct ?? 0) >= 1 ? 'bg-good' : (g.pct ?? 0) >= 0.8 ? 'bg-accent' : 'bg-bad'}" style="width: {Math.min(g.pct ?? 0, 1) * 100}%"></div>
+						</div>
+						<p class="mt-1 text-xs text-ink-2">{Math.round((g.pct ?? 0) * 100)}% of {formatValue(g.target, g.def.format)} goal</p>
+					{/if}
+				</div>
+			{/each}
+		</div>
+	</section>
+{/if}
+
 <section>
 	<p class="text-sm text-ink-2">Open pipeline</p>
 	<p class="text-5xl font-semibold tracking-tight">{money.format(data.pipeline.openValue)}</p>
@@ -17,11 +40,11 @@
 <section class="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
 	<StatTile label="Won revenue" value={money.format(data.roi.wonRevenue)} />
 	<StatTile label="Marketing spend" value={money.format(data.roi.spend)} />
-	<StatTile label="Cost per lead" value={data.roi.costPerLead == null ? '—' : money.format(data.roi.costPerLead)} />
+	<StatTile label="Cost per lead" value={data.roi.costPerLead == null ? '—' : money.format(Math.round(data.roi.costPerLead))} />
 	<StatTile label="Marketing ROI" value={pct(data.roi.roi)} />
 </section>
 <p class="mt-2 text-xs text-ink-3">
-	Spend, cost and ROI since {new Date(data.roi.since + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' })}.
+	Spend includes synced Google Ads and Meta Ads spend. Spend, cost and ROI since {new Date(data.roi.since + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' })}.
 </p>
 
 {#if sources.length === 0}
@@ -44,6 +67,7 @@
 					value={formatValue(t.value, t.def.format)}
 					delta={t.def.agg === 'last' ? null : t.delta}
 					upIsGood={t.def.upIsGood ?? true}
+					neutral={t.def.neutral}
 					spark={t.def.agg === 'last' ? [] : t.spark}
 					format={(v) => formatValue(v, t.def.format)}
 				/>

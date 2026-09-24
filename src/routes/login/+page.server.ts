@@ -1,7 +1,9 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { env as publicEnv } from '$env/dynamic/public';
+import { isDemo } from '$lib/server/demo';
 
 export async function load({ locals }) {
+	if (isDemo()) redirect(303, '/demo');
 	const { user } = await locals.safeGetSession();
 	if (user) redirect(303, '/app');
 }

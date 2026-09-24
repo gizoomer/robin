@@ -1,4 +1,6 @@
 import { buildTiles, pipelineStats, repStats } from '$lib/dashboard';
+import { AD_SPEND_SOURCES } from '$lib/metrics';
+import { kpiProgress } from '$lib/portfolio';
 
 export async function load({ locals, parent }) {
 	const { org } = await parent();
@@ -7,13 +9,15 @@ export async function load({ locals, parent }) {
 	const since90 = new Date(Date.now() - 90 * 86400_000);
 	const spendFrom = new Date(Date.UTC(since90.getUTCFullYear(), since90.getUTCMonth(), 1)).toISOString().slice(0, 10);
 
-	const [snapshots, leads, activities, members, spend, huddle] = await Promise.all([
+	const [snapshots, leads, activities, members, spend, huddle, kpis, adSpend] = await Promise.all([
 		locals.supabase.from('metric_snapshots').select('source, metric, day, value').eq('org_id', org.id).gte('day', since60),
 		locals.supabase.from('leads').select('owner_id, stage, estimated_value, created_at, stage_changed_at').eq('org_id', org.id),
 		locals.supabase.from('activities').select('user_id').eq('org_id', org.id).gte('created_at', since7),
 		locals.supabase.from('org_members').select('user_id').eq('org_id', org.id),
 		locals.supabase.from('marketing_spend').select('amount, month').eq('org_id', org.id).gte('month', spendFrom),
-		locals.supabase.from('huddle_notes').select('huddle_date, wins, blockers, focus').eq('org_id', org.id).order('huddle_date', { ascending: false }).limit(1)
+		locals.supabase.from('huddle_notes').select('huddle_date, wins, blockers, focus').eq('org_id', org.id).order('huddle_date', { ascending: false }).limit(1),
+		locals.supabase.from('org_kpis').select('source, metric, position, monthly_target').eq('org_id', org.id),
+		locals.supabase.from('metric_snapshots').select('value').eq('org_id', org.id).eq('metric', 'spend').in('source', AD_SPEND_SOURCES).gte('day', spendFrom)
 	]);
 
 	const allLeads = leads.data ?? [];
@@ -27,14 +31,18 @@ export async function load({ locals, parent }) {
 	const names = new Map<string, string>((profiles ?? []).map((p) => [p.id, p.full_name ?? 'Team member']));
 
 	// ROI over the spend window: revenue from deals won since the window opened vs. spend in it.
-	const totalSpend = (spend.data ?? []).reduce((a, s) => a + Number(s.amount), 0);
+	// Manual spend (retainers, print, ...) plus ad spend synced from Google Ads / Meta Ads.
+	const adTotal = (adSpend.data ?? []).reduce((a, s) => a + Number(s.value), 0);
+	const totalSpend = (spend.data ?? []).reduce((a, s) => a + Number(s.amount), 0) + adTotal;
 	const windowLeads = allLeads.filter((l) => l.created_at >= spendFrom);
 	const windowWon = allLeads
 		.filter((l) => l.stage === 'closed_won' && l.stage_changed_at >= spendFrom)
 		.reduce((a, l) => a + Number(l.estimated_value), 0);
 
+	const tiles = buildTiles(snapshots.data ?? []);
 	return {
-		tiles: buildTiles(snapshots.data ?? []),
+		tiles,
+		goals: kpiProgress(tiles, kpis.data ?? []),
 		pipeline: pipelineStats(allLeads),
 		reps: repStats(allLeads, actCounts, names),
 		roi: {

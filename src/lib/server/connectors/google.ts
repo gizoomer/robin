@@ -43,52 +43,58 @@ function toTokens(t: GoogleTokenResponse, prevRefresh?: string | null): TokenSet
 
 const bearer = (token: string) => ({ Authorization: `Bearer ${token}` });
 
+/** Google OAuth pieces shared by every Google connector (analytics, ads). */
+export function googleOAuth(scopes: string[]) {
+	return {
+		authorizeUrl(state: string, redirectUri: string) {
+			const p = new URLSearchParams({
+				client_id: env.GOOGLE_CLIENT_ID ?? '',
+				redirect_uri: redirectUri,
+				response_type: 'code',
+				scope: scopes.join(' '),
+				access_type: 'offline',
+				prompt: 'consent', // guarantees a refresh_token on reconnect
+				include_granted_scopes: 'true',
+				state
+			});
+			return `https://accounts.google.com/o/oauth2/v2/auth?${p}`;
+		},
+
+		async exchangeCode(code: string, redirectUri: string) {
+			const t = await fetchJson<GoogleTokenResponse>('google', 'https://oauth2.googleapis.com/token', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams({
+					code,
+					client_id: env.GOOGLE_CLIENT_ID ?? '',
+					client_secret: env.GOOGLE_CLIENT_SECRET ?? '',
+					redirect_uri: redirectUri,
+					grant_type: 'authorization_code'
+				})
+			});
+			return toTokens(t);
+		},
+
+		async refresh(tokens: TokenSet) {
+			if (!tokens.refreshToken) return null;
+			const t = await fetchJson<GoogleTokenResponse>('google', 'https://oauth2.googleapis.com/token', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				body: new URLSearchParams({
+					client_id: env.GOOGLE_CLIENT_ID ?? '',
+					client_secret: env.GOOGLE_CLIENT_SECRET ?? '',
+					refresh_token: tokens.refreshToken,
+					grant_type: 'refresh_token'
+				})
+			});
+			return toTokens(t, tokens.refreshToken);
+		}
+	};
+}
+
 export const google: Connector<GoogleConfig, GoogleAccounts> = {
 	provider: 'google',
-
-	authorizeUrl(state, redirectUri) {
-		const p = new URLSearchParams({
-			client_id: env.GOOGLE_CLIENT_ID ?? '',
-			redirect_uri: redirectUri,
-			response_type: 'code',
-			scope: SCOPES.join(' '),
-			access_type: 'offline',
-			prompt: 'consent', // guarantees a refresh_token on reconnect
-			include_granted_scopes: 'true',
-			state
-		});
-		return `https://accounts.google.com/o/oauth2/v2/auth?${p}`;
-	},
-
-	async exchangeCode(code, redirectUri) {
-		const t = await fetchJson<GoogleTokenResponse>('google', 'https://oauth2.googleapis.com/token', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: new URLSearchParams({
-				code,
-				client_id: env.GOOGLE_CLIENT_ID ?? '',
-				client_secret: env.GOOGLE_CLIENT_SECRET ?? '',
-				redirect_uri: redirectUri,
-				grant_type: 'authorization_code'
-			})
-		});
-		return toTokens(t);
-	},
-
-	async refresh(tokens) {
-		if (!tokens.refreshToken) return null;
-		const t = await fetchJson<GoogleTokenResponse>('google', 'https://oauth2.googleapis.com/token', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: new URLSearchParams({
-				client_id: env.GOOGLE_CLIENT_ID ?? '',
-				client_secret: env.GOOGLE_CLIENT_SECRET ?? '',
-				refresh_token: tokens.refreshToken,
-				grant_type: 'refresh_token'
-			})
-		});
-		return toTokens(t, tokens.refreshToken);
-	},
+	...googleOAuth(SCOPES),
 
 	async listAccounts(token) {
 		const [ga4, gsc, youtube] = await Promise.all([
