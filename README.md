@@ -59,6 +59,15 @@ a table with RLS on and **no** policies, so only server code using the service r
 1. **Supabase:** create a project. In the SQL editor, run each file in `supabase/migrations/` in order.
    Under Authentication > URL Configuration, add `{APP_URL}/auth/callback` as a redirect URL.
 2. **Env:** `cp .env.example .env` and fill it in. Generate the encryption key with `openssl rand -base64 32`.
+   **Sign-in options** (Authentication > Sign In / Providers). Email is on by default. Also enable:
+   - **Google:** create a separate OAuth client (Web) in Google Cloud with redirect URI
+     `https://YOUR-PROJECT.supabase.co/auth/v1/callback`, and paste its ID and secret into Supabase.
+     Sign-in only asks for name and email, so it needs no Google verification.
+   - **Microsoft (listed as "Azure"):** register an app in Microsoft Entra ID with "Accounts in any
+     organizational directory and personal Microsoft accounts", same Supabase redirect URI, then paste
+     the Application (client) ID and a client secret into Supabase. Tenant URL: leave it as `common`.
+   People can sign in with Google or Microsoft using the email they were invited with. Anyone else can
+   create an account but sees no client data until you add them on a client's Team page.
 3. **Make yourself agency staff:** invite yourself under Authentication > Users, then run
    `update profiles set is_agency_staff = true where email = 'you@yourdomain.com';`
 4. **Google Cloud:** create an OAuth client (Web). Enable *Google Analytics Data API*, *Google Analytics Admin API*,
