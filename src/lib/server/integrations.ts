@@ -3,6 +3,7 @@ import { env } from '$env/dynamic/private';
 import { connectors, type ProviderId } from './connectors';
 import { isoDay, type TokenSet } from './connectors/types';
 import { decrypt, encrypt } from './crypto';
+import { isDemo } from './demo';
 
 export async function saveTokens(admin: SupabaseClient, integrationId: string, t: TokenSet) {
 	const { error } = await admin.from('integration_secrets').upsert({
@@ -54,6 +55,11 @@ export async function syncIntegration(admin: SupabaseClient, integ: IntegrationR
 	end.setUTCDate(end.getUTCDate() - 1);
 	const start = new Date(end);
 	start.setUTCDate(start.getUTCDate() - (integ.last_synced_at ? 7 : 90));
+
+	if (isDemo()) {
+		await admin.from('integrations').update({ status: 'connected', last_synced_at: new Date().toISOString() }).eq('id', integ.id);
+		return { rows: 0, warnings: ['Demo mode: sample data only, nothing was fetched.'] };
+	}
 
 	try {
 		const token = await getAccessToken(admin, integ.id, integ.provider);

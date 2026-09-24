@@ -1,18 +1,21 @@
 import { createServerClient } from '@supabase/ssr';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { env as publicEnv } from '$env/dynamic/public';
+import { demoClient, isDemo } from '$lib/server/demo';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	event.locals.supabase = createServerClient(publicEnv.PUBLIC_SUPABASE_URL!, publicEnv.PUBLIC_SUPABASE_ANON_KEY!, {
-		cookies: {
-			getAll: () => event.cookies.getAll(),
-			setAll: (cookies) => {
-				for (const { name, value, options } of cookies) {
-					event.cookies.set(name, value, { ...options, path: '/' });
+	event.locals.supabase = isDemo()
+		? demoClient()
+		: createServerClient(publicEnv.PUBLIC_SUPABASE_URL!, publicEnv.PUBLIC_SUPABASE_ANON_KEY!, {
+			cookies: {
+				getAll: () => event.cookies.getAll(),
+				setAll: (cookies) => {
+					for (const { name, value, options } of cookies) {
+						event.cookies.set(name, value, { ...options, path: '/' });
+					}
 				}
 			}
-		}
-	});
+		});
 
 	// getSession() alone trusts the cookie; getUser() verifies the JWT with Supabase.
 	event.locals.safeGetSession = async () => {

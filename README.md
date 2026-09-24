@@ -8,6 +8,19 @@ A client-facing marketing + sales dashboard. Each client business logs in and se
 
 Stack: SvelteKit 2 + Svelte 5 (runes), Supabase (Postgres, Auth, RLS), Tailwind CSS 4, deployed on Vercel.
 
+## Try it with no setup (demo mode)
+
+```bash
+npm install && npm run build
+DEMO_MODE=true npx vite preview
+```
+
+Open http://localhost:4173/app. The whole app runs on built-in sample data for a fictional
+"Acme Roofing" (no Supabase, Google or Meta needed), and new leads and stage moves work until
+you restart. Screenshots are in `screenshots/`. Never set `DEMO_MODE` in production.
+
+![Overview](screenshots/desktop-1-overview.png)
+
 ## How it fits together
 
 ```

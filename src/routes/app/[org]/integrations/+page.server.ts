@@ -2,6 +2,7 @@ import { error, fail } from '@sveltejs/kit';
 import { connectors, isProvider } from '$lib/server/connectors';
 import { getAccessToken, syncIntegration } from '$lib/server/integrations';
 import { orgFromEvent } from '$lib/server/org';
+import { demoAccountOptions, isDemo } from '$lib/server/demo';
 import { supabaseAdmin } from '$lib/server/supabaseAdmin';
 
 const CONFIG_KEYS: Record<string, string[]> = {
@@ -24,6 +25,7 @@ export async function load({ locals, parent }) {
 	await Promise.all(
 		(integrations ?? []).map(async (i: { id: string; provider: string }) => {
 			if (!isProvider(i.provider)) return;
+			if (isDemo()) return void (options[i.provider] = demoAccountOptions[i.provider]);
 			try {
 				const token = await getAccessToken(admin, i.id, i.provider);
 				options[i.provider] = await connectors[i.provider].listAccounts(token);
